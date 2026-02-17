@@ -159,7 +159,10 @@ export default function PostContent({ post }: { post: Post }) {
 
       {/* Author + meta */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
+        <Link
+          href={`/user/${post.author_id}`}
+          className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+        >
           <div className="w-7 h-7 rounded-full bg-amber-100 flex items-center justify-center text-xs">
             {post.author?.avatar_url ? (
               <img
@@ -177,7 +180,7 @@ export default function PostContent({ post }: { post: Post }) {
           <span className="text-xs text-amber-500">
             {post.author?.manner_temp ?? 36.5}°
           </span>
-        </div>
+        </Link>
         <div className="flex items-center gap-2">
           <span className="text-xs text-gray-400">
             {timeAgo(post.created_at)}

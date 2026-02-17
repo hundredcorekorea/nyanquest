@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { Party, PartyMember } from "@/types/database";
+import Link from "next/link";
 import JoinPartyButton from "./JoinPartyButton";
 import DiscordInvite from "./DiscordInvite";
 import ReviewSection from "./ReviewSection";
@@ -23,6 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   if (!party) return { title: "nyanQuest" };
 
   const p = party as unknown as Party;
+  const ogImageUrl = `${process.env.NEXT_PUBLIC_SUPABASE_URL ? new URL("/api/og/party?id=" + id, process.env.VERCEL_PROJECT_PRODUCTION_URL ? "https://" + process.env.VERCEL_PROJECT_PRODUCTION_URL : "http://localhost:3000").toString() : ""}`;
   return {
     title: `${p.title} - nyanQuest`,
     description: p.content?.slice(0, 160) ?? "TRPG 파티를 찾아보세요!",
@@ -30,6 +32,13 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       title: p.title,
       description: p.content?.slice(0, 160) ?? "nyanQuest에서 파티원 모집 중!",
       type: "article",
+      ...(ogImageUrl ? { images: [{ url: ogImageUrl, width: 1200, height: 630 }] } : {}),
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: p.title,
+      description: p.content?.slice(0, 160) ?? "nyanQuest에서 파티원 모집 중!",
+      ...(ogImageUrl ? { images: [ogImageUrl] } : {}),
     },
   };
 }
@@ -99,7 +108,10 @@ export default async function PartyDetailPage({ params }: Props) {
       <h1 className="text-2xl font-bold text-gray-900">{p.title}</h1>
 
       {/* GM info */}
-      <div className="flex items-center gap-3 bg-amber-50 rounded-xl p-4">
+      <Link
+        href={`/user/${p.gm_id}`}
+        className="flex items-center gap-3 bg-amber-50 rounded-xl p-4 hover:bg-amber-100/50 transition-colors"
+      >
         <div className="w-10 h-10 rounded-full bg-amber-200 flex items-center justify-center text-lg">
           {p.gm?.avatar_url ? (
             <img
@@ -120,7 +132,7 @@ export default async function PartyDetailPage({ params }: Props) {
             꾹꾹이 온도 {p.gm?.manner_temp ?? 36.5}°
           </p>
         </div>
-      </div>
+      </Link>
 
       {/* Content */}
       {p.content && (
@@ -185,7 +197,11 @@ export default async function PartyDetailPage({ params }: Props) {
         </h2>
         <div className="space-y-2">
           {typedMembers.map((m) => (
-            <div key={m.id} className="flex items-center gap-3">
+            <Link
+              key={m.id}
+              href={`/user/${m.user_id}`}
+              className="flex items-center gap-3 hover:bg-gray-50 rounded-lg py-1 px-1 -mx-1 transition-colors"
+            >
               <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-sm">
                 {m.user?.avatar_url ? (
                   <img
@@ -212,7 +228,7 @@ export default async function PartyDetailPage({ params }: Props) {
               <span className="text-xs text-amber-500 ml-auto">
                 {m.user?.manner_temp ?? 36.5}°
               </span>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
