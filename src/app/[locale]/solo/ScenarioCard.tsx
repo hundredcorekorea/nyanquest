@@ -1,7 +1,7 @@
 "use client";
 
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
@@ -30,6 +30,7 @@ export default function ScenarioCard({
   const { toast } = useToast();
   const tSolo = useTranslations("Solo");
   const tCommon = useTranslations("Common");
+  const locale = useLocale();
   const [loading, setLoading] = useState(false);
   const [showAdGate, setShowAdGate] = useState(false);
 
@@ -137,7 +138,7 @@ export default function ScenarioCard({
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 mb-1">
             <h3 className="font-bold text-gray-900 text-sm">
-              {scenario.titleKo}
+              {locale === "ko" ? scenario.titleKo : scenario.title}
             </h3>
             <span
               className={`text-xs px-2 py-0.5 rounded-full ${difficultyLabel.color}`}
@@ -150,9 +151,9 @@ export default function ScenarioCard({
               </span>
             )}
           </div>
-          <p className="text-xs text-gray-500 mb-2">{scenario.description}</p>
+          <p className="text-xs text-gray-500 mb-2">{locale === "ko" ? scenario.description : scenario.descriptionEn}</p>
           <div className="flex items-center gap-3 text-xs text-gray-400">
-            <span>🎭 {scenario.genre}</span>
+            <span>🎭 {locale === "ko" ? scenario.genre : scenario.genreEn}</span>
             <span>🎲 ~{effectiveTurns} {tCommon("turns")}</span>
           </div>
         </div>

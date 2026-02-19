@@ -8,10 +8,13 @@ export const SCENARIOS: Scenario[] = [
     titleKo: "고블린 동굴 구출작전",
     description:
       "마을 상인이 납치됐다냥! 고블린 동굴에 잠입해서 구출하는 임무다냥.",
+    descriptionEn:
+      "A village merchant has been kidnapped, meow! Your mission is to infiltrate the goblin cave and rescue them.",
     thumbnailEmoji: "🗡️",
     difficulty: "easy",
     estimatedTurns: 8,
     genre: "판타지",
+    genreEn: "Fantasy",
     systemPromptAddition: `배경: 중세 판타지 세계. 작은 마을 외곽의 고블린 동굴.
 목표: 납치된 상인 '마르코'를 구출하라.
 분위기: 긴장감 있지만 유쾌한 모험.
@@ -38,10 +41,13 @@ export const SCENARIOS: Scenario[] = [
     titleKo: "유령 도서관의 비밀",
     description:
       "폐쇄된 고대 도서관에서 이상한 소리가 들린다냥... 용기 있는 집사만 도전하라냥!",
+    descriptionEn:
+      "Strange sounds echo from an abandoned ancient library, meow... Only brave butlers dare to enter!",
     thumbnailEmoji: "📚",
     difficulty: "normal",
     estimatedTurns: 10,
     genre: "호러/미스터리",
+    genreEn: "Horror/Mystery",
     systemPromptAddition: `배경: 100년간 폐쇄된 고대 마법 도서관. 밤.
 목표: 도서관에 봉인된 저주를 풀어라.
 분위기: 으스스하지만 무섭지 않은 정도. 유머 섞인 호러.
@@ -70,10 +76,13 @@ export const SCENARIOS: Scenario[] = [
     titleKo: "우주정거장 오메가 긴급사태",
     description:
       "우주정거장에서 원인불명의 사고가 발생했다냥! 30분 안에 탈출하라냥!",
+    descriptionEn:
+      "An unexplained accident has occurred on the space station, meow! Escape within 30 minutes!",
     thumbnailEmoji: "🚀",
     difficulty: "hard",
     estimatedTurns: 12,
     genre: "SF",
+    genreEn: "Sci-Fi",
     systemPromptAddition: `배경: 미래 우주. 소행성 궤도의 연구 정거장 '오메가'.
 목표: 정거장이 폭발하기 전에 탈출선으로 탈출.
 분위기: 긴박한 SF 서바이벌. 타이머 느낌.
@@ -101,10 +110,13 @@ AI 음성이 울려퍼지고, 바닥이 흔들린다냥! 복도의 비상등이 
     titleKo: "고양이 왕국의 왕관",
     description:
       "고양이들의 비밀 왕국에 초대받았다냥! 도둑맞은 왕관을 찾아달라냥!",
+    descriptionEn:
+      "You've been invited to the secret kingdom of cats, meow! Find the stolen crown!",
     thumbnailEmoji: "👑",
     difficulty: "easy",
     estimatedTurns: 8,
     genre: "판타지/코미디",
+    genreEn: "Fantasy/Comedy",
     systemPromptAddition: `배경: 인간에게 숨겨진 고양이들의 비밀 왕국. 동화적 분위기.
 목표: 도둑맞은 고양이 왕의 왕관을 되찾아라.
 분위기: 따뜻하고 유쾌한 코미디 판타지. 고양이 말장난 많이.
@@ -135,10 +147,13 @@ NPC: 고양이 왕 (근엄), 궁정 고양이들 (수다쟁이), 용의자 3마�
     titleKo: "용의 외교관",
     description:
       "고대 용과의 평화 협상에 나서야 한다냥! 말 한마디가 왕국의 운명을 바꾼다냥!",
+    descriptionEn:
+      "You must negotiate peace with an ancient dragon, meow! A single word could change the kingdom's fate!",
     thumbnailEmoji: "🐉",
     difficulty: "hard",
     estimatedTurns: 12,
     genre: "판타지/외교",
+    genreEn: "Fantasy/Diplomacy",
     systemPromptAddition: `배경: 중세 판타지. 인간 왕국과 용족의 긴장 관계. 용의 둥지에서 협상.
 목표: 고대 용 '아우렐리온'과 평화 조약을 맺어라.
 분위기: 웅장하면서도 긴장감 넘치는 외교전. 말 한마디가 운명을 바꿈.
@@ -170,10 +185,13 @@ NPC: 아우렐리온 (현명하지만 오만한 고대 용), 용족 수호자들
     titleKo: "시간의 고리: 끝없는 주점",
     description:
       "같은 밤이 반복된다냥! 시간 루프를 깨뜨리고 아침을 맞이하라냥!",
+    descriptionEn:
+      "The same night keeps repeating, meow! Break the time loop and welcome the morning!",
     thumbnailEmoji: "🕐",
     difficulty: "normal",
     estimatedTurns: 10,
     genre: "미스터리/판타지",
+    genreEn: "Mystery/Fantasy",
     systemPromptAddition: `배경: 마법 세계의 한 주점. 같은 밤이 무한 반복되는 시간 루프에 갇힘.
 목표: 시간 루프의 원인을 밝히고 루프를 깨뜨려라.
 분위기: 미스터리 스릴러 + 따뜻한 인간(고양이) 드라마.

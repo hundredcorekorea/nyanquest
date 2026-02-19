@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { PREMIUM_CONFIG } from "@/lib/premium";
@@ -19,6 +19,7 @@ export default function QuestComplete({ questId, turnCount, isPremium }: Props) 
   const { toast } = useToast();
   const tQuest = useTranslations("SoloQuest");
   const tCommon = useTranslations("Common");
+  const locale = useLocale();
   const [claiming, setClaiming] = useState(false);
   const [claimed, setClaimed] = useState(false);
   const [expAmount, setExpAmount] = useState(0);
@@ -102,10 +103,10 @@ export default function QuestComplete({ questId, turnCount, isPremium }: Props) 
             <div className="bg-white/60 rounded-xl p-3 space-y-1">
               <p className="text-xs font-bold text-amber-700">{tQuest("newTitleEarned")}</p>
               {newTitles.map((titleId) => {
-                const t = getTitleDef(titleId);
-                return t ? (
+                const td = getTitleDef(titleId);
+                return td ? (
                   <p key={titleId} className="text-sm">
-                    {t.emoji} <span className="font-medium">{t.name}</span>
+                    {td.emoji} <span className="font-medium">{locale === "ko" ? td.name : td.nameEn}</span>
                   </p>
                 ) : null;
               })}

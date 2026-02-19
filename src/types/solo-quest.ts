@@ -21,10 +21,12 @@ export interface Scenario {
   title: string;
   titleKo: string;
   description: string;
+  descriptionEn: string;
   thumbnailEmoji: string;
   difficulty: "easy" | "normal" | "hard";
   estimatedTurns: number;
   genre: string;
+  genreEn: string;
   systemPromptAddition: string;
   openingMessage: string;
   suggestedActions: string[];

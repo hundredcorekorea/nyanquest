@@ -203,7 +203,7 @@ export default async function PublicProfilePage({ params }: Props) {
             <h1 className="font-bold text-xl text-gray-900">{p.nickname}</h1>
             <p className="text-xs text-gray-400 mt-0.5">
               {p.active_title
-                ? (() => { const td = getTitleDef(p.active_title); return td ? `${td.emoji} ${td.name}` : catLevel.title; })()
+                ? (() => { const td = getTitleDef(p.active_title); return td ? `${td.emoji} ${locale === "ko" ? td.name : td.nameEn}` : catLevel.title; })()
                 : catLevel.title}
             </p>
 

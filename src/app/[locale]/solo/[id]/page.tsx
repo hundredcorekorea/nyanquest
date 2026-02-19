@@ -6,11 +6,11 @@ import type { SoloQuest } from "@/types/solo-quest";
 import QuestChat from "./QuestChat";
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: Promise<{ locale: string; id: string }>;
 }
 
 export default async function SoloQuestPlayPage({ params }: Props) {
-  const { id } = await params;
+  const { locale, id } = await params;
   const supabase = await createClient();
   const {
     data: { user },
@@ -45,7 +45,7 @@ export default async function SoloQuestPlayPage({ params }: Props) {
   return (
     <QuestChat
       quest={typedQuest}
-      scenarioTitle={scenario.titleKo}
+      scenarioTitle={locale === "ko" ? scenario.titleKo : scenario.title}
       scenarioId={scenario.id}
       totalTurns={effectiveTurns}
       suggestedActions={scenario.suggestedActions}

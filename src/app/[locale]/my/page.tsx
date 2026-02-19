@@ -416,7 +416,7 @@ export default function MyPage() {
                 >
                   {activeTitleDef ? (
                     <span className="text-xs text-amber-600 font-medium">
-                      {activeTitleDef.emoji} {activeTitleDef.name}
+                      {activeTitleDef.emoji} {locale === "ko" ? activeTitleDef.name : activeTitleDef.nameEn}
                     </span>
                   ) : (
                     <span className="text-xs text-gray-400">
@@ -670,7 +670,7 @@ export default function MyPage() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <p className={`text-sm font-medium ${earned ? "text-gray-900" : "text-gray-400"}`}>
-                            {title.name}
+                            {locale === "ko" ? title.name : title.nameEn}
                           </p>
                           {isActive && (
                             <span className="text-xs bg-amber-100 text-amber-600 px-1.5 py-0.5 rounded">
@@ -679,7 +679,9 @@ export default function MyPage() {
                           )}
                         </div>
                         <p className="text-xs text-gray-400 mt-0.5">
-                          {earned ? title.description : `🔒 ${title.condition}`}
+                          {earned
+                            ? (locale === "ko" ? title.description : title.descriptionEn)
+                            : `🔒 ${locale === "ko" ? title.condition : title.conditionEn}`}
                         </p>
                       </div>
                     </div>

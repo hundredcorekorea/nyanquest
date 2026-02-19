@@ -87,7 +87,7 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
             </span>
           </div>
           <p className="text-xs text-gray-600 mb-3">
-            {SCENARIOS.find((s) => s.id === inProgressQuest!.scenario_id)?.titleKo ?? t("unknownScenario")}{" "}
+            {(() => { const s = SCENARIOS.find((s) => s.id === inProgressQuest!.scenario_id); return s ? (locale === "ko" ? s.titleKo : s.title) : t("unknownScenario"); })()}{" "}
             — {t("inProgressTurns", { turnCount: inProgressQuest.turn_count })}
           </p>
           <div className="flex items-center gap-2">
