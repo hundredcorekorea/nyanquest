@@ -7,7 +7,7 @@ import type { User } from "@supabase/supabase-js";
 import type { TrpgSystem } from "@/types/database";
 import { useToast } from "@/components/Toast";
 import DateTimePicker from "@/components/DateTimePicker";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function CreatePartyPage() {
   const router = useRouter();
@@ -16,6 +16,8 @@ export default function CreatePartyPage() {
   const t = useTranslations("CreateParty");
   const tCommon = useTranslations("Common");
   const tMeeting = useTranslations("MeetingType");
+  const locale = useLocale();
+  const dateLocale = locale === "ko" ? "ko-KR" : "en-US";
   const [user, setUser] = useState<User | null>(null);
   const [systems, setSystems] = useState<TrpgSystem[]>([]);
   const [step, setStep] = useState(0);
@@ -497,7 +499,7 @@ export default function CreatePartyPage() {
             {form.scheduled_at && (
               <p className="text-xs text-gray-400">
                 📅{" "}
-                {new Date(form.scheduled_at).toLocaleDateString("ko-KR", {
+                {new Date(form.scheduled_at).toLocaleDateString(dateLocale, {
                   year: "numeric",
                   month: "long",
                   day: "numeric",

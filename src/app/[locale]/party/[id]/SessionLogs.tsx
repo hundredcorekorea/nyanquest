@@ -4,7 +4,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import type { SessionLog } from "@/types/database";
 import { useToast } from "@/components/Toast";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Props {
   partyId: string;
@@ -18,6 +18,8 @@ interface SessionLogWithAuthor extends SessionLog {
 export default function SessionLogs({ partyId, memberUserIds }: Props) {
   const t = useTranslations("SessionLogs");
   const tc = useTranslations("Common");
+  const locale = useLocale();
+  const dateLocale = locale === "ko" ? "ko-KR" : "en-US";
   const supabase = createClient();
   const { toast } = useToast();
   const [userId, setUserId] = useState<string | null>(null);
@@ -202,7 +204,7 @@ export default function SessionLogs({ partyId, memberUserIds }: Props) {
               {log.session_date && (
                 <p className="text-xs text-gray-400">
                   {new Date(log.session_date + "T00:00:00").toLocaleDateString(
-                    "ko-KR",
+                    dateLocale,
                     {
                       year: "numeric",
                       month: "long",

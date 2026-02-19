@@ -6,7 +6,7 @@ import { Link } from "@/i18n/navigation";
 import { useToast } from "@/components/Toast";
 import { usePremium } from "@/hooks/usePremium";
 import { PLANS, PREMIUM_CONFIG, type PlanType } from "@/lib/premium";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function PremiumPage() {
   const router = useRouter();
@@ -16,6 +16,8 @@ export default function PremiumPage() {
   const [processing, setProcessing] = useState(false);
   const t = useTranslations("Premium");
   const tCommon = useTranslations("Common");
+  const locale = useLocale();
+  const dateLocale = locale === "ko" ? "ko-KR" : "en-US";
 
   async function handleSubscribe() {
     setProcessing(true);
@@ -113,7 +115,7 @@ export default function PremiumPage() {
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">{t("expiryDate")}</span>
             <span className="text-sm font-bold text-gray-900">
-              {expiresAt.toLocaleDateString("ko-KR")}
+              {expiresAt.toLocaleDateString(dateLocale)}
             </span>
           </div>
           <div className="flex justify-between items-center">

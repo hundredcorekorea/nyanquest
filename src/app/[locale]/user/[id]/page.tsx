@@ -65,6 +65,7 @@ const statusColors: Record<string, string> = {
 export default async function PublicProfilePage({ params }: Props) {
   const { locale, id } = await params;
   setRequestLocale(locale);
+  const dateLocale = locale === "ko" ? "ko-KR" : "en-US";
   const t = await getTranslations("UserProfile");
   const tStatus = await getTranslations("Status");
   const tTimeAgo = await getTranslations("TimeAgo");
@@ -419,7 +420,7 @@ export default async function PublicProfilePage({ params }: Props) {
 
       {/* Join date */}
       <p className="text-xs text-gray-300 text-center">
-        {t("joinDate", { date: new Date(p.created_at).toLocaleDateString("ko-KR") })}
+        {t("joinDate", { date: new Date(p.created_at).toLocaleDateString(dateLocale) })}
       </p>
     </div>
   );

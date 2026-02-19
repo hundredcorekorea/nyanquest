@@ -9,7 +9,7 @@ import { useToast } from "@/components/Toast";
 import { usePremium } from "@/hooks/usePremium";
 import { TITLES, getTitleDef } from "@/lib/titles";
 import Image from "next/image";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 async function resizeImage(file: File, maxSize: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -48,6 +48,8 @@ export default function MyPage() {
   const t = useTranslations("MyPage");
   const tCommon = useTranslations("Common");
   const tStatus = useTranslations("Status");
+  const locale = useLocale();
+  const dateLocale = locale === "ko" ? "ko-KR" : "en-US";
   const [user, setUser] = useState<User | null>(null);
   const [profile, setProfile] = useState<Profile | null>(null);
   const [parties, setParties] = useState<Party[]>([]);
@@ -493,7 +495,7 @@ export default function MyPage() {
                 <div>
                   <p className="text-sm font-bold text-purple-700">{t("premiumActive")}</p>
                   <p className="text-xs text-gray-500">
-                    {t("premiumActiveUntil", { date: new Date(subscription.expires_at).toLocaleDateString("ko-KR") })}
+                    {t("premiumActiveUntil", { date: new Date(subscription.expires_at).toLocaleDateString(dateLocale) })}
                   </p>
                 </div>
               </div>

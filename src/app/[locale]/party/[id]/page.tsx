@@ -52,6 +52,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PartyDetailPage({ params }: Props) {
   const { locale, id } = await params;
   setRequestLocale(locale);
+  const dateLocale = locale === "ko" ? "ko-KR" : "en-US";
 
   const t = await getTranslations("PartyDetail");
   const tStatus = await getTranslations("Status");
@@ -271,7 +272,7 @@ export default async function PartyDetailPage({ params }: Props) {
             <div className="bg-gray-50 rounded-xl p-3">
               <p className="text-xs text-gray-400">{t("scheduledDate")}</p>
               <p className="text-sm font-medium text-gray-700">
-                {new Date(p.scheduled_at).toLocaleDateString("ko-KR", {
+                {new Date(p.scheduled_at).toLocaleDateString(dateLocale, {
                   month: "short",
                   day: "numeric",
                   weekday: "short",
