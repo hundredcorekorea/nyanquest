@@ -1,0 +1,2 @@
+rootProject.name = 'nyanquest-twa'
+include ':app'

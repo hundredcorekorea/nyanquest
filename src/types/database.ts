@@ -7,8 +7,16 @@ export interface Profile {
   cat_exp: number;
   style_tags: string[];
   manner_temp: number;
+  active_title: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface UserTitle {
+  id: string;
+  user_id: string;
+  title_id: string;
+  earned_at: string;
 }
 
 export interface TrpgSystem {
@@ -20,7 +28,8 @@ export interface TrpgSystem {
 
 export interface Party {
   id: string;
-  gm_id: string;
+  creator_id: string;
+  gm_id: string | null;
   title: string;
   content: string | null;
   system_id: string | null;
@@ -32,10 +41,14 @@ export interface Party {
   location: string | null;
   scheduled_at: string | null;
   status: "recruiting" | "filled" | "completed" | "cancelled";
+  looking_for_gm: boolean;
   thumbnail_url: string | null;
+  use_ai_gm: boolean;
+  play_mode: "realtime" | "async";
   created_at: string;
   updated_at: string;
   // Joined fields
+  creator?: Profile;
   gm?: Profile;
   system?: TrpgSystem;
 }
@@ -99,13 +112,72 @@ export interface Comment {
   author?: Profile;
 }
 
+export interface GmStats {
+  totalSessions: number;
+  completedSessions: number;
+  systems: { name: string; count: number }[];
+  positiveRate: number;
+  totalGmReviews: number;
+}
+
+export interface Subscription {
+  id: string;
+  user_id: string;
+  plan: "monthly" | "yearly";
+  status: "active" | "expired" | "cancelled" | "pending";
+  portone_payment_id: string | null;
+  amount: number;
+  started_at: string;
+  expires_at: string;
+  cancelled_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Payment {
+  id: string;
+  user_id: string;
+  portone_payment_id: string;
+  portone_tx_id: string | null;
+  method: string | null;
+  amount: number;
+  currency: string;
+  status: "paid" | "failed" | "cancelled" | "refunded";
+  plan: "monthly" | "yearly";
+  created_at: string;
+}
+
+export type ReportReason = "spam" | "harassment" | "inappropriate" | "cheating" | "other";
+
+export interface Report {
+  id: string;
+  reporter_id: string;
+  report_type: "post" | "comment" | "user" | "session_message";
+  target_id: string;
+  reason: ReportReason;
+  description: string | null;
+  status: "pending" | "resolved" | "dismissed";
+  created_at: string;
+}
+
+export interface BlockedUser {
+  id: string;
+  blocker_id: string;
+  blocked_id: string;
+  created_at: string;
+}
+
 export type NotificationType =
   | "join_request"
   | "join_accepted"
   | "join_rejected"
   | "party_status"
   | "review_received"
-  | "exp_gained";
+  | "exp_gained"
+  | "quest_complete"
+  | "gm_assigned"
+  | "subscription_started"
+  | "subscription_expiring";
 
 export interface Notification {
   id: string;

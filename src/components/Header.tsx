@@ -1,6 +1,6 @@
 "use client";
 
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import AuthButton from "./AuthButton";
 import NotificationBell from "./NotificationBell";
 import { createClient } from "@/lib/supabase/client";

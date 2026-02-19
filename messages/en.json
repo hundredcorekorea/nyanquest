@@ -1,0 +1,932 @@
+{
+  "Metadata": {
+    "appName": "nyanQuest",
+    "appNameFull": "nyanQuest - Find TRPG Parties",
+    "siteTitle": "nyanQuest - Find TRPG Parties",
+    "siteDescription": "An adventure with a dice-rolling cat! TRPG party finder & adventure log platform",
+    "ogTitle": "nyanQuest - Find TRPG Parties",
+    "ogDescription": "An adventure with a dice-rolling cat! TRPG party finder & adventure log platform",
+    "description": "An adventure with a dice-rolling cat! TRPG party finder & adventure log platform",
+    "locale": "en",
+    "ogCommunity": "nyanQuest Community",
+    "ogPartyDescription": "Find your TRPG party!",
+    "ogPartyRecruiting": "Recruiting party members on nyanQuest!"
+  },
+  "Common": {
+    "loading": "Loading, nya~...",
+    "submitting": "Submitting...",
+    "saving": "Saving...",
+    "processing": "Processing...",
+    "cancel": "Cancel",
+    "confirm": "OK",
+    "delete": "Delete",
+    "edit": "Edit",
+    "save": "Save",
+    "next": "Next",
+    "previous": "Previous",
+    "send": "Send",
+    "register": "Register",
+    "close": "Close",
+    "back": "Back",
+    "more": "See More",
+    "unknown": "Unknown",
+    "anonymous": "Anonymous",
+    "undetermined": "TBD",
+    "adventurer": "Adventurer",
+    "persons": "",
+    "times": "",
+    "turns": "turns",
+    "loginRequired": "You need to log in, nya!",
+    "loginRequiredDesc": "Click the login button in the top right corner, nya~",
+    "errorOccurred": "An error occurred, nya!",
+    "loadingMore": "Loading more...",
+    "noResults": "No results found, nya...",
+    "max": "MAX",
+    "undecided": "TBD",
+    "personUnit": "",
+    "loadMore": "Load More"
+  },
+  "Nav": {
+    "quest": "Quests",
+    "guildHall": "Guild Hall",
+    "training": "Training",
+    "postQuest": "Post Quest",
+    "adventurer": "Adventurer"
+  },
+  "Auth": {
+    "login": "Log In",
+    "logout": "Log Out",
+    "discord": "Start with Discord",
+    "google": "Start with Google",
+    "loginAndJoin": "Log in and apply to join"
+  },
+  "Home": {
+    "emptyBoardTitle": "The quest board is empty, nya...",
+    "emptyBoardDesc": "How about posting the first quest, nya?",
+    "gmWanted": "GM Wanted",
+    "selectRulebook": "Select Rulebook",
+    "lookingForGm": "GM Wanted"
+  },
+  "CatMascot": {
+    "msg1": "Today's roll is gonna be a Critical Success, nya! 🎲",
+    "msg2": "A new quest just popped up on the board, nya~",
+    "msg3": "Let's find party members to raid the dungeon together, nya!",
+    "msg4": "Shall we roll a d20? I bet it'll be a natural 20, nya! ✨",
+    "msg5": "A legendary Game Master is recruiting party members, nya!",
+    "msg6": "Today's saving throw... success, nya! 🛡️",
+    "msg7": "A new quest has arrived at the Adventurers' Guild, nya~ 📜"
+  },
+  "Party": {
+    "playerCount": "{current}/{max}",
+    "gmWanted": "GM Wanted",
+    "lookingForGm": "GM Wanted",
+    "gmRecruit": "GM Wanted",
+    "selectRulebook": "Select Rulebook",
+    "partyLeader": "Party Leader"
+  },
+  "PartyDetail": {
+    "findParty": "Find your TRPG party!",
+    "recruitingParty": "Recruiting party members on nyanQuest!",
+    "questInfo": "Quest Info",
+    "recruitmentStatus": "Recruitment Status",
+    "scheduledDate": "Scheduled Date",
+    "location": "Location",
+    "partyMembers": "Party Members ({count}/{max})",
+    "aiGmSession": "This session is run by NaYang AI GM, nya!",
+    "aiGmRealtime": "Adventure together in real-time, nya!",
+    "aiGmAsync": "Adventure at your own pace with async (PBP), nya!",
+    "lookingForGmTitle": "Looking for a GM, nya!",
+    "lookingForGmDesc": "Want to be the Game Master for this party, nya?",
+    "mannerTemp": "Kneading Temp {temp}°",
+    "completedCount": "{count} completed",
+    "joinSession": "Join Session",
+    "startSession": "Start Session",
+    "startSessionAiGm": "Start Session (AI GM)",
+    "creatingSession": "Creating session...",
+    "sessionCreated": "The session has started, nya!",
+    "sessionCreateFailed": "Session creation failed: {error}",
+    "weeklyLimitReached": "You've used all your AI GM sessions this week, nya! Go premium for unlimited, nya!",
+    "alreadyJoined": "You're already in this party, nya!",
+    "pendingJoin": "{role} application submitted! Waiting for the party leader to accept, nya...",
+    "joinAsGm": "Apply as GM",
+    "joinAsPl": "Join as PL",
+    "joinParty": "I'll join this adventure, nya!",
+    "recruitmentClosed": "Recruitment is closed, nya...",
+    "applying": "Applying...",
+    "joinFailed": "Application failed: {error}",
+    "deleteParty": "Delete Party",
+    "deleting": "Deleting...",
+    "deleteConfirm": "Delete this party, nya? This can't be undone, nya!",
+    "deleteSuccess": "The party has been deleted, nya!",
+    "deleteFailed": "Delete failed: {error}",
+    "discordJoinServer": "Join Discord Server",
+    "discordRedirectNote": "Clicking will redirect to Discord",
+    "discordLinkAttached": "Discord link attached"
+  },
+  "PartyEdit": {
+    "title": "Edit Recruitment Post",
+    "trpgSystem": "TRPG System",
+    "postTitle": "Post Title",
+    "description": "Description",
+    "maxPlayers": "Max Players (excluding GM)",
+    "meetingType": "Meeting Type",
+    "discordLink": "Discord Invite Link (optional)",
+    "offlineLocation": "Offline Location",
+    "offlineLocationPlaceholder": "e.g., Board game cafe near downtown",
+    "scheduledDate": "Scheduled Date (optional)",
+    "customSystemPlaceholder": "Enter the system name",
+    "otherSystem": "Other (custom)",
+    "submitEdit": "Save Changes",
+    "editing": "Saving...",
+    "editFailed": "Edit failed: {error}",
+    "editSuccess": "The post has been updated, nya!",
+    "cannotEditCompleted": "Can't edit completed or cancelled parties, nya!"
+  },
+  "PartyManage": {
+    "partyManagement": "Party Management",
+    "recruitmentStatus": "Recruitment Status",
+    "gmManagement": "GM Management",
+    "gmUnassigned": "GM unassigned (recruiting)",
+    "gmAssigned": "Assigned",
+    "meLeader": "Me (Party Leader)",
+    "gmRemove": "Remove GM",
+    "gmRemoved": "The GM has been removed, nya.",
+    "gmApplicants": "GM Applicants ({count})",
+    "gmAccept": "Accept as GM",
+    "gmAssignSuccess": "GM has been assigned, nya!",
+    "reject": "Reject",
+    "accept": "Accept",
+    "plApplicants": "Pending PL Applications ({count})",
+    "partyMembersCount": "Party Members ({count})",
+    "noMembers": "No party members yet, nya...",
+    "profile": "Profile",
+    "actionFailed": "Action failed: {error}",
+    "statusRecruiting": "Recruiting",
+    "statusFilled": "Full",
+    "statusCompleted": "Completed",
+    "statusCancelled": "Cancelled",
+    "statusChangeFailed": "Status change failed: {error}",
+    "aiGmSession": "AI GM Session",
+    "realtimeMode": "Real-time",
+    "asyncMode": "Async (PBP)",
+    "sessionPlay": "Play Session",
+    "viewPost": "View Post",
+    "editPost": "Edit Post",
+    "myList": "My List",
+    "deleteParty": "Delete Party",
+    "deleteConfirm1": "Really delete this party, nya? All members and records will be lost, nya!",
+    "deleteConfirm2": "This can't be undone, nya! Are you sure, nya?",
+    "deleteSuccess": "The party has been deleted, nya.",
+    "deleteFailed": "Delete failed: {error}"
+  },
+  "PartyPlay": {
+    "nayangGm": "NaYang GM",
+    "aiGm": "AI GM",
+    "async": "Async",
+    "turnProgress": "{current}/{total} turns",
+    "me": "Me",
+    "sessionCompleted": "Session complete, nya!",
+    "sessionCompletedDesc": "The adventure lasted {turnCount} turns, nya! Great job, everyone, nya!",
+    "sessionCompletedExp": "+20 EXP",
+    "sessionCompletedToast": "Session complete, nya! +20 EXP!",
+    "returnToParty": "Return to Party",
+    "sessionPaused": "The session is paused, nya",
+    "sessionPausedDesc": "Wait until the party leader resumes it, nya~",
+    "aiGmResponding": "AI GM is responding, nya...",
+    "inputPlaceholder": "Enter your action, nya...",
+    "messageSendFailed": "Message failed to send, nya!",
+    "requestFailed": "Request failed",
+    "pause": "Pause",
+    "endSession": "End Session",
+    "resume": "Resume",
+    "endSessionConfirm": "End the session, nya? All party members will receive EXP, nya!",
+    "endSessionSuccess": "The session is complete, nya!",
+    "endSessionFailed": "Failed to end session: {error}",
+    "statusChangeFailed": "Status change failed, nya",
+    "sessionPausedToast": "The session has been paused, nya",
+    "sessionResumedToast": "The session has been resumed, nya!"
+  },
+  "CreateParty": {
+    "steps": {
+      "system": "System",
+      "systemCatMsg": "What system are we playing, nya?",
+      "info": "Details",
+      "infoCatMsg": "What kind of adventure is it? Tell me more, nya!",
+      "schedule": "Schedule & Location",
+      "scheduleCatMsg": "When and where shall we meet, nya?",
+      "confirm": "Confirm",
+      "confirmCatMsg": "All set, nya! Let's review and post it, nya!"
+    },
+    "trpgSystem": "TRPG System",
+    "postTitle": "Post Title",
+    "postTitlePlaceholder": "e.g., [D&D 5e] Weekend one-shot, looking for players!",
+    "description": "Description",
+    "descriptionPlaceholder": "Feel free to describe your campaign, preferred play style, any notes, etc.",
+    "maxPlayers": "Max Players (excluding GM)",
+    "useAiGm": "Use AI GM",
+    "aiGmDesc": "NaYang will automatically GM for you, nya!",
+    "aiGmMaxPlayers": "Up to 4 players when using AI GM, nya!",
+    "playMode": "Play Mode",
+    "realtime": "Real-time",
+    "async": "Async (PBP)",
+    "realtimeDesc": "All players join at the same time",
+    "asyncDesc": "Take turns one at a time (Play-by-Post)",
+    "myRole": "My Role",
+    "joinAsGm": "Join as GM",
+    "joinAsPl": "Join as PL (GM Wanted)",
+    "gmRecruitNote": "Recruiting a GM. You can approve applicants when they apply.",
+    "meetingType": "Meeting Type",
+    "online": "Online",
+    "offline": "Offline",
+    "hybrid": "Hybrid",
+    "discordLink": "Discord Invite Link (optional)",
+    "offlineLocation": "Offline Location",
+    "offlineLocationPlaceholder": "e.g., Board game cafe near downtown",
+    "scheduledDate": "Scheduled Date (optional)",
+    "customSystemPlaceholder": "Enter the system name",
+    "recruitCount": "Recruiting {count} players",
+    "gmRecruiting": "Recruiting GM",
+    "submitParty": "Post Adventure!",
+    "submitFailed": "Submission failed: {error}"
+  },
+  "Solo": {
+    "title": "The Wizard Cat's Training Grounds",
+    "subtitle": "Practice adventuring with NaYang the Master, nya!",
+    "unlimitedTraining": "Unlimited training available",
+    "dailyCount": "Today: {count}/{limit} sessions completed",
+    "inProgressTitle": "You have a training session in progress, nya!",
+    "inProgressTurns": "— {turnCount} turns played",
+    "unknownScenario": "Unknown scenario",
+    "resumeTraining": "Resume Training",
+    "selectScenario": "Select Scenario",
+    "loginRequiredForTraining": "You need to log in to start training, nya!",
+    "startTraining": "Start Training",
+    "preparing": "Preparing...",
+    "premiumScenario": "Premium-only scenario",
+    "dailyLimitReached": "You've used all your daily training sessions, nya! Go premium for unlimited, nya!",
+    "finishActiveFirst": "Finish your current training session first, nya!",
+    "questCreateFailed": "Failed to create quest, nya...",
+    "abandon": "Abandon",
+    "abandonConfirm": "Abandon this training, nya? Your progress will be lost, nya!",
+    "abandonSuccess": "Training abandoned, nya.",
+    "abandonFailed": "Abandon failed: {error}"
+  },
+  "SoloQuest": {
+    "turnProgress": "{current}/{total} turns",
+    "abandon": "Abandon",
+    "waitingPlaceholder": "Waiting for a response, nya...",
+    "inputPlaceholder": "Enter your action, nya...",
+    "requestFailed": "Request failed",
+    "diceSuccess": "Success!",
+    "diceFail": "Failure...",
+    "diceSuccessNyan": "Success, nya!",
+    "diceFailNyan": "Failure, nya...",
+    "diceRolling": "Rolling...",
+    "diceRoll": "Roll",
+    "diceCheck": "{label} Check (DC {dc})",
+    "diceRollResult": "Rolled the dice! {type} = {total} (DC {dc} {result})",
+    "diceResultSuccess": "Success!",
+    "diceResultFail": "Failure...",
+    "questComplete": "Training complete, nya!",
+    "questCompleteDesc": "You finished the adventure in {turnCount} turns! Paw-some job, adventurer, nya!",
+    "claimExpBase": "Claim +{exp} EXP",
+    "claimExpPremiumBonus": "Claim +{exp} EXP (1.5x bonus!)",
+    "claimExpAd": "Watch ad for +{exp} EXP (2x!)",
+    "adComingSoon": "Ad rewards are coming soon, nya!",
+    "rewardClaimFailed": "Failed to claim reward, nya...",
+    "expGained": "+{exp} EXP earned, nya!",
+    "newTitleEarned": "New title earned!",
+    "returnToTraining": "Return to Training Grounds",
+    "viewProfile": "View My Profile",
+    "questCompleteTag": "[Quest Complete]",
+    "diceGreatSuccess": "Amazing, nya!",
+    "diceNextTimeBetter": "No worries, nya~ You'll do better next time, nya!"
+  },
+  "Tutorial": {
+    "skip": "Skip",
+    "firstTime": "First time!",
+    "alreadyKnow": "I already know!",
+    "startAdventure": "Start Adventure!",
+    "steps": {
+      "welcome": "Welcome, new adventurer, nya! I'm NaYang, the wizard cat who guards this training ground, nya.",
+      "askTrpg": "Have you ever heard of TRPG, nya?",
+      "explainTrpg": "TRPG stands for 'Tabletop Role-Playing Game', nya. You gather together like a board game, and the GM (Game Master) tells the story while you, the PL (Player), make choices, nya!",
+      "explainDice": "The key thing here is the dice, nya! Dice decide whether your actions succeed or fail. Shall we give it a roll, nya?",
+      "afterDice": "Nice, nya! That's how you roll dice during adventures to overcome challenges. Don't worry about failing — failures make for great stories too, nya!",
+      "explainTraining": "Here in the Training Grounds, I'll take on the role of GM, nya. You can pick from choices or type in whatever action you want, nya!",
+      "ready": "Alright, are you ready, nya? Pick a scenario below and start your first adventure! NaYang will be waiting for you, nya~"
+    },
+    "rollD20": "Roll a d20!"
+  },
+  "Community": {
+    "community": "Community",
+    "title": "The Adventurers' Lounge",
+    "writePost": "Write Post",
+    "categories": {
+      "all": "All",
+      "free": "Meow Chat",
+      "freeShort": "Chat",
+      "tip": "Cat Library",
+      "tipShort": "Tips",
+      "gallery": "Adventurer Gallery",
+      "galleryShort": "Gallery",
+      "qna": "Ask Me-ow",
+      "qnaShort": "Q&A"
+    },
+    "categoryDescriptions": {
+      "free": "Chat about anything",
+      "tip": "Share rules & tips",
+      "gallery": "Characters & session recaps",
+      "qna": "Got a question? Ask away, nya"
+    },
+    "emptyTitle": "No posts yet, nya...",
+    "emptyDesc": "Be the first to share a story, nya!"
+  },
+  "CommunityWrite": {
+    "title": "Write Post",
+    "category": "Category",
+    "systemTag": "System Tag (optional)",
+    "noTag": "No tag",
+    "postTitle": "Title",
+    "postTitlePlaceholder": "What's on your mind, nya?",
+    "content": "Content",
+    "contentPlaceholder": "Share your thoughts freely, nya~",
+    "submit": "Post",
+    "submitting": "Submitting...",
+    "submitFailed": "Submission failed: {error}"
+  },
+  "CommunityPost": {
+    "like": "Kneads {count}",
+    "comments": "Comments ({count})",
+    "commentPlaceholder": "Leave a comment, nya~",
+    "commentSubmit": "Submit",
+    "commentLoginRequired": "You need to log in to comment, nya~",
+    "commentFailed": "Comment failed: {error}",
+    "deleteComment": "Delete",
+    "deleteCommentConfirm": "Delete this comment, nya?",
+    "deletePost": "Delete",
+    "deletePostConfirm": "Delete this post, nya? This can't be undone, nya!",
+    "emptyComments": "No comments yet, nya... Be the first to leave one, nya!"
+  },
+  "MyPage": {
+    "catLevels": {
+      "babyCat": "Kitten",
+      "apprenticeCat": "Apprentice Cat",
+      "adventurerCat": "Adventurer Cat",
+      "veteranCat": "Veteran Cat",
+      "archmage": "Archmage Cat"
+    },
+    "catTitles": {
+      "newbornAdventurer": "Newborn Adventurer",
+      "curiousExplorer": "Curious Explorer",
+      "reliablePartyMember": "Reliable Party Member",
+      "veteranDiceRoller": "Veteran Dice Roller",
+      "legendaryButler": "Legendary Adventurer"
+    },
+    "styleTags": {
+      "narrativeFocus": "Narrative",
+      "combatFocus": "Combat",
+      "exploration": "Exploration",
+      "roleplayFan": "Roleplay Fan",
+      "roleplayFanatic": "Roleplay Fan",
+      "newbieWelcome": "Newbie Friendly",
+      "ruleStrict": "Rules-First",
+      "ruleOriented": "Rules-First",
+      "impromptu": "Improviser",
+      "improviser": "Improviser",
+      "planner": "Planner"
+    },
+    "mannerTemp": "Kneading Temp",
+    "experience": "Experience",
+    "titlesCount": "Titles",
+    "change": "Change",
+    "inUse": "In Use",
+    "titleSelect": "Select Title",
+    "defaultTitle": "Default (Level Title)",
+    "titleChanged": "Your title has been changed, nya!",
+    "titleRemoved": "Title removed, nya!",
+    "titleChangeFailed": "Title change failed: {error}",
+    "myAdventures": "My Adventures ({count})",
+    "joinedAdventures": "Joined Adventures ({count})",
+    "noMyAdventures": "No adventures created yet, nya...",
+    "noJoinedAdventures": "No adventures joined yet, nya...",
+    "createFirstAdventure": "Create First Adventure",
+    "premiumActive": "Premium Active",
+    "premiumActiveUntil": "Until {date}",
+    "premiumManage": "Manage",
+    "premiumSubscribe": "Premium Subscription",
+    "premiumSubscribeDesc": "Unlimited training, powerful AI, premium scenarios",
+    "premiumView": "View",
+    "avatarUploadSizeError": "Only images under 2MB can be uploaded, nya!",
+    "avatarUploadFailed": "Upload failed: {error}",
+    "profileUpdateFailed": "Profile update failed: {error}",
+    "avatarChanged": "Profile picture changed, nya!",
+    "imageProcessError": "An error occurred while processing the image, nya!",
+    "saveFailed": "Save failed: {error}",
+    "catLevel0Name": "Kitten",
+    "catLevel0Title": "Newborn Adventurer",
+    "catLevel1Name": "Apprentice Cat",
+    "catLevel1Title": "Curious Explorer",
+    "catLevel2Name": "Adventurer Cat",
+    "catLevel2Title": "Reliable Party Member",
+    "catLevel3Name": "Veteran Cat",
+    "catLevel3Title": "Veteran Dice Roller",
+    "catLevel4Name": "Archmage Cat",
+    "catLevel4Title": "Legendary Adventurer"
+  },
+  "Premium": {
+    "title": "nyanQuest Premium",
+    "subtitle": "Unlock a more powerful AI, unlimited training, and premium scenarios, nya!",
+    "benefits": "Premium Benefits",
+    "benefitUnlimited": "Unlimited daily training (Free: 3 per day)",
+    "benefitAiModel": "High-performance AI model (Gemini 2.5 Flash)",
+    "benefitLongResponse": "2x longer AI responses (1000 chars)",
+    "benefitExtendedTurns": "2.5x more turns (deeper adventures)",
+    "benefitExpBonus": "1.5x EXP bonus",
+    "benefitPremiumScenario": "Premium-exclusive scenarios",
+    "subscribe": "Subscribe to Premium",
+    "subscribing": "Processing payment...",
+    "autoRenewalNote": "Subscriptions do not auto-renew. Re-subscription is required after expiration.",
+    "activeTitle": "Premium Active",
+    "activeSubtitle": "You're enjoying premium benefits, nya!",
+    "plan": "Plan",
+    "monthlyPlan": "Monthly Plan",
+    "yearlyPlan": "Annual Plan",
+    "yearlyDiscount": "33% off",
+    "expiryDate": "Expiry Date",
+    "status": "Status",
+    "statusActive": "Active",
+    "statusCancelPending": "Cancellation pending (usable until expiry)",
+    "cancelSubscription": "Cancel Subscription",
+    "cancelling": "Processing...",
+    "cancelConfirm": "Are you sure you want to cancel? You can still use premium features until the expiry date.",
+    "cancelSuccess": "Subscription cancelled, nya. You can use it until the expiry date, nya!",
+    "cancelFailed": "Cancellation failed",
+    "goToTraining": "Go to Training Grounds",
+    "paymentInitFailed": "Payment initialization failed, nya",
+    "paymentCancelled": "Payment was cancelled, nya",
+    "paymentVerifyFailed": "Payment verification failed, nya",
+    "subscriptionStarted": "Premium subscription started, nya!",
+    "paymentError": "A payment error occurred, nya",
+    "perMonth": "/mo",
+    "perYear": "/yr",
+    "won": "KRW"
+  },
+  "PremiumComplete": {
+    "verifying": "Verifying your payment, nya...",
+    "errorTitle": "Payment verification failed, nya...",
+    "errorDesc": "It may be processed automatically shortly, nya. If the issue persists, please contact us, nya.",
+    "goBack": "Go Back",
+    "successTitle": "Premium subscription complete, nya!",
+    "successDesc": "Now you can enjoy unlimited training and premium scenarios, nya!",
+    "goToTraining": "Go to Training Grounds",
+    "myProfile": "My Profile",
+    "subscriptionStarted": "Premium subscription has started, nya!"
+  },
+  "UserProfile": {
+    "mannerTemp": "Kneading Temp",
+    "experience": "Experience",
+    "completedSessions": "Completed Sessions",
+    "receivedReviews": "Reviews Received ({count})",
+    "positive": "Paw-sitive",
+    "negative": "Could be better",
+    "positiveRate": "Positive Rate",
+    "gmAdventures": "Adventures as GM ({count})",
+    "creatorAdventures": "Adventures as Party Leader ({count})",
+    "plAdventures": "Adventures as PL ({count})",
+    "noAdventureHistory": "No adventure history yet, nya...",
+    "joinDate": "Joined: {date}"
+  },
+  "Notification": {
+    "title": "Notifications",
+    "markAllRead": "Mark all read",
+    "empty": "No notifications, nya~"
+  },
+  "Report": {
+    "title": "Report",
+    "button": "Report",
+    "reason": "Reason for report *",
+    "reasons": {
+      "spam": "Spam/Advertising",
+      "harassment": "Harassment/Abuse",
+      "inappropriate": "Inappropriate Content",
+      "cheating": "Cheating",
+      "other": "Other"
+    },
+    "description": "Additional details (optional)",
+    "descriptionPlaceholder": "Any additional details you'd like to share, nya...",
+    "submit": "Submit Report",
+    "submitting": "Submitting...",
+    "selectReason": "Please select a reason for the report, nya!",
+    "success": "Report submitted, nya! It will be reviewed and handled, nya.",
+    "failed": "Report failed: {error}"
+  },
+  "Block": {
+    "block": "Block",
+    "unblock": "Unblock",
+    "blocked": "User has been blocked, nya!",
+    "unblocked": "User has been unblocked, nya!",
+    "blockFailed": "Block failed: {error}"
+  },
+  "AdGate": {
+    "title": "Hold on! Preparing your adventure, nya~",
+    "loadingAd": "Loading ad...",
+    "countdown": "seconds until you can start, nya!",
+    "startAdventure": "Start Adventure!",
+    "premiumUpsell": "Go premium to skip ads and start right away!"
+  },
+  "DatePicker": {
+    "placeholder": "Select a date and time",
+    "dateTab": "Date",
+    "timeTab": "Time",
+    "year": "",
+    "month": "",
+    "day": "",
+    "hour": "",
+    "minute": "",
+    "weekdays": {
+      "sun": "Sun",
+      "mon": "Mon",
+      "tue": "Tue",
+      "wed": "Wed",
+      "thu": "Thu",
+      "fri": "Fri",
+      "sat": "Sat"
+    }
+  },
+  "GmStats": {
+    "gmHistory": "GM History",
+    "totalSessions": "Total Sessions",
+    "completed": "Completed",
+    "positiveRate": "GM Positive Rate",
+    "frequentSystems": "Frequently Run Systems",
+    "completedCount": "{count} completed"
+  },
+  "Titles": {
+    "firstStep": {
+      "name": "First Step",
+      "description": "An adventurer who completed their first solo quest",
+      "condition": "Complete 1 solo quest"
+    },
+    "trainee": {
+      "name": "Trainee",
+      "description": "An apprentice adventurer who trains diligently",
+      "condition": "Complete 5 solo quests"
+    },
+    "soloMaster": {
+      "name": "Lone Wolf",
+      "description": "A formidable warrior who has braved countless adventures alone",
+      "condition": "Complete 20 solo quests"
+    },
+    "partyStarter": {
+      "name": "Party Pioneer",
+      "description": "A leader who formed their first party",
+      "condition": "Create 1 party"
+    },
+    "socialCat": {
+      "name": "Social Cat",
+      "description": "A socialite who has been active in multiple parties",
+      "condition": "Join 3 parties"
+    },
+    "veteranPlayer": {
+      "name": "Veteran Adventurer",
+      "description": "A veteran who has completed numerous sessions",
+      "condition": "Complete 10 parties"
+    },
+    "firstGm": {
+      "name": "Rookie Master",
+      "description": "A storyteller who experienced their first time as GM",
+      "condition": "GM 1 session"
+    },
+    "gmPro": {
+      "name": "Pro Master",
+      "description": "A skilled master who leads sessions with finesse",
+      "condition": "Complete 5 sessions as GM"
+    },
+    "warmHeart": {
+      "name": "Warm-Hearted Cat",
+      "description": "A warm and well-mannered soul beloved by all",
+      "condition": "Manner Temp 38° or above"
+    },
+    "hotCat": {
+      "name": "Red-Hot Cat",
+      "description": "A master of passion and impeccable manners",
+      "condition": "Manner Temp 40° or above"
+    },
+    "reviewer": {
+      "name": "Meticulous Reviewer",
+      "description": "A dedicated critic who always leaves thoughtful reviews",
+      "condition": "Write 10 reviews"
+    },
+    "writer": {
+      "name": "Guild Hall Author",
+      "description": "An active writer in the Guild Hall community",
+      "condition": "Write 5 community posts"
+    },
+    "expHunter": {
+      "name": "EXP Hunter",
+      "description": "A relentless hunter who never stops gathering experience",
+      "condition": "Reach 300 EXP"
+    },
+    "legend": {
+      "name": "Living Legend",
+      "description": "A legendary being who has reached the pinnacle",
+      "condition": "Reach 500 EXP"
+    },
+    "premiumCat": {
+      "name": "Premium Cat",
+      "description": "A patron who supports adventures through premium subscription",
+      "condition": "Premium subscription"
+    }
+  },
+  "Scenarios": {
+    "goblinCave": {
+      "title": "Goblin Cave Rescue Mission",
+      "description": "A village merchant has been kidnapped, nya! Infiltrate the goblin cave and rescue them, nya.",
+      "genre": "Fantasy",
+      "systemPrompt": "Setting: A medieval fantasy world. A goblin cave on the outskirts of a small village.\nObjective: Rescue the kidnapped merchant 'Marco'.\nTone: Tense but lighthearted adventure.\nEnemies: 3-5 goblins (weak), 1 goblin chief (moderate).\nItems: Torch, rope, and dagger in starting inventory.\nKey checks: Stealth (DC 10), Combat (DC 12), Trap Disarm (DC 13).",
+      "openingMessage": "Darkness has fallen over the forest, and the cave entrance comes into view, nya...\n\nGoblin laughter echoes from inside, and torchlight flickers within, nya. You need to rescue Marco the village merchant, nya!\n\nWhat will you do, adventurer, nya?\n\n1. Charge in head-on\n2. Attempt a stealthy approach\n3. Scout around the cave first\n\nYou can also type any action you'd like to take, nya!",
+      "suggestedActions": ["Charge in", "Sneak in", "Scout around"]
+    },
+    "hauntedLibrary": {
+      "title": "Secrets of the Haunted Library",
+      "description": "Strange sounds are coming from a sealed ancient library, nya... Only the bravest adventurers should enter, nya!",
+      "genre": "Horror/Mystery",
+      "systemPrompt": "Setting: An ancient magical library sealed for 100 years. Nighttime.\nObjective: Break the curse sealed within the library.\nTone: Spooky but not terrifying. Horror with a touch of humor.\nEnemies: A wandering ghost librarian (can be spoken to), magical traps, living books.\nPuzzle element: Three magical books must be placed on the altar in the correct order to break the seal.\nKey checks: Knowledge (DC 11), Courage (DC 13), Arcane Detection (DC 12).",
+      "openingMessage": "Creeeeak... The door opens, and the smell of dust hits your nose, nya.\n\nAn ancient library that no one has entered for 100 years... Bookshelves tower to the ceiling, and a faint light flickers somewhere in the distance, nya. Then suddenly, a whisper...!\n\n\"Who... has come, nya...?\"\n\nWhat will you do, adventurer, nya?\n\n1. Head toward the sound\n2. Examine the books on the nearest shelf\n3. Call out: \"Who's there?\"\n\nYou can also type any action you'd like to take, nya!",
+      "suggestedActions": ["Follow the sound", "Examine bookshelf", "Call out"]
+    },
+    "spaceStation": {
+      "title": "Space Station Omega Emergency",
+      "description": "An unknown accident occurred on the space station, nya! Escape within 30 minutes, nya!",
+      "genre": "Sci-Fi",
+      "systemPrompt": "Setting: The future, in space. Research station 'Omega' in asteroid orbit.\nObjective: Escape to the shuttle before the station explodes.\nTone: Tense sci-fi survival. Timer atmosphere.\nObstacles: Locked blast doors, damaged oxygen system, malfunctioning AI, floating debris.\nEquipment: Space suit, multi-tool, communicator.\nKey checks: Technical (DC 13), Endurance (DC 12), Hacking (DC 15).\nDescribe the situation worsening each turn (alarms, decreasing oxygen, etc.).",
+      "openingMessage": "WARNING! WARNING!\n\n\"Structural damage detected on Space Station Omega. All personnel evacuate immediately.\"\n\nThe AI voice blares through the corridors, and the floor shakes beneath your feet, nya! Emergency lights flash red down the hallway... You need to move fast, nya!\n\n1. Sprint straight to the shuttle hangar\n2. Check the communications room for intel first\n3. Search for fellow crew members\n\nYou can also type any action you'd like to take, nya!",
+      "suggestedActions": ["Head to shuttle", "Gather intel", "Find crew"]
+    },
+    "catKingdom": {
+      "title": "The Crown of the Cat Kingdom",
+      "description": "You've been invited to the secret kingdom of cats, nya! Find the stolen crown, nya!",
+      "genre": "Fantasy/Comedy",
+      "systemPrompt": "Setting: A secret kingdom of cats hidden from humans. Fairy-tale atmosphere.\nObjective: Recover the stolen crown of the Cat King.\nTone: Warm and lighthearted comedy fantasy. Lots of cat puns.\nNPCs: The Cat King (dignified), Court cats (chatty), 3 suspects (suspicious cats).\nPuzzle: Deduce which of the 3 suspects is the culprit (collect 3 clues).\nKey checks: Observation (DC 10), Conversation (DC 11), Deduction (DC 12).\nMake heavy use of cat-related humor and puns.",
+      "openingMessage": "\"Meow~ Welcome, human, nya!\"\n\nYou open your eyes to find yourself in the grand throne room of a massive cat castle, nya! A huge Persian cat sits upon the throne, gazing down at you with a dignified expression, nya.\n\n\"The crown has vanished, nya... There are three suspects, but I don't know who the culprit is, nya. I wish to borrow the wisdom of a human, nya!\"\n\nReady to start the investigation, adventurer, nya?\n\n1. Meet the suspects\n2. Investigate the treasure room where the crown was kept\n3. Gather rumors from the court cats\n\nYou can also type any action you'd like to take, nya!",
+      "suggestedActions": ["Question suspects", "Investigate treasure room", "Gather rumors"]
+    },
+    "dragonDiplomacy": {
+      "title": "The Dragon Diplomat",
+      "description": "You must negotiate peace with an ancient dragon, nya! A single word could change the fate of the kingdom, nya!",
+      "genre": "Fantasy/Diplomacy",
+      "systemPrompt": "Setting: Medieval fantasy. Tense relations between the human kingdom and dragonkin. Negotiations in the dragon's lair.\nObjective: Forge a peace treaty with the ancient dragon 'Aurelion'.\nTone: Grand yet tense diplomatic battle. Every word matters.\nNPCs: Aurelion (wise but arrogant ancient dragon), Dragonkin guardians, Human advisor.\nCore: Resolve through dialogue and negotiation, not combat. Must satisfy the dragon's 3 demands.\nKey checks: Persuasion (DC 14), Wisdom (DC 13), Courage (DC 15), Diplomacy (DC 12).\nAurelion instantly detects lies. Be honest but strategic.",
+      "openingMessage": "At the end of the vast cavern, golden scales glimmer in the light of flowing lava, nya...\n\n\"A human... has come, nya.\"\n\nAurelion, a dragon as massive as a mountain, slowly opens his eyes, nya. Eyes carrying thousands of years of wisdom gaze down upon you, nya.\n\n\"You desire peace? How intriguing, nya. Then... prove three things to me.\"\n\nWhat will you do before the dragon, adventurer, nya?\n\n1. Greet respectfully and begin negotiations\n2. Offer the gifts you brought\n3. Boldly argue the need for peace\n\nYou can also type any action you'd like to take, nya!",
+      "suggestedActions": ["Respectful greeting", "Offer gifts", "Argue for peace"]
+    },
+    "timeLoop": {
+      "title": "The Time Loop: The Endless Tavern",
+      "description": "The same night keeps repeating, nya! Break the time loop and see the morning, nya!",
+      "genre": "Mystery/Fantasy",
+      "systemPrompt": "Setting: A tavern in a magical world. Trapped in a time loop where the same night repeats infinitely.\nObjective: Discover the cause of the time loop and break it.\nTone: Mystery thriller + warm human (cat) drama.\nNPCs: The elderly tavern owner (knows a secret), A bard (gives hints through songs), A mysterious traveler (key to the loop).\nPuzzle: Gather new information each loop → change events in the correct order.\nKey checks: Observation (DC 11), Memory (DC 12), Persuasion (DC 13), Arcane Detection (DC 14).\nNPC reactions change once the player becomes aware of the loop.",
+      "openingMessage": "\"Welcome, traveler, nya! Tonight is a special night, nya!\"\n\nAs you push open the tavern door, warm light and the sound of music greet you, nya. The old woman smiles and hands you a mug of ale, nya.\n\n...But something feels off, nya. This scene... feels familiar somehow...?\n\nThe moment the midnight bell tolls, the world blinks and — you're standing at the tavern door again, nya!\n\nWhat will you do, adventurer, nya?\n\n1. Ask the old woman: \"What time is it?\"\n2. Approach the bard who's singing\n3. Observe the mysterious traveler in the corner\n\nYou can also type any action you'd like to take, nya!",
+      "suggestedActions": ["Ask the old woman", "Approach the bard", "Observe the traveler"]
+    }
+  },
+  "Prompts": {
+    "solo": {
+      "identity": "You are nyanQuest's wizard cat GM, nya!",
+      "name": "NaYang, the Ancient Wizard Cat",
+      "speechStyle": "Naturally mix in cat-like expressions such as \"nya~\", \"nya!\", \"meow\" at the end of sentences. Don't use them in every single sentence.",
+      "personality": "Playful and mischievous, but serious when the moment calls for it. Refers to the player as \"adventurer\".",
+      "rules": {
+        "shortDescription": "Keep descriptions short and impactful (3-5 sentences). Never write long paragraphs.",
+        "choices": "Present 2-3 numbered choices each turn, and always end with something like \"Or feel free to type any action you'd like, nya!\"",
+        "creative": "If the player takes a creative action not listed in the choices, embrace it enthusiastically and make the story fun.",
+        "diceFormat": "[Check required: d20+modifier, DC difficulty (ability)]",
+        "diceExample": "[Check required: d20+2, DC 12 (Dexterity)]",
+        "diceResult": "When the player sends a dice result, narrate the success or failure accordingly.",
+        "failIsOk": "Make both successes and failures entertaining. The story continues even on a failure."
+      },
+      "climaxWarning": "Climax approaching! Steer the story toward a conclusion.",
+      "lastTurn": "Final turn! Write an epilogue and add the \"[Quest Complete]\" tag at the end.",
+      "prohibited": {
+        "noSexualViolent": "Absolutely no sexual, violent, or discriminatory content",
+        "noPlayerActions": "Never act for the player. Always give them a choice.",
+        "charLimit": "Do not exceed {maxChars} characters per turn."
+      }
+    },
+    "multiplayer": {
+      "identity": "You are nyanQuest's wizard cat GM, nya!",
+      "name": "NaYang, the Ancient Wizard Cat",
+      "speechStyle": "Naturally mix in cat-like expressions such as \"nya~\", \"nya!\", \"meow\" at the end of sentences. Don't use them in every single sentence.",
+      "personality": "Playful and mischievous, but serious when the moment calls for it.",
+      "rules": {
+        "partySize": "This is a **{count}-player party** session.",
+        "useNicknames": "Address each player by their nickname. Only use \"adventurers\" when addressing the entire party.",
+        "shortDescription": "Keep descriptions short and impactful (3-6 sentences). Never write long paragraphs.",
+        "individualChoices": "Each turn, present individual choices for each player, or give shared choices for the whole party.",
+        "partyVote": "For critical moments requiring party consensus, use the \"[Party Vote]\" tag.",
+        "combatDice": "During combat, request checks for each character: \"[Check required: CharacterName, d20+modifier, DC difficulty (ability)]\"",
+        "freeInput": "End choices with \"Or feel free to type any action you'd like, nya!\""
+      },
+      "freeAdventure": "Lead a freeform adventure with the party members. Default fantasy world setting.",
+      "openingWelcome": "Welcome, adventurers, nya!",
+      "freeAdventureStart": "The freeform adventure begins, nya!",
+      "freeAdventureAsk": "What kind of world and adventure do you want, nya? Discuss with your party and let me know, nya!",
+      "freeChoices": {
+        "fantasy": "Dungeon crawl in a fantasy world",
+        "scifi": "Space exploration in a sci-fi world",
+        "mystery": "Solve a case in a mystery world"
+      },
+      "freeInputNote": "You can also suggest any world setting you like beyond these choices, nya!"
+    }
+  },
+  "Status": {
+    "recruiting": "Recruiting",
+    "filled": "Full",
+    "completed": "Completed",
+    "cancelled": "Cancelled"
+  },
+  "MeetingType": {
+    "all": "All",
+    "online": "Online",
+    "offline": "Offline",
+    "hybrid": "Hybrid"
+  },
+  "Difficulty": {
+    "easy": "Easy",
+    "normal": "Normal",
+    "hard": "Hard"
+  },
+  "TimeAgo": {
+    "justNow": "Just now",
+    "minutesAgo": "{count}m ago",
+    "hoursAgo": "{count}h ago",
+    "daysAgo": "{count}d ago",
+    "monthsAgo": "{count}mo ago",
+    "today": "Today"
+  },
+  "Privacy": {
+    "metaTitle": "Privacy Policy - nyanQuest",
+    "title": "Privacy Policy",
+    "effectiveDate": "Effective Date: February 18, 2026",
+    "section1Title": "1. Personal Information We Collect",
+    "section1Intro": "nyanQuest (hereinafter \"the Service\") collects the following personal information in order to provide the Service.",
+    "section1Items": {
+      "socialLogin": "Social login information: Email address, profile image (when linking a Google account)",
+      "serviceUsage": "Service usage information: Nickname, style tags, adventure records, experience points",
+      "payment": "Payment information: Payment method, amount, date/time (for premium subscriptions, processed via PortOne)"
+    },
+    "section2Title": "2. Purpose of Using Personal Information",
+    "section2Items": {
+      "identification": "User identification and service provision",
+      "matching": "TRPG party matching and solo quest functionality",
+      "partyMatching": "TRPG party matching and solo quest functionality",
+      "payment": "Premium subscription payment processing",
+      "premiumPayment": "Premium subscription payment processing",
+      "improvement": "Service improvement and statistical analysis"
+    },
+    "section3Title": "3. Retention and Destruction of Personal Information",
+    "section3Intro": "Personal information is destroyed immediately upon account deletion. However, where retention is required by applicable law, data is retained for the designated period.",
+    "section3Items": {
+      "ecommerce": "E-commerce transaction records: 5 years (E-Commerce Act)",
+      "transaction": "E-commerce transaction records: 5 years (E-Commerce Act)",
+      "loginRecord": "Login records: 3 months (Protection of Communications Secrets Act)"
+    },
+    "section4Title": "4. Provision of Personal Information to Third Parties",
+    "section4Content": "The Service does not provide personal information to third parties without user consent. However, the minimum necessary information is transmitted to PortOne for payment processing.",
+    "section5Title": "5. Measures to Ensure the Security of Personal Information",
+    "section5Items": {
+      "encryption": "Database encryption and access control (Supabase RLS)",
+      "https": "HTTPS encrypted communication",
+      "socialAuth": "Secure authentication via social login"
+    },
+    "section6Title": "6. User Rights",
+    "section6Content": "Users may view, modify, or delete their personal information at any time, and may cease processing of personal information by deleting their account.",
+    "section7Title": "7. Cookies and Automatic Data Collection",
+    "section7Content": "The Service uses cookies to maintain login sessions. Users may refuse cookies through browser settings; however, some features may be limited.",
+    "section8Title": "8. Privacy Officer",
+    "section8Items": {
+      "operator": "Operator: HundredCore Korea",
+      "email": "Email: osu355@gmail.com"
+    },
+    "section9Title": "9. Changes to the Privacy Policy",
+    "section9Content": "This Privacy Policy may be amended in accordance with changes to applicable laws or service policies. Any changes will be announced through the Service."
+  },
+  "Terms": {
+    "metaTitle": "Terms of Service - nyanQuest",
+    "title": "Terms of Service",
+    "effectiveDate": "Effective Date: February 18, 2026",
+    "article1Title": "Article 1 (Purpose)",
+    "article1Content": "These Terms govern the rights, obligations, and responsibilities between HundredCore Korea (hereinafter \"the Company\") and users in connection with the use of the nyanQuest service (hereinafter \"the Service\").",
+    "article2Title": "Article 2 (Description of Service)",
+    "article2Intro": "The Service provides the following features:",
+    "article2Items": {
+      "partyMatching": "TRPG party recruitment and matching",
+      "soloQuest": "AI-powered solo quests (single-player TRPG experience)",
+      "growthSystem": "Character growth system (cat level, experience points)",
+      "characterGrowth": "Character growth system (cat level, experience points)",
+      "premiumService": "Premium subscription service",
+      "premium": "Premium subscription service"
+    },
+    "article3Title": "Article 3 (Registration and Accounts)",
+    "article3Items": {
+      "socialLogin": "Registration via Google social login is required to use the Service.",
+      "accurateInfo": "Users must provide accurate information and must not misuse the information of others.",
+      "accountResponsibility": "Users are responsible for managing their own accounts."
+    },
+    "article4Title": "Article 4 (Premium Subscription)",
+    "article4Items": {
+      "pricing": "Premium subscriptions are available as monthly (KRW 4,900) or annual (KRW 39,000) plans.",
+      "plans": "Premium subscriptions are available as monthly (KRW 4,900) or annual (KRW 39,000) plans.",
+      "noAutoRenewal": "Subscriptions do not auto-renew; re-subscription is required after expiration.",
+      "noAutoRenew": "Subscriptions do not auto-renew; re-subscription is required after expiration.",
+      "cancelPolicy": "Upon cancellation, premium features remain available until the expiry date.",
+      "paymentProcessor": "Payments are processed through PortOne. For payment-related inquiries, please contact the Company."
+    },
+    "article5Title": "Article 5 (Refund Policy)",
+    "article5Items": {
+      "fullRefund": "A full refund is available within 7 days of subscription if the Service has not been used.",
+      "serviceIssue": "If the Service is unavailable due to service outages, the subscription period will be extended accordingly.",
+      "serviceOutage": "If the Service is unavailable due to service outages, the subscription period will be extended accordingly.",
+      "refundContact": "Refund requests should be submitted via email (osu355@gmail.com)."
+    },
+    "article6Title": "Article 6 (User Obligations)",
+    "article6Intro": "Users must not engage in the following activities:",
+    "article6Items": {
+      "noHarassment": "Actions that infringe on the rights of others or cause discomfort",
+      "infringement": "Actions that infringe on the rights of others or cause discomfort",
+      "noDisruption": "Actions that disrupt the normal operation of the Service",
+      "disruption": "Actions that disrupt the normal operation of the Service",
+      "noIllegal": "Using the Service for illegal or fraudulent purposes",
+      "illegalUse": "Using the Service for illegal or fraudulent purposes",
+      "noFalseInfo": "Registering false information or misusing another person's account",
+      "falseInfo": "Registering false information or misusing another person's account"
+    },
+    "article7Title": "Article 7 (Service Restrictions and Suspension)",
+    "article7Items": {
+      "maintenance": "The Company may temporarily suspend the Service for system maintenance, equipment replacement, or similar reasons.",
+      "violation": "If a user violates these Terms, the Company may restrict access to the Service or delete the user's account."
+    },
+    "article8Title": "Article 8 (Disclaimer)",
+    "article8Items": {
+      "aiContent": "AI-generated content is produced automatically, and the Company does not guarantee its accuracy.",
+      "userDispute": "The Company is not responsible for disputes between users.",
+      "forceMajeure": "The Company is not liable for service interruptions caused by force majeure, including natural disasters or technical failures.",
+      "forceM": "The Company is not liable for service interruptions caused by force majeure, including natural disasters or technical failures."
+    },
+    "article9Title": "Article 9 (Copyright)",
+    "article9Items": {
+      "companyCopyright": "The copyright for the Service's design, code, and content belongs to the Company.",
+      "userContent": "The copyright for user-created content (party descriptions, nicknames, etc.) belongs to the user, but may be used for Service operation purposes."
+    },
+    "article10Title": "Article 10 (Amendments to Terms)",
+    "article10Content": "These Terms may be amended in accordance with changes to applicable laws or service policies. Any changes will be announced through the Service at least 7 days prior to the effective date.",
+    "article11Title": "Article 11 (Contact)",
+    "article11Items": {
+      "operator": "Operator: HundredCore Korea",
+      "email": "Email: osu355@gmail.com"
+    }
+  },
+  "Offline": {
+    "title": "You're offline, nya...",
+    "description": "Please check your internet connection and try again, nya!",
+    "retry": "Retry"
+  },
+  "NotFound": {
+    "title": "You seem lost, nya...",
+    "description": "The page you're looking for doesn't exist.",
+    "goHome": "Return to Adventure Square"
+  },
+  "Loading": {},
+  "Manifest": {
+    "name": "nyanQuest - Find TRPG Parties",
+    "shortName": "nyanQuest",
+    "description": "An adventure with a dice-rolling cat! TRPG party finder & adventure log platform"
+  },
+  "Review": {
+    "title": "Kneading Review",
+    "completedCount": "{reviewed}/{total} completed",
+    "commentPlaceholder": "Short comment (optional)",
+    "positive": "Paw-sitive",
+    "negative": "Could be better",
+    "reviewComplete": "Review Complete",
+    "writtenReviews": "Written Reviews",
+    "noReviews": "No reviews yet, nya...",
+    "alreadyReviewed": "You've already left a review, nya!",
+    "reviewFailed": "Review failed: {error}",
+    "reviewSubmitted": "Review submitted, nya!"
+  },
+  "SessionLogs": {
+    "title": "Session Logs ({count})",
+    "addRecord": "+ Add Log",
+    "newRecordPrompt": "Leave a new session log, nya!",
+    "sessionTitle": "Session Title (required)",
+    "externalLink": "External Link (Google Docs, Postype, etc.)",
+    "summary": "Brief Summary (optional)",
+    "saveRecord": "Save Log",
+    "saving": "Saving...",
+    "viewDetail": "View Details",
+    "empty": "No logs yet, nya... Be the first to leave a session log, nya!",
+    "deleteConfirm": "Delete this log, nya?",
+    "saveFailed": "Save failed: {error}",
+    "deleteFailed": "Delete failed: {error}"
+  }
+}

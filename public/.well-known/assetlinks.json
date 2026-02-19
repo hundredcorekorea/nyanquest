@@ -1,0 +1,12 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.reaf.nyanquest",
+      "sha256_cert_fingerprints": [
+        "2F:38:DC:53:D5:E7:C8:08:6B:CD:CF:B6:29:BF:D0:6A:95:5D:FD:A2:A1:72:2C:FF:33:D2:68:85:D3:D7:3B:BF"
+      ]
+    }
+  }
+]

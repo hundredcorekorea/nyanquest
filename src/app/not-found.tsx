@@ -1,21 +1,20 @@
-import Link from "next/link";
-
-export default function NotFound() {
+export default function GlobalNotFound() {
   return (
-    <div className="text-center py-20 pb-24">
-      <div className="text-6xl mb-4">😿</div>
-      <h1 className="text-xl font-bold text-gray-900 mb-2">
-        길을 잃었다냥...
-      </h1>
-      <p className="text-sm text-gray-400 mb-6">
-        찾으시는 페이지가 존재하지 않습니다.
-      </p>
-      <Link
-        href="/"
-        className="inline-block px-6 py-3 bg-amber-500 text-white rounded-xl font-medium text-sm hover:bg-amber-600 transition-colors"
-      >
-        모험 광장으로 돌아가기
-      </Link>
-    </div>
+    <html lang="ko">
+      <body className="flex items-center justify-center min-h-screen bg-amber-50/30">
+        <div className="text-center space-y-4">
+          <p className="text-6xl">🐱</p>
+          <h1 className="text-xl font-bold text-gray-900">
+            Page not found
+          </h1>
+          <a
+            href="/"
+            className="inline-block px-6 py-3 bg-amber-500 text-white rounded-xl font-bold hover:bg-amber-600 transition-colors"
+          >
+            Go Home
+          </a>
+        </div>
+      </body>
+    </html>
   );
 }

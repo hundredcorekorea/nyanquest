@@ -1,0 +1,932 @@
+{
+  "Metadata": {
+    "appName": "nyanQuest",
+    "appNameFull": "nyanQuest - TRPG 파티 찾기",
+    "siteTitle": "nyanQuest - TRPG 파티 찾기",
+    "siteDescription": "주사위 굴리는 고양이와 함께 떠나는 모험! TRPG 구인 & 기록 플랫폼",
+    "ogTitle": "nyanQuest - TRPG 파티 찾기",
+    "ogDescription": "주사위 굴리는 고양이와 함께 떠나는 모험! TRPG 구인 & 기록 플랫폼",
+    "description": "주사위 굴리는 고양이와 함께 떠나는 모험! TRPG 구인 & 기록 플랫폼",
+    "locale": "ko",
+    "ogCommunity": "nyanQuest 커뮤니티",
+    "ogPartyDescription": "TRPG 파티를 찾아보세요!",
+    "ogPartyRecruiting": "nyanQuest에서 파티원 모집 중!"
+  },
+  "Common": {
+    "loading": "불러오는 중이다냥...",
+    "submitting": "등록 중...",
+    "saving": "저장 중...",
+    "processing": "처리 중...",
+    "cancel": "취소",
+    "confirm": "확인",
+    "delete": "삭제",
+    "edit": "편집",
+    "save": "저장",
+    "next": "다음",
+    "previous": "이전",
+    "send": "전송",
+    "register": "등록",
+    "close": "닫기",
+    "back": "뒤로",
+    "more": "더 보기",
+    "unknown": "알 수 없음",
+    "anonymous": "익명",
+    "undetermined": "미정",
+    "adventurer": "모험가",
+    "persons": "명",
+    "times": "회",
+    "turns": "턴",
+    "loginRequired": "로그인이 필요하다냥!",
+    "loginRequiredDesc": "오른쪽 위의 로그인 버튼을 눌러달라냥~",
+    "errorOccurred": "오류가 발생했다냥!",
+    "loadingMore": "불러오는 중...",
+    "noResults": "결과가 없다냥...",
+    "max": "MAX",
+    "undecided": "미정",
+    "personUnit": "명",
+    "loadMore": "더 보기"
+  },
+  "Nav": {
+    "quest": "퀘스트",
+    "guildHall": "길드홀",
+    "training": "수련장",
+    "postQuest": "의뢰등록",
+    "adventurer": "모험자"
+  },
+  "Auth": {
+    "login": "로그인",
+    "logout": "로그아웃",
+    "discord": "디스코드로 시작",
+    "google": "구글로 시작",
+    "loginAndJoin": "로그인하고 참가 신청하기"
+  },
+  "Home": {
+    "emptyBoardTitle": "의뢰판이 텅 비었다냥...",
+    "emptyBoardDesc": "첫 번째 퀘스트를 등록해보는 건 어떨까냥?",
+    "gmWanted": "GM 구인",
+    "selectRulebook": "룰북 선택",
+    "lookingForGm": "GM 구인"
+  },
+  "CatMascot": {
+    "msg1": "오늘의 판정은 대성공(Critical)일 것 같다냥! 🎲",
+    "msg2": "새로운 퀘스트가 의뢰판에 올라왔다냥~",
+    "msg3": "집사, 같이 던전 공략할 파티원을 찾자냥!",
+    "msg4": "1d20 굴려볼까냥? 내추럴 20이 나올 거다냥! ✨",
+    "msg5": "전설의 마스터가 파티원을 모집 중이다냥!",
+    "msg6": "오늘의 세이브 판정, 성공이다냥! 🛡️",
+    "msg7": "모험가 길드에 새 의뢰가 도착했다냥~ 📜"
+  },
+  "Party": {
+    "playerCount": "{current}/{max}명",
+    "gmWanted": "GM 구인",
+    "lookingForGm": "GM 구인",
+    "gmRecruit": "GM 구인",
+    "selectRulebook": "룰북 선택",
+    "partyLeader": "파티장"
+  },
+  "PartyDetail": {
+    "findParty": "TRPG 파티를 찾아보세요!",
+    "recruitingParty": "nyanQuest에서 파티원 모집 중!",
+    "questInfo": "모험 정보",
+    "recruitmentStatus": "모집 현황",
+    "scheduledDate": "예정 일시",
+    "location": "장소",
+    "partyMembers": "파티원 ({count}/{max})",
+    "aiGmSession": "나양 AI GM이 진행하는 세션이다냥!",
+    "aiGmRealtime": "실시간으로 함께 모험한다냥!",
+    "aiGmAsync": "비동기(PBP)로 느긋하게 모험한다냥!",
+    "lookingForGmTitle": "GM을 모집 중이다냥!",
+    "lookingForGmDesc": "이 파티의 게임 진행자가 되어보겠냥?",
+    "mannerTemp": "꾹꾹이 온도 {temp}°",
+    "completedCount": "완료 {count}회",
+    "joinSession": "세션 참가하기",
+    "startSession": "세션 시작하기",
+    "startSessionAiGm": "세션 시작하기 (AI GM)",
+    "creatingSession": "세션 생성 중...",
+    "sessionCreated": "세션이 시작되었다냥!",
+    "sessionCreateFailed": "세션 생성 실패: {error}",
+    "weeklyLimitReached": "이번 주 AI GM 세션을 모두 사용했다냥! 프리미엄이면 무제한이다냥!",
+    "alreadyJoined": "이미 파티에 참여중이다냥!",
+    "pendingJoin": "{role} 참가 신청 완료! 파티장의 수락을 기다리는 중이다냥...",
+    "joinAsGm": "GM으로 지원하기",
+    "joinAsPl": "PL로 참가하기",
+    "joinParty": "이 모험에 참가하겠다냥!",
+    "recruitmentClosed": "모집이 마감됐다냥...",
+    "applying": "신청 중...",
+    "joinFailed": "참가 신청 실패: {error}",
+    "deleteParty": "파티 삭제",
+    "deleting": "삭제 중...",
+    "deleteConfirm": "이 파티를 삭제할까냥? 되돌릴 수 없다냥!",
+    "deleteSuccess": "파티가 삭제되었다냥!",
+    "deleteFailed": "삭제 실패: {error}",
+    "discordJoinServer": "디스코드 서버 참가하기",
+    "discordRedirectNote": "클릭하면 디스코드로 이동합니다",
+    "discordLinkAttached": "디스코드 링크 첨부됨"
+  },
+  "PartyEdit": {
+    "title": "구인글 수정",
+    "trpgSystem": "TRPG 시스템",
+    "postTitle": "모집글 제목",
+    "description": "상세 설명",
+    "maxPlayers": "모집 인원 (GM 제외)",
+    "meetingType": "진행 방식",
+    "discordLink": "디스코드 초대 링크 (선택)",
+    "offlineLocation": "오프라인 장소",
+    "offlineLocationPlaceholder": "예: 강남역 OO보드게임카페",
+    "scheduledDate": "예정 일시 (선택)",
+    "customSystemPlaceholder": "시스템 이름을 입력해주세요",
+    "otherSystem": "기타 (직접 입력)",
+    "submitEdit": "수정 완료",
+    "editing": "수정 중...",
+    "editFailed": "수정 실패: {error}",
+    "editSuccess": "구인글이 수정되었다냥!",
+    "cannotEditCompleted": "완료/취소된 파티는 수정할 수 없다냥!"
+  },
+  "PartyManage": {
+    "partyManagement": "파티 관리",
+    "recruitmentStatus": "모집 상태",
+    "gmManagement": "GM 관리",
+    "gmUnassigned": "GM 미배정 (구인중)",
+    "gmAssigned": "배정됨",
+    "meLeader": "나 (파티장)",
+    "gmRemove": "GM 해제",
+    "gmRemoved": "GM이 해제되었다냥.",
+    "gmApplicants": "GM 지원자 ({count}명)",
+    "gmAccept": "GM 수락",
+    "gmAssignSuccess": "GM이 배정되었다냥!",
+    "reject": "거절",
+    "accept": "수락",
+    "plApplicants": "PL 참가 신청 대기중 ({count}명)",
+    "partyMembersCount": "파티원 ({count}명)",
+    "noMembers": "아직 파티원이 없다냥...",
+    "profile": "프로필",
+    "actionFailed": "처리 실패: {error}",
+    "statusRecruiting": "모집중",
+    "statusFilled": "모집마감",
+    "statusCompleted": "세션 완료",
+    "statusCancelled": "취소",
+    "statusChangeFailed": "상태 변경 실패: {error}",
+    "aiGmSession": "AI GM 세션",
+    "realtimeMode": "실시간",
+    "asyncMode": "비동기(PBP)",
+    "sessionPlay": "세션 플레이",
+    "viewPost": "구인글 보기",
+    "editPost": "구인글 수정",
+    "myList": "내 목록으로",
+    "deleteParty": "파티 삭제",
+    "deleteConfirm1": "정말 이 파티를 삭제할까냥? 모든 멤버와 기록이 사라진다냥!",
+    "deleteConfirm2": "되돌릴 수 없다냥! 정말 삭제하겠냥?",
+    "deleteSuccess": "파티가 삭제되었다냥.",
+    "deleteFailed": "삭제 실패: {error}"
+  },
+  "PartyPlay": {
+    "nayangGm": "나양 GM",
+    "aiGm": "AI GM",
+    "async": "비동기",
+    "turnProgress": "{current}/{total} 턴",
+    "me": "나",
+    "sessionCompleted": "세션 완료다냥!",
+    "sessionCompletedDesc": "{turnCount}턴의 모험이 끝났다냥! 모두 수고했다냥!",
+    "sessionCompletedExp": "+20 EXP",
+    "sessionCompletedToast": "세션이 완료되었다냥! +20 EXP!",
+    "returnToParty": "파티로 돌아가기",
+    "sessionPaused": "세션이 일시정지되었다냥",
+    "sessionPausedDesc": "파티장이 재개할 때까지 기다려달라냥~",
+    "aiGmResponding": "AI GM이 응답 중이다냥...",
+    "inputPlaceholder": "행동을 입력하라냥...",
+    "messageSendFailed": "메시지 전송 실패다냥!",
+    "requestFailed": "요청 실패",
+    "pause": "일시정지",
+    "endSession": "세션 종료",
+    "resume": "재개하기",
+    "endSessionConfirm": "세션을 종료할까냥? 모든 파티원에게 EXP가 지급된다냥!",
+    "endSessionSuccess": "세션이 완료되었다냥!",
+    "endSessionFailed": "세션 종료 실패: {error}",
+    "statusChangeFailed": "상태 변경 실패다냥",
+    "sessionPausedToast": "세션이 일시정지되었다냥",
+    "sessionResumedToast": "세션이 재개되었다냥!"
+  },
+  "CreateParty": {
+    "steps": {
+      "system": "시스템",
+      "systemCatMsg": "어떤 시스템으로 놀거냥?",
+      "info": "모집 정보",
+      "infoCatMsg": "어떤 모험이냥? 자세히 알려달라냥!",
+      "schedule": "일정 & 장소",
+      "scheduleCatMsg": "언제 어디서 만나냥?",
+      "confirm": "확인",
+      "confirmCatMsg": "다 됐다냥! 확인하고 올리자냥!"
+    },
+    "trpgSystem": "TRPG 시스템",
+    "postTitle": "모집글 제목",
+    "postTitlePlaceholder": "예: [D&D 5e] 주말 원샷 같이 하실 분!",
+    "description": "상세 설명",
+    "descriptionPlaceholder": "캠페인 설명, 원하는 플레이 스타일, 주의사항 등을 자유롭게 적어주세요.",
+    "maxPlayers": "모집 인원 (GM 제외)",
+    "useAiGm": "AI GM 사용",
+    "aiGmDesc": "나양이 자동으로 GM을 해준다냥!",
+    "aiGmMaxPlayers": "AI GM 사용 시 최대 4명까지 참가 가능하다냥!",
+    "playMode": "플레이 방식",
+    "realtime": "실시간",
+    "async": "비동기 (PBP)",
+    "realtimeDesc": "모든 플레이어가 동시에 접속해서 진행",
+    "asyncDesc": "턴 순서대로 한 명씩 행동 (Play-by-Post)",
+    "myRole": "나의 역할",
+    "joinAsGm": "GM으로 참가",
+    "joinAsPl": "PL로 참가 (GM 구인)",
+    "gmRecruitNote": "GM을 모집합니다. 지원자가 들어오면 승인할 수 있습니다.",
+    "meetingType": "진행 방식",
+    "online": "온라인",
+    "offline": "오프라인",
+    "hybrid": "하이브리드",
+    "discordLink": "디스코드 초대 링크 (선택)",
+    "offlineLocation": "오프라인 장소",
+    "offlineLocationPlaceholder": "예: 강남역 OO보드게임카페",
+    "scheduledDate": "예정 일시 (선택)",
+    "customSystemPlaceholder": "시스템 이름을 입력해주세요",
+    "recruitCount": "{count}명 모집",
+    "gmRecruiting": "GM 구인중",
+    "submitParty": "모험 올리기!",
+    "submitFailed": "등록 실패: {error}"
+  },
+  "Solo": {
+    "title": "마법사 고양이의 수련장",
+    "subtitle": "나양 마스터와 함께 모험을 연습해보자냥!",
+    "unlimitedTraining": "무제한 수련 가능",
+    "dailyCount": "오늘 수련 {count}/{limit}회 완료",
+    "inProgressTitle": "진행 중인 수련이 있다냥!",
+    "inProgressTurns": "— {turnCount}턴 진행됨",
+    "unknownScenario": "알 수 없는 시나리오",
+    "resumeTraining": "이어서 수련하기",
+    "selectScenario": "시나리오 선택",
+    "loginRequiredForTraining": "수련을 시작하려면 로그인이 필요하다냥!",
+    "startTraining": "수련 시작하기",
+    "preparing": "준비 중...",
+    "premiumScenario": "프리미엄 전용 시나리오",
+    "dailyLimitReached": "오늘의 수련 횟수를 모두 사용했다냥! 프리미엄이면 무제한이다냥!",
+    "finishActiveFirst": "진행 중인 수련을 먼저 끝내달라냥!",
+    "questCreateFailed": "퀘스트 생성에 실패했다냥...",
+    "abandon": "포기하기",
+    "abandonConfirm": "수련을 포기할까냥? 진행 상황이 사라진다냥!",
+    "abandonSuccess": "수련을 포기했다냥.",
+    "abandonFailed": "포기 실패: {error}"
+  },
+  "SoloQuest": {
+    "turnProgress": "{current}/{total} 턴",
+    "abandon": "포기하기",
+    "waitingPlaceholder": "응답을 기다리는 중이다냥...",
+    "inputPlaceholder": "행동을 입력하라냥...",
+    "requestFailed": "요청 실패",
+    "diceSuccess": "성공!",
+    "diceFail": "실패...",
+    "diceSuccessNyan": "성공이다냥!",
+    "diceFailNyan": "실패다냥...",
+    "diceRolling": "굴리는 중...",
+    "diceRoll": "굴리기",
+    "diceCheck": "{label} 판정 (DC {dc})",
+    "diceRollResult": "주사위를 굴렸다! {type} = {total} (DC {dc} {result})",
+    "diceResultSuccess": "성공!",
+    "diceResultFail": "실패...",
+    "questComplete": "수련 완료다냥!",
+    "questCompleteDesc": "{turnCount}턴 만에 모험을 마쳤다냥! 대단하다냥, 집사!",
+    "claimExpBase": "+{exp} EXP 받기",
+    "claimExpPremiumBonus": "+{exp} EXP 받기 (1.5x 보너스!)",
+    "claimExpAd": "광고 보고 +{exp} EXP 받기 (2배!)",
+    "adComingSoon": "광고 기능은 곧 추가될 예정이다냥!",
+    "rewardClaimFailed": "보상 수령에 실패했다냥...",
+    "expGained": "+{exp} EXP 획득이다냥!",
+    "newTitleEarned": "새 칭호 획득!",
+    "returnToTraining": "수련장으로 돌아가기",
+    "viewProfile": "내 프로필 보기",
+    "questCompleteTag": "[퀘스트 완료]",
+    "diceGreatSuccess": "대단하다냥!",
+    "diceNextTimeBetter": "괜찮다냥, 다음엔 더 잘할 수 있다냥!"
+  },
+  "Tutorial": {
+    "skip": "건너뛰기",
+    "firstTime": "처음이야!",
+    "alreadyKnow": "알고 있어!",
+    "startAdventure": "모험 시작하기!",
+    "steps": {
+      "welcome": "어서 오라냥, 새로운 모험가여! 나는 '나양', 이 수련장을 지키는 마법사 고양이다냥.",
+      "askTrpg": "혹시 TRPG라는 걸 들어본 적 있냥?",
+      "explainTrpg": "TRPG는 '테이블탑 롤플레잉 게임'의 약자다냥. 보드게임처럼 모여서, GM(게임 마스터)이 이야기를 들려주면 PL(플레이어)인 집사가 선택을 하는 거다냥!",
+      "explainDice": "여기서 중요한 건 '주사위'다냥! 집사의 행동이 성공할지 실패할지를 주사위가 결정한다냥. 한 번 굴려볼까냥?",
+      "afterDice": "좋다냥! 이런 식으로 모험 중에 주사위를 굴려서 위기를 넘기는 거다냥. 실패해도 괜찮다냥, 실패도 재미있는 이야기가 되니까!",
+      "explainTraining": "여기 '수련장'에서는 내가 GM 역할을 맡아줄 거다냥. 집사는 선택지를 고르거나, 원하는 행동을 직접 타이핑하면 된다냥!",
+      "ready": "자, 이제 준비 됐냥? 아래에서 시나리오를 골라서 첫 모험을 시작해 보자냥! 나양이 기다리고 있겠다냥~"
+    },
+    "rollD20": "d20 주사위 굴리기!"
+  },
+  "Community": {
+    "community": "커뮤니티",
+    "title": "집사들의 쉼터",
+    "writePost": "글쓰기",
+    "categories": {
+      "all": "전체",
+      "free": "냥냥 잡담",
+      "freeShort": "잡담",
+      "tip": "고양이 도서관",
+      "tipShort": "팁",
+      "gallery": "모험가 갤러리",
+      "galleryShort": "갤러리",
+      "qna": "질문해냥",
+      "qnaShort": "Q&A"
+    },
+    "categoryDescriptions": {
+      "free": "자유롭게 수다 떨기",
+      "tip": "룰 & 팁 공유",
+      "gallery": "캐릭터 & 후기",
+      "qna": "궁금한 건 물어봐냥"
+    },
+    "emptyTitle": "아직 글이 없다냥...",
+    "emptyDesc": "첫 번째 이야기를 남겨봐냥!"
+  },
+  "CommunityWrite": {
+    "title": "글쓰기",
+    "category": "카테고리",
+    "systemTag": "시스템 태그 (선택)",
+    "noTag": "태그 없음",
+    "postTitle": "제목",
+    "postTitlePlaceholder": "무슨 이야기를 할 거냥?",
+    "content": "내용",
+    "contentPlaceholder": "자유롭게 이야기해봐냥~",
+    "submit": "글 올리기",
+    "submitting": "등록 중...",
+    "submitFailed": "등록 실패: {error}"
+  },
+  "CommunityPost": {
+    "like": "꾹꾹이 {count}",
+    "comments": "댓글 ({count})",
+    "commentPlaceholder": "댓글을 남겨봐냥~",
+    "commentSubmit": "등록",
+    "commentLoginRequired": "댓글을 쓰려면 로그인이 필요하다냥~",
+    "commentFailed": "댓글 실패: {error}",
+    "deleteComment": "삭제",
+    "deleteCommentConfirm": "댓글을 삭제할까냥?",
+    "deletePost": "삭제",
+    "deletePostConfirm": "이 글을 삭제할까냥? 되돌릴 수 없다냥!",
+    "emptyComments": "아직 댓글이 없다냥... 첫 댓글을 남겨봐냥!"
+  },
+  "MyPage": {
+    "catLevels": {
+      "babyCat": "아기 냥이",
+      "apprenticeCat": "견습 냥이",
+      "adventurerCat": "모험가 냥이",
+      "veteranCat": "베테랑 냥이",
+      "archmage": "대마법사 냥이"
+    },
+    "catTitles": {
+      "newbornAdventurer": "갓 태어난 모험가",
+      "curiousExplorer": "호기심 가득한 탐험가",
+      "reliablePartyMember": "믿음직한 파티원",
+      "veteranDiceRoller": "역전의 주사위꾼",
+      "legendaryButler": "전설의 집사님"
+    },
+    "styleTags": {
+      "narrativeFocus": "서사중심",
+      "combatFocus": "전투중심",
+      "exploration": "탐색형",
+      "roleplayFan": "롤플레이광",
+      "roleplayFanatic": "롤플레이광",
+      "newbieWelcome": "뉴비환영",
+      "ruleStrict": "룰중시",
+      "ruleOriented": "룰중시",
+      "impromptu": "즉흥형",
+      "improviser": "즉흥형",
+      "planner": "계획형"
+    },
+    "mannerTemp": "꾹꾹이 온도",
+    "experience": "경험치",
+    "titlesCount": "칭호",
+    "change": "변경",
+    "inUse": "사용 중",
+    "titleSelect": "칭호 선택",
+    "defaultTitle": "기본 (레벨 칭호)",
+    "titleChanged": "대표 칭호가 변경되었다냥!",
+    "titleRemoved": "칭호를 해제했다냥!",
+    "titleChangeFailed": "칭호 변경 실패: {error}",
+    "myAdventures": "내가 만든 모험 ({count})",
+    "joinedAdventures": "참가한 모험 ({count})",
+    "noMyAdventures": "아직 만든 모험이 없다냥...",
+    "noJoinedAdventures": "아직 참가한 모험이 없다냥...",
+    "createFirstAdventure": "첫 모험 만들기",
+    "premiumActive": "프리미엄 구독 중",
+    "premiumActiveUntil": "{date}까지",
+    "premiumManage": "관리",
+    "premiumSubscribe": "프리미엄 구독",
+    "premiumSubscribeDesc": "무제한 수련, 고성능 AI, 프리미엄 시나리오",
+    "premiumView": "보기",
+    "avatarUploadSizeError": "2MB 이하 이미지만 업로드할 수 있다냥!",
+    "avatarUploadFailed": "업로드 실패: {error}",
+    "profileUpdateFailed": "프로필 업데이트 실패: {error}",
+    "avatarChanged": "프로필 사진이 변경되었다냥!",
+    "imageProcessError": "이미지 처리 중 오류가 발생했다냥!",
+    "saveFailed": "저장 실패: {error}",
+    "catLevel0Name": "아기 냥이",
+    "catLevel0Title": "갓 태어난 모험가",
+    "catLevel1Name": "견습 냥이",
+    "catLevel1Title": "호기심 가득한 탐험가",
+    "catLevel2Name": "모험가 냥이",
+    "catLevel2Title": "믿음직한 파티원",
+    "catLevel3Name": "베테랑 냥이",
+    "catLevel3Title": "역전의 주사위꾼",
+    "catLevel4Name": "대마법사 냥이",
+    "catLevel4Title": "전설의 집사님"
+  },
+  "Premium": {
+    "title": "nyanQuest Premium",
+    "subtitle": "더 강력한 AI, 무제한 수련, 프리미엄 시나리오를 즐겨보라냥!",
+    "benefits": "프리미엄 혜택",
+    "benefitUnlimited": "일일 수련 무제한 (무료: 3회)",
+    "benefitAiModel": "고성능 AI 모델 (Gemini 2.5 Flash)",
+    "benefitLongResponse": "2배 긴 AI 응답 (1000자)",
+    "benefitExtendedTurns": "2.5배 턴 확장 (더 깊은 모험)",
+    "benefitExpBonus": "EXP 1.5배 보너스",
+    "benefitPremiumScenario": "프리미엄 전용 시나리오",
+    "subscribe": "프리미엄 구독하기",
+    "subscribing": "결제 처리 중...",
+    "autoRenewalNote": "구독은 자동 갱신되지 않습니다. 만료 후 재구독이 필요합니다.",
+    "activeTitle": "프리미엄 구독 중",
+    "activeSubtitle": "프리미엄 혜택을 누리고 있다냥!",
+    "plan": "플랜",
+    "monthlyPlan": "월간 구독",
+    "yearlyPlan": "연간 구독",
+    "yearlyDiscount": "33% 할인",
+    "expiryDate": "만료일",
+    "status": "상태",
+    "statusActive": "활성",
+    "statusCancelPending": "해지 예정 (만료일까지 이용 가능)",
+    "cancelSubscription": "구독 해지",
+    "cancelling": "처리 중...",
+    "cancelConfirm": "정말 구독을 해지하시겠습니까? 만료일까지는 이용 가능합니다.",
+    "cancelSuccess": "구독이 해지되었다냥. 만료일까지 이용 가능하다냥!",
+    "cancelFailed": "해지 실패",
+    "goToTraining": "수련장으로 가기",
+    "paymentInitFailed": "결제 시작에 실패했다냥",
+    "paymentCancelled": "결제가 취소되었다냥",
+    "paymentVerifyFailed": "결제 확인에 실패했다냥",
+    "subscriptionStarted": "프리미엄 구독 시작이다냥!",
+    "paymentError": "결제 중 오류가 발생했다냥",
+    "perMonth": "월",
+    "perYear": "년",
+    "won": "원"
+  },
+  "PremiumComplete": {
+    "verifying": "결제를 확인하고 있다냥...",
+    "errorTitle": "결제 확인에 실패했다냥...",
+    "errorDesc": "잠시 후 자동으로 처리될 수 있다냥. 문제가 계속되면 문의해달라냥.",
+    "goBack": "돌아가기",
+    "successTitle": "프리미엄 구독 완료다냥!",
+    "successDesc": "이제 무제한 수련과 프리미엄 시나리오를 즐길 수 있다냥!",
+    "goToTraining": "수련장으로 가기",
+    "myProfile": "내 프로필",
+    "subscriptionStarted": "프리미엄 구독이 시작되었다냥!"
+  },
+  "UserProfile": {
+    "mannerTemp": "꾹꾹이 온도",
+    "experience": "경험치",
+    "completedSessions": "완료 세션",
+    "receivedReviews": "받은 리뷰 ({count}개)",
+    "positive": "좋았다냥",
+    "negative": "아쉽다냥",
+    "positiveRate": "긍정률",
+    "gmAdventures": "GM으로 이끈 모험 ({count})",
+    "creatorAdventures": "파티장으로 만든 모험 ({count})",
+    "plAdventures": "PL로 참여한 모험 ({count})",
+    "noAdventureHistory": "아직 모험 기록이 없다냥...",
+    "joinDate": "가입일: {date}"
+  },
+  "Notification": {
+    "title": "알림",
+    "markAllRead": "모두 읽음",
+    "empty": "알림이 없다냥~"
+  },
+  "Report": {
+    "title": "신고하기",
+    "button": "신고",
+    "reason": "신고 사유 *",
+    "reasons": {
+      "spam": "스팸/광고",
+      "harassment": "괴롭힘/욕설",
+      "inappropriate": "부적절한 콘텐츠",
+      "cheating": "부정행위",
+      "other": "기타"
+    },
+    "description": "상세 설명 (선택사항)",
+    "descriptionPlaceholder": "추가 설명이 있다면 적어달라냥...",
+    "submit": "신고 접수",
+    "submitting": "접수 중...",
+    "selectReason": "신고 사유를 선택해달라냥!",
+    "success": "신고가 접수되었다냥! 검토 후 처리된다냥.",
+    "failed": "신고 접수 실패: {error}"
+  },
+  "Block": {
+    "block": "차단",
+    "unblock": "차단 해제",
+    "blocked": "해당 유저를 차단했다냥!",
+    "unblocked": "차단을 해제했다냥!",
+    "blockFailed": "차단 실패: {error}"
+  },
+  "AdGate": {
+    "title": "잠깐! 모험 준비 중이다냥~",
+    "loadingAd": "광고를 불러오는 중...",
+    "countdown": "초 후 시작할 수 있다냥!",
+    "startAdventure": "모험 시작하기!",
+    "premiumUpsell": "프리미엄이면 광고 없이 바로 시작!"
+  },
+  "DatePicker": {
+    "placeholder": "날짜와 시간을 선택해주세요",
+    "dateTab": "날짜",
+    "timeTab": "시간",
+    "year": "년",
+    "month": "월",
+    "day": "일",
+    "hour": "시",
+    "minute": "분",
+    "weekdays": {
+      "sun": "일",
+      "mon": "월",
+      "tue": "화",
+      "wed": "수",
+      "thu": "목",
+      "fri": "금",
+      "sat": "토"
+    }
+  },
+  "GmStats": {
+    "gmHistory": "GM 이력",
+    "totalSessions": "총 세션",
+    "completed": "완료",
+    "positiveRate": "GM 긍정률",
+    "frequentSystems": "자주 진행한 시스템",
+    "completedCount": "완료 {count}회"
+  },
+  "Titles": {
+    "firstStep": {
+      "name": "첫 발걸음",
+      "description": "첫 솔로 퀘스트를 완료한 모험가",
+      "condition": "솔로 퀘스트 1회 완료"
+    },
+    "trainee": {
+      "name": "수련생",
+      "description": "꾸준히 수련하는 견습 모험가",
+      "condition": "솔로 퀘스트 5회 완료"
+    },
+    "soloMaster": {
+      "name": "고독한 수련가",
+      "description": "홀로 수많은 모험을 헤쳐온 강자",
+      "condition": "솔로 퀘스트 20회 완료"
+    },
+    "partyStarter": {
+      "name": "파티 개척자",
+      "description": "첫 파티를 결성한 리더",
+      "condition": "파티 1회 생성"
+    },
+    "socialCat": {
+      "name": "사교적인 냥이",
+      "description": "여러 파티에서 활약한 사교가",
+      "condition": "파티 3회 참가"
+    },
+    "veteranPlayer": {
+      "name": "역전의 모험가",
+      "description": "수많은 세션을 완주한 베테랑",
+      "condition": "파티 10회 완료"
+    },
+    "firstGm": {
+      "name": "신입 마스터",
+      "description": "첫 GM을 경험한 이야기꾼",
+      "condition": "GM 1회 수행"
+    },
+    "gmPro": {
+      "name": "프로 마스터",
+      "description": "능숙하게 세션을 이끄는 마스터",
+      "condition": "GM 5회 완료"
+    },
+    "warmHeart": {
+      "name": "따뜻한 고양이",
+      "description": "모두에게 따뜻한 매너의 소유자",
+      "condition": "매너온도 38° 이상"
+    },
+    "hotCat": {
+      "name": "뜨거운 냥이",
+      "description": "넘치는 열정과 매너의 달인",
+      "condition": "매너온도 40° 이상"
+    },
+    "reviewer": {
+      "name": "꼼꼼한 리뷰어",
+      "description": "성실하게 리뷰를 남기는 평론가",
+      "condition": "리뷰 10개 작성"
+    },
+    "writer": {
+      "name": "길드홀 작가",
+      "description": "길드홀에서 활발히 활동하는 작가",
+      "condition": "커뮤니티 글 5개 작성"
+    },
+    "expHunter": {
+      "name": "경험치 사냥꾼",
+      "description": "경험치를 끊임없이 모으는 사냥꾼",
+      "condition": "EXP 300 달성"
+    },
+    "legend": {
+      "name": "전설의 집사님",
+      "description": "정점에 도달한 전설적 존재",
+      "condition": "EXP 500 달성"
+    },
+    "premiumCat": {
+      "name": "프리미엄 냥이",
+      "description": "프리미엄 구독으로 모험을 지원하는 후원자",
+      "condition": "프리미엄 구독"
+    }
+  },
+  "Scenarios": {
+    "goblinCave": {
+      "title": "고블린 동굴 구출작전",
+      "description": "마을 상인이 납치됐다냥! 고블린 동굴에 잠입해서 구출하는 임무다냥.",
+      "genre": "판타지",
+      "systemPrompt": "배경: 중세 판타지 세계. 작은 마을 외곽의 고블린 동굴.\n목표: 납치된 상인 '마르코'를 구출하라.\n분위기: 긴장감 있지만 유쾌한 모험.\n적: 고블린 3-5마리 (약함), 고블린 대장 1마리 (보통).\n아이템: 횃불, 밧줄, 단검을 기본 소지.\n주요 판정: 은신(DC 10), 전투(DC 12), 함정 해제(DC 13).",
+      "openingMessage": "어둠이 내려앉은 숲속, 동굴 입구가 보인다냥...\n\n고블린들의 웃음소리가 안에서 들려오고, 횃불빛이 깜빡이고 있다냥. 마을 상인 마르코를 구출해야 한다냥!\n\n집사, 어떻게 할 거냥?\n\n1. 정면으로 돌격한다\n2. 은밀하게 잠입을 시도한다\n3. 먼저 동굴 주변을 정찰한다\n\n위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!",
+      "suggestedActions": ["정면 돌격", "은밀 잠입", "주변 정찰"]
+    },
+    "hauntedLibrary": {
+      "title": "유령 도서관의 비밀",
+      "description": "폐쇄된 고대 도서관에서 이상한 소리가 들린다냥... 용기 있는 집사만 도전하라냥!",
+      "genre": "호러/미스터리",
+      "systemPrompt": "배경: 100년간 폐쇄된 고대 마법 도서관. 밤.\n목표: 도서관에 봉인된 저주를 풀어라.\n분위기: 으스스하지만 무섭지 않은 정도. 유머 섞인 호러.\n적: 떠도는 유령 사서 (대화 가능), 마법 함정들, 살아움직이는 책들.\n퍼즐 요소: 3개의 마법 책을 올바른 순서로 제단에 놓아야 봉인 해제.\n주요 판정: 지식(DC 11), 용기(DC 13), 마법 감지(DC 12).",
+      "openingMessage": "삐걱... 문이 열리자 먼지 냄새가 코를 찌른다냥.\n\n100년간 아무도 들어오지 않은 고대 도서관... 책장들이 천장까지 솟아있고, 어딘가에서 희미한 빛이 깜빡이고 있다냥. 갑자기 속삭이는 소리가...!\n\n\"누가... 왔냥...?\"\n\n집사, 무엇을 하겠냥?\n\n1. 소리가 나는 방향으로 간다\n2. 가까운 책장의 책을 살펴본다\n3. \"누구냥?\" 하고 대답한다\n\n위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!",
+      "suggestedActions": ["소리 방향 이동", "책장 조사", "대답하기"]
+    },
+    "spaceStation": {
+      "title": "우주정거장 오메가 긴급사태",
+      "description": "우주정거장에서 원인불명의 사고가 발생했다냥! 30분 안에 탈출하라냥!",
+      "genre": "SF",
+      "systemPrompt": "배경: 미래 우주. 소행성 궤도의 연구 정거장 '오메가'.\n목표: 정거장이 폭발하기 전에 탈출선으로 탈출.\n분위기: 긴박한 SF 서바이벌. 타이머 느낌.\n장애물: 잠긴 방화문, 손상된 산소 시스템, 고장난 AI, 부유하는 잔해.\n장비: 우주복, 다용도 공구, 통신기.\n주요 판정: 기술(DC 13), 체력(DC 12), 해킹(DC 15).\n매 턴 상황이 악화됨을 묘사할 것 (경고음, 산소 감소 등).",
+      "openingMessage": "경고! 경고!\n\n\"우주정거장 오메가에 구조적 손상이 감지되었습니다. 모든 인원은 즉시 대피하십시오.\"\n\nAI 음성이 울려퍼지고, 바닥이 흔들린다냥! 복도의 비상등이 빨갛게 깜빡이고... 집사, 빨리 움직여야 한다냥!\n\n1. 곧장 탈출선 격납고로 달린다\n2. 먼저 통신실에서 상황을 파악한다\n3. 동료 연구원을 찾으러 간다\n\n위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!",
+      "suggestedActions": ["탈출선으로 이동", "상황 파악", "동료 구출"]
+    },
+    "catKingdom": {
+      "title": "고양이 왕국의 왕관",
+      "description": "고양이들의 비밀 왕국에 초대받았다냥! 도둑맞은 왕관을 찾아달라냥!",
+      "genre": "판타지/코미디",
+      "systemPrompt": "배경: 인간에게 숨겨진 고양이들의 비밀 왕국. 동화적 분위기.\n목표: 도둑맞은 고양이 왕의 왕관을 되찾아라.\n분위기: 따뜻하고 유쾌한 코미디 판타지. 고양이 말장난 많이.\nNPC: 고양이 왕 (근엄), 궁정 고양이들 (수다쟁이), 용의자 3마리 (수상한 고양이들).\n퍼즐: 용의자 3마리 중 범인 추리 (힌트 3개 수집).\n주요 판정: 관찰(DC 10), 대화(DC 11), 추리(DC 12).\n고양이 관련 유머와 말장난을 적극 활용할 것.",
+      "openingMessage": "\"야옹~ 환영한다냥, 인간이여!\"\n\n눈을 뜨니 거대한 고양이 성의 알현실이다냥! 왕좌에 앉은 거대한 페르시안 고양이가 근엄한 표정으로 내려다보고 있다냥.\n\n\"왕관이 사라졌다냥... 세 명의 용의자가 있지만, 누가 범인인지 모르겠다냥. 인간의 지혜를 빌리고 싶다냥!\"\n\n집사, 수사를 시작할까냥?\n\n1. 용의자들을 만나본다\n2. 왕관이 보관되었던 보물실을 조사한다\n3. 궁정 고양이들에게 소문을 듣는다\n\n위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!",
+      "suggestedActions": ["용의자 심문", "보물실 조사", "소문 수집"]
+    },
+    "dragonDiplomacy": {
+      "title": "용의 외교관",
+      "description": "고대 용과의 평화 협상에 나서야 한다냥! 말 한마디가 왕국의 운명을 바꾼다냥!",
+      "genre": "판타지/외교",
+      "systemPrompt": "배경: 중세 판타지. 인간 왕국과 용족의 긴장 관계. 용의 둥지에서 협상.\n목표: 고대 용 '아우렐리온'과 평화 조약을 맺어라.\n분위기: 웅장하면서도 긴장감 넘치는 외교전. 말 한마디가 운명을 바꿈.\nNPC: 아우렐리온 (현명하지만 오만한 고대 용), 용족 수호자들, 인간 측 조언자.\n핵심: 전투가 아닌 대화와 협상으로 해결. 용의 3가지 요구를 충족시켜야 함.\n주요 판정: 설득(DC 14), 지혜(DC 13), 담력(DC 15), 외교(DC 12).\n아우렐리온은 거짓말을 즉시 간파함. 정직하되 전략적으로.",
+      "openingMessage": "거대한 동굴의 끝, 황금빛 비늘이 용암의 빛에 반짝인다냥...\n\n\"인간이... 왔냥.\"\n\n산 하나만큼 거대한 용 아우렐리온이 천천히 눈을 뜬다냥. 수천 년의 지혜가 담긴 눈동자가 집사를 내려다보고 있다냥.\n\n\"평화를 원한다고? 흥미롭냥. 그렇다면... 세 가지를 증명해 보아라.\"\n\n집사, 용 앞에서 어떻게 할 거냥?\n\n1. 정중하게 인사하며 협상을 시작한다\n2. 가져온 선물을 먼저 바친다\n3. 당당하게 평화의 필요성을 역설한다\n\n위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!",
+      "suggestedActions": ["정중한 인사", "선물 바치기", "평화 역설"]
+    },
+    "timeLoop": {
+      "title": "시간의 고리: 끝없는 주점",
+      "description": "같은 밤이 반복된다냥! 시간 루프를 깨뜨리고 아침을 맞이하라냥!",
+      "genre": "미스터리/판타지",
+      "systemPrompt": "배경: 마법 세계의 한 주점. 같은 밤이 무한 반복되는 시간 루프에 갇힘.\n목표: 시간 루프의 원인을 밝히고 루프를 깨뜨려라.\n분위기: 미스터리 스릴러 + 따뜻한 인간(고양이) 드라마.\nNPC: 주점 주인 할머니 (비밀을 알고 있음), 음유시인 (힌트를 노래로 전함), 수상한 여행자 (루프의 열쇠).\n퍼즐: 매 루프마다 새로운 정보 수집 → 올바른 순서로 이벤트 변경.\n주요 판정: 관찰(DC 11), 기억(DC 12), 설득(DC 13), 마법 감지(DC 14).\n플레이어가 루프를 인식하면 NPC들의 반응이 달라짐.",
+      "openingMessage": "\"어서 오라냥, 여행자여! 오늘 밤은 특별한 밤이다냥!\"\n\n주점 문을 열자 따스한 불빛과 음악 소리가 반긴다냥. 할머니가 웃으며 맥주잔을 건넨다냥.\n\n...그런데 이상하다냥. 이 장면, 어디서 본 것 같은데...?\n\n자정을 알리는 종이 울리는 순간, 세상이 깜빡이고\u2014 다시 주점 문 앞에 서 있다냥!\n\n집사, 무엇을 하겠냥?\n\n1. 할머니에게 \"지금 몇 시냥?\" 물어본다\n2. 노래하고 있는 음유시인에게 다가간다\n3. 구석에 앉은 수상한 여행자를 관찰한다\n\n위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!",
+      "suggestedActions": ["할머니에게 질문", "음유시인 접근", "여행자 관찰"]
+    }
+  },
+  "Prompts": {
+    "solo": {
+      "identity": "너는 nyanQuest의 마법사 고양이 GM이다냥!",
+      "name": "나양 (NaYang), 고대 마법사 고양이",
+      "speechStyle": "문장 끝에 \"~냥\", \"다냥\", \"냥!\" 을 자연스럽게 섞어. 매 문장마다 쓰지는 마.",
+      "personality": "장난기 많지만 진지한 순간에는 진중함. 플레이어를 \"집사\"라고 부름.",
+      "rules": {
+        "shortDescription": "짧고 임팩트 있는 묘사 (3-5문장). 절대 장문 금지.",
+        "choices": "매 턴마다 2-3가지 선택지를 번호로 제시하되, 마지막에 반드시 \"또는 원하는 행동을 자유롭게 입력해도 된다냥!\" 같은 자유 입력 안내를 추가해.",
+        "creative": "플레이어가 선택지에 없는 창의적인 행동을 하면 적극적으로 수용하고 재미있게 진행해.",
+        "diceFormat": "[판정 필요: d20+수정치, DC 난이도 (능력치)]",
+        "diceExample": "[판정 필요: d20+2, DC 12 (민첩)]",
+        "diceResult": "플레이어가 주사위 결과를 보내면 그 결과에 맞춰 성공/실패 내러티브를 진행.",
+        "failIsOk": "성공과 실패 모두 재미있게 묘사. 실패해도 이야기는 계속 진행."
+      },
+      "climaxWarning": "곧 클라이맥스! 이야기를 마무리 방향으로 진행해.",
+      "lastTurn": "마지막 턴! 에필로그를 작성하고 \"[퀘스트 완료]\" 태그를 문장 끝에 추가해.",
+      "prohibited": {
+        "noSexualViolent": "성적, 폭력적, 차별적 콘텐츠 절대 금지",
+        "noPlayerActions": "플레이어 대신 행동하지 마. 항상 선택권을 줘.",
+        "charLimit": "한 턴에 {maxChars}자를 넘기지 마."
+      }
+    },
+    "multiplayer": {
+      "identity": "너는 nyanQuest의 마법사 고양이 GM이다냥!",
+      "name": "나양 (NaYang), 고대 마법사 고양이",
+      "speechStyle": "문장 끝에 \"~냥\", \"다냥\", \"냥!\" 을 자연스럽게 섞어. 매 문장마다 쓰지는 마.",
+      "personality": "장난기 많지만 진지한 순간에는 진중함.",
+      "rules": {
+        "partySize": "이것은 **{count}명의 파티** 세션이다.",
+        "useNicknames": "각 플레이어를 닉네임으로 불러. \"집사\"라는 호칭은 전체 파티를 부를 때만 사용.",
+        "shortDescription": "짧고 임팩트 있는 묘사 (3-6문장). 절대 장문 금지.",
+        "individualChoices": "매 턴마다 각 플레이어에게 개별적인 선택지를 제시하거나, 파티 전체에 공통 선택지를 줘.",
+        "partyVote": "파티 합의가 필요한 중요한 순간에는 \"[파티 투표]\" 태그를 사용해.",
+        "combatDice": "전투 시 각 캐릭터별로 판정을 요청해: \"[판정 필요: 캐릭터이름, d20+수정치, DC 난이도 (능력치)]\"",
+        "freeInput": "선택지 끝에 \"또는 원하는 행동을 자유롭게 입력해도 된다냥!\" 추가."
+      },
+      "freeAdventure": "파티원들과 함께 자유로운 모험을 진행해. 판타지 세계관 기본 설정.",
+      "openingWelcome": "환영한다냥, 모험자들이여!",
+      "freeAdventureStart": "자유 모험이 시작된다냥!",
+      "freeAdventureAsk": "어떤 세계에서 어떤 모험을 하고 싶냥? 파티원들과 상의해서 알려달라냥!",
+      "freeChoices": {
+        "fantasy": "판타지 세계에서 던전 탐험",
+        "scifi": "SF 세계에서 우주 탐사",
+        "mystery": "미스터리 세계에서 사건 해결"
+      },
+      "freeInputNote": "위 선택지 외에도 원하는 세계관을 자유롭게 제안할 수 있다냥!"
+    }
+  },
+  "Status": {
+    "recruiting": "모집중",
+    "filled": "모집완료",
+    "completed": "완료",
+    "cancelled": "취소됨"
+  },
+  "MeetingType": {
+    "all": "전체",
+    "online": "온라인",
+    "offline": "오프라인",
+    "hybrid": "하이브리드"
+  },
+  "Difficulty": {
+    "easy": "쉬움",
+    "normal": "보통",
+    "hard": "어려움"
+  },
+  "TimeAgo": {
+    "justNow": "방금",
+    "minutesAgo": "{count}분 전",
+    "hoursAgo": "{count}시간 전",
+    "daysAgo": "{count}일 전",
+    "monthsAgo": "{count}개월 전",
+    "today": "오늘"
+  },
+  "Privacy": {
+    "metaTitle": "개인정보처리방침 - nyanQuest",
+    "title": "개인정보처리방침",
+    "effectiveDate": "시행일: 2026년 2월 18일",
+    "section1Title": "1. 수집하는 개인정보",
+    "section1Intro": "nyanQuest(이하 \"서비스\")는 서비스 제공을 위해 다음의 개인정보를 수집합니다.",
+    "section1Items": {
+      "socialLogin": "소셜 로그인 정보: 이메일 주소, 프로필 이미지 (Google 계정 연동 시)",
+      "serviceUsage": "서비스 이용 정보: 닉네임, 스타일 태그, 모험 기록, 경험치",
+      "payment": "결제 정보: 결제 수단, 결제 금액, 결제 일시 (프리미엄 구독 시, 포트원을 통해 처리)"
+    },
+    "section2Title": "2. 개인정보의 이용 목적",
+    "section2Items": {
+      "identification": "회원 식별 및 서비스 제공",
+      "matching": "TRPG 파티 매칭 및 솔로 퀘스트 기능 제공",
+      "partyMatching": "TRPG 파티 매칭 및 솔로 퀘스트 기능 제공",
+      "payment": "프리미엄 구독 결제 처리",
+      "premiumPayment": "프리미엄 구독 결제 처리",
+      "improvement": "서비스 개선 및 통계 분석"
+    },
+    "section3Title": "3. 개인정보의 보유 및 파기",
+    "section3Intro": "회원 탈퇴 시 개인정보는 즉시 파기됩니다. 단, 관련 법령에 따라 보존이 필요한 경우 해당 기간 동안 보관합니다.",
+    "section3Items": {
+      "ecommerce": "전자상거래 거래 기록: 5년 (전자상거래법)",
+      "transaction": "전자상거래 거래 기록: 5년 (전자상거래법)",
+      "loginRecord": "로그인 기록: 3개월 (통신비밀보호법)"
+    },
+    "section4Title": "4. 개인정보의 제3자 제공",
+    "section4Content": "서비스는 이용자의 동의 없이 개인정보를 외부에 제공하지 않습니다. 다만, 결제 처리를 위해 포트원(PortOne)에 필요한 최소한의 정보가 전달됩니다.",
+    "section5Title": "5. 개인정보의 안전성 확보 조치",
+    "section5Items": {
+      "encryption": "데이터베이스 암호화 및 접근 제어 (Supabase RLS)",
+      "https": "HTTPS 통신 암호화",
+      "socialAuth": "소셜 로그인을 통한 안전한 인증"
+    },
+    "section6Title": "6. 이용자의 권리",
+    "section6Content": "이용자는 언제든지 자신의 개인정보를 조회, 수정, 삭제할 수 있으며, 회원 탈퇴를 통해 개인정보 처리를 중단할 수 있습니다.",
+    "section7Title": "7. 쿠키 및 자동 수집 장치",
+    "section7Content": "서비스는 로그인 세션 유지를 위해 쿠키를 사용합니다. 이용자는 브라우저 설정을 통해 쿠키를 거부할 수 있으나, 일부 기능 이용이 제한될 수 있습니다.",
+    "section8Title": "8. 개인정보 보호책임자",
+    "section8Items": {
+      "operator": "운영자: 백코어코리아 (HundredCore Korea)",
+      "email": "이메일: osu355@gmail.com"
+    },
+    "section9Title": "9. 개인정보처리방침 변경",
+    "section9Content": "본 개인정보처리방침은 관련 법령 및 서비스 정책 변경에 따라 수정될 수 있으며, 변경 사항은 서비스 내 공지를 통해 안내됩니다."
+  },
+  "Terms": {
+    "metaTitle": "서비스 이용약관 - nyanQuest",
+    "title": "서비스 이용약관",
+    "effectiveDate": "시행일: 2026년 2월 18일",
+    "article1Title": "제1조 (목적)",
+    "article1Content": "본 약관은 백코어코리아(이하 \"회사\")가 제공하는 nyanQuest 서비스(이하 \"서비스\")의 이용과 관련하여 회사와 이용자 간의 권리, 의무 및 책임 사항을 규정함을 목적으로 합니다.",
+    "article2Title": "제2조 (서비스의 내용)",
+    "article2Intro": "서비스는 다음의 기능을 제공합니다.",
+    "article2Items": {
+      "partyMatching": "TRPG 파티 모집 및 매칭",
+      "soloQuest": "AI 기반 솔로 퀘스트 (1인 TRPG 체험)",
+      "growthSystem": "캐릭터 성장 시스템 (냥이 레벨, 경험치)",
+      "characterGrowth": "캐릭터 성장 시스템 (냥이 레벨, 경험치)",
+      "premiumService": "프리미엄 구독 서비스",
+      "premium": "프리미엄 구독 서비스"
+    },
+    "article3Title": "제3조 (회원가입 및 계정)",
+    "article3Items": {
+      "socialLogin": "서비스 이용을 위해 Google 소셜 로그인을 통한 회원가입이 필요합니다.",
+      "accurateInfo": "이용자는 정확한 정보를 제공해야 하며, 타인의 정보를 도용해서는 안 됩니다.",
+      "accountResponsibility": "계정의 관리 책임은 이용자 본인에게 있습니다."
+    },
+    "article4Title": "제4조 (프리미엄 구독)",
+    "article4Items": {
+      "pricing": "프리미엄 구독은 월간(4,900원) 또는 연간(39,000원) 플랜으로 제공됩니다.",
+      "plans": "프리미엄 구독은 월간(4,900원) 또는 연간(39,000원) 플랜으로 제공됩니다.",
+      "noAutoRenewal": "구독은 자동 갱신되지 않으며, 만료 후 재구독이 필요합니다.",
+      "noAutoRenew": "구독은 자동 갱신되지 않으며, 만료 후 재구독이 필요합니다.",
+      "cancelPolicy": "구독 해지 시 만료일까지 프리미엄 기능을 이용할 수 있습니다.",
+      "paymentProcessor": "결제는 포트원(PortOne)을 통해 처리되며, 결제 관련 문의는 회사로 연락하시기 바랍니다."
+    },
+    "article5Title": "제5조 (환불 정책)",
+    "article5Items": {
+      "fullRefund": "구독 후 7일 이내, 서비스를 이용하지 않은 경우 전액 환불이 가능합니다.",
+      "serviceIssue": "서비스 장애로 인해 정상 이용이 불가능한 경우, 해당 기간만큼 이용 기간이 연장됩니다.",
+      "serviceOutage": "서비스 장애로 인해 정상 이용이 불가능한 경우, 해당 기간만큼 이용 기간이 연장됩니다.",
+      "refundContact": "환불 요청은 이메일(osu355@gmail.com)로 접수하시기 바랍니다."
+    },
+    "article6Title": "제6조 (이용자의 의무)",
+    "article6Intro": "이용자는 다음 행위를 해서는 안 됩니다.",
+    "article6Items": {
+      "noHarassment": "타인의 권리를 침해하거나 불쾌감을 주는 행위",
+      "infringement": "타인의 권리를 침해하거나 불쾌감을 주는 행위",
+      "noDisruption": "서비스의 정상적인 운영을 방해하는 행위",
+      "disruption": "서비스의 정상적인 운영을 방해하는 행위",
+      "noIllegal": "불법적이거나 부정한 목적으로 서비스를 이용하는 행위",
+      "illegalUse": "불법적이거나 부정한 목적으로 서비스를 이용하는 행위",
+      "noFalseInfo": "허위 정보를 등록하거나 타인의 계정을 도용하는 행위",
+      "falseInfo": "허위 정보를 등록하거나 타인의 계정을 도용하는 행위"
+    },
+    "article7Title": "제7조 (서비스 제한 및 중단)",
+    "article7Items": {
+      "maintenance": "회사는 시스템 점검, 장비 교체 등의 사유로 서비스를 일시 중단할 수 있습니다.",
+      "violation": "이용자가 본 약관을 위반한 경우, 서비스 이용을 제한하거나 계정을 삭제할 수 있습니다."
+    },
+    "article8Title": "제8조 (면책 조항)",
+    "article8Items": {
+      "aiContent": "AI 기반 콘텐츠는 자동 생성되며, 회사는 그 정확성을 보장하지 않습니다.",
+      "userDispute": "이용자 간 분쟁에 대해 회사는 책임을 지지 않습니다.",
+      "forceMajeure": "천재지변, 기술적 장애 등 불가항력으로 인한 서비스 중단에 대해 책임을 지지 않습니다.",
+      "forceM": "천재지변, 기술적 장애 등 불가항력으로 인한 서비스 중단에 대해 책임을 지지 않습니다."
+    },
+    "article9Title": "제9조 (저작권)",
+    "article9Items": {
+      "companyCopyright": "서비스의 디자인, 코드, 콘텐츠에 대한 저작권은 회사에 있습니다.",
+      "userContent": "이용자가 작성한 콘텐츠(파티 설명, 닉네임 등)의 저작권은 이용자에게 있으며, 서비스 운영 목적으로 사용할 수 있습니다."
+    },
+    "article10Title": "제10조 (약관의 변경)",
+    "article10Content": "본 약관은 관련 법령 및 서비스 정책 변경에 따라 수정될 수 있으며, 변경 사항은 서비스 내 공지를 통해 시행일 7일 전에 안내됩니다.",
+    "article11Title": "제11조 (문의)",
+    "article11Items": {
+      "operator": "운영자: 백코어코리아 (HundredCore Korea)",
+      "email": "이메일: osu355@gmail.com"
+    }
+  },
+  "Offline": {
+    "title": "오프라인이다냥...",
+    "description": "인터넷 연결을 확인하고 다시 시도해달라냥!",
+    "retry": "다시 시도"
+  },
+  "NotFound": {
+    "title": "길을 잃었다냥...",
+    "description": "찾으시는 페이지가 존재하지 않습니다.",
+    "goHome": "모험 광장으로 돌아가기"
+  },
+  "Loading": {},
+  "Manifest": {
+    "name": "nyanQuest - TRPG 파티 찾기",
+    "shortName": "nyanQuest",
+    "description": "주사위 굴리는 고양이와 함께 떠나는 모험! TRPG 구인 & 기록 플랫폼"
+  },
+  "Review": {
+    "title": "꾹꾹이 리뷰",
+    "completedCount": "{reviewed}/{total}명 완료",
+    "commentPlaceholder": "한줄 코멘트 (선택)",
+    "positive": "좋았다냥",
+    "negative": "아쉽다냥",
+    "reviewComplete": "리뷰 완료",
+    "writtenReviews": "작성된 리뷰",
+    "noReviews": "아직 리뷰가 없다냥...",
+    "alreadyReviewed": "이미 리뷰를 남겼다냥!",
+    "reviewFailed": "리뷰 실패: {error}",
+    "reviewSubmitted": "리뷰를 남겼다냥!"
+  },
+  "SessionLogs": {
+    "title": "세션 기록 ({count}개)",
+    "addRecord": "+ 기록 추가",
+    "newRecordPrompt": "새 세션 기록을 남겨달라냥!",
+    "sessionTitle": "세션 제목 (필수)",
+    "externalLink": "외부 링크 (구글독스, 포스타입 등)",
+    "summary": "간단한 요약 (선택)",
+    "saveRecord": "기록 저장",
+    "saving": "저장 중...",
+    "viewDetail": "자세히 보기",
+    "empty": "아직 기록이 없다냥... 첫 세션 기록을 남겨봐냥!",
+    "deleteConfirm": "이 기록을 삭제할까냥?",
+    "saveFailed": "등록 실패: {error}",
+    "deleteFailed": "삭제 실패: {error}"
+  }
+}

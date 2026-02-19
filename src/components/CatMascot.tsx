@@ -1,51 +1,35 @@
 "use client";
 
 import { useState, useEffect } from "react";
-
-const catMessages = [
-  "오늘의 모험을 찾아보라냥! 🎲",
-  "새로운 파티가 기다리고 있다냥~",
-  "집사, 같이 던전 갈 사람 찾자냥!",
-  "주사위 운이 좋을 것 같다냥 ✨",
-  "멋진 마스터를 찾아보라냥!",
-];
+import { useTranslations } from "next-intl";
 
 export default function CatMascot() {
-  const [message, setMessage] = useState(catMessages[0]);
-  const [isBlinking, setIsBlinking] = useState(false);
+  const t = useTranslations("CatMascot");
+  const messages = [
+    t("msg1"), t("msg2"), t("msg3"), t("msg4"),
+    t("msg5"), t("msg6"), t("msg7"),
+  ];
+
+  const [message, setMessage] = useState(messages[0]);
 
   useEffect(() => {
-    // Rotate messages
     const msgInterval = setInterval(() => {
-      setMessage(catMessages[Math.floor(Math.random() * catMessages.length)]);
+      setMessage(messages[Math.floor(Math.random() * messages.length)]);
     }, 5000);
 
-    // Blink animation
-    const blinkInterval = setInterval(() => {
-      setIsBlinking(true);
-      setTimeout(() => setIsBlinking(false), 200);
-    }, 3000);
-
-    return () => {
-      clearInterval(msgInterval);
-      clearInterval(blinkInterval);
-    };
+    return () => clearInterval(msgInterval);
   }, []);
 
   return (
-    <div className="flex items-center gap-4 bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-100">
-      {/* Cat face */}
-      <div className="text-5xl flex-shrink-0 select-none" role="img" aria-label="cat mascot">
+    <div className="flex items-center gap-4 bg-linear-to-r from-amber-50 to-orange-50 rounded-2xl p-4 border border-amber-100">
+      <div className="text-5xl shrink-0 select-none" role="img" aria-label="cat mascot">
         <div className="relative">
-          <span className={`transition-all duration-100 ${isBlinking ? "opacity-0" : "opacity-100"}`}>
-            😺
-          </span>
+          <span>🧙‍♂️</span>
+          <span className="absolute -bottom-1 -right-1 text-lg">🐱</span>
         </div>
       </div>
-
-      {/* Speech bubble */}
       <div className="relative bg-white rounded-xl px-4 py-2.5 shadow-sm border border-amber-100 flex-1">
-        <div className="absolute left-[-8px] top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-r-[8px] border-r-white border-b-[6px] border-b-transparent" />
+        <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[6px] border-t-transparent border-r-8 border-r-white border-b-[6px] border-b-transparent" />
         <p className="text-sm text-gray-700 font-medium">{message}</p>
       </div>
     </div>

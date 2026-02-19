@@ -1,25 +1,29 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
 import { useCallback } from "react";
-
-const meetingTypes = [
-  { value: "", label: "전체" },
-  { value: "online", label: "온라인" },
-  { value: "offline", label: "오프라인" },
-  { value: "hybrid", label: "하이브리드" },
-];
+import { useTranslations } from "next-intl";
 
 interface Props {
   systems: { id: string; name: string }[];
 }
 
 export default function PartyFilters({ systems }: Props) {
+  const t = useTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
 
+  const meetingTypes = [
+    { value: "", label: t("MeetingType.all") },
+    { value: "online", label: t("MeetingType.online") },
+    { value: "offline", label: t("MeetingType.offline") },
+    { value: "hybrid", label: t("MeetingType.hybrid") },
+  ];
+
   const currentMeeting = searchParams.get("meeting") ?? "";
   const currentSystem = searchParams.get("system") ?? "";
+  const currentGmWanted = searchParams.get("gm_wanted") === "true";
 
   const updateFilter = useCallback(
     (key: string, value: string) => {
@@ -36,7 +40,6 @@ export default function PartyFilters({ systems }: Props) {
 
   return (
     <div className="flex flex-wrap gap-2">
-      {/* Meeting type filter */}
       <div className="flex gap-1 bg-gray-50 rounded-xl p-1">
         {meetingTypes.map((type) => (
           <button
@@ -53,13 +56,25 @@ export default function PartyFilters({ systems }: Props) {
         ))}
       </div>
 
-      {/* System filter */}
+      <button
+        onClick={() =>
+          updateFilter("gm_wanted", currentGmWanted ? "" : "true")
+        }
+        className={`px-3 py-1.5 rounded-xl text-sm font-medium transition-colors border ${
+          currentGmWanted
+            ? "bg-purple-500 text-white border-purple-500 shadow-sm"
+            : "text-gray-500 hover:text-gray-700 border-gray-200 bg-white"
+        }`}
+      >
+        🎲 {t("Party.gmRecruit")}
+      </button>
+
       <select
         value={currentSystem}
         onChange={(e) => updateFilter("system", e.target.value)}
         className="px-3 py-1.5 rounded-xl text-sm border border-gray-200 bg-white text-gray-700 focus:outline-none focus:ring-2 focus:ring-amber-300"
       >
-        <option value="">🎲 모든 시스템</option>
+        <option value="">📖 {t("Party.selectRulebook")}</option>
         {systems.map((sys) => (
           <option key={sys.id} value={sys.id}>
             {sys.name}

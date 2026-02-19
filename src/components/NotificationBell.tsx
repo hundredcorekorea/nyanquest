@@ -2,7 +2,8 @@
 
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
+import { useTranslations } from "next-intl";
 
 interface Notification {
   id: string;
@@ -11,17 +12,6 @@ interface Notification {
   party_id: string | null;
   is_read: boolean;
   created_at: string;
-}
-
-function timeAgo(dateStr: string): string {
-  const diff = Date.now() - new Date(dateStr).getTime();
-  const minutes = Math.floor(diff / 60000);
-  if (minutes < 1) return "방금";
-  if (minutes < 60) return `${minutes}분 전`;
-  const hours = Math.floor(minutes / 60);
-  if (hours < 24) return `${hours}시간 전`;
-  const days = Math.floor(hours / 24);
-  return `${days}일 전`;
 }
 
 const typeEmoji: Record<string, string> = {
@@ -34,10 +24,23 @@ const typeEmoji: Record<string, string> = {
 };
 
 export default function NotificationBell({ userId }: { userId: string }) {
+  const t = useTranslations("Notification");
+  const tTime = useTranslations("TimeAgo");
   const supabase = createClient();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
   const [unreadCount, setUnreadCount] = useState(0);
+
+  function timeAgo(dateStr: string): string {
+    const diff = Date.now() - new Date(dateStr).getTime();
+    const minutes = Math.floor(diff / 60000);
+    if (minutes < 1) return tTime("justNow");
+    if (minutes < 60) return tTime("minutesAgo", { count: minutes });
+    const hours = Math.floor(minutes / 60);
+    if (hours < 24) return tTime("hoursAgo", { count: hours });
+    const days = Math.floor(hours / 24);
+    return tTime("daysAgo", { count: days });
+  }
 
   const loadNotifications = async () => {
     const { data } = await supabase
@@ -55,7 +58,6 @@ export default function NotificationBell({ userId }: { userId: string }) {
 
   useEffect(() => {
     loadNotifications();
-    // Poll every 30 seconds
     const interval = setInterval(loadNotifications, 30000);
     return () => clearInterval(interval);
   }, [userId]);
@@ -75,18 +77,8 @@ export default function NotificationBell({ userId }: { userId: string }) {
         }}
         className="relative w-9 h-9 flex items-center justify-center rounded-full hover:bg-amber-50 transition-colors"
       >
-        <svg
-          className="w-5 h-5 text-gray-500"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          strokeWidth={2}
-        >
-          <path
-            strokeLinecap="round"
-            strokeLinejoin="round"
-            d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0"
-          />
+        <svg className="w-5 h-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+          <path strokeLinecap="round" strokeLinejoin="round" d="M14.857 17.082a23.848 23.848 0 005.454-1.31A8.967 8.967 0 0118 9.75v-.7V9A6 6 0 006 9v.75a8.967 8.967 0 01-2.312 6.022c1.733.64 3.56 1.085 5.455 1.31m5.714 0a24.255 24.255 0 01-5.714 0m5.714 0a3 3 0 11-5.714 0" />
         </svg>
         {unreadCount > 0 && (
           <span className="absolute -top-0.5 -right-0.5 w-4.5 h-4.5 bg-red-500 text-white text-[10px] font-bold rounded-full flex items-center justify-center min-w-[18px] h-[18px]">
@@ -97,19 +89,13 @@ export default function NotificationBell({ userId }: { userId: string }) {
 
       {open && (
         <>
-          <div
-            className="fixed inset-0 z-40"
-            onClick={() => setOpen(false)}
-          />
-          <div className="absolute right-0 top-full mt-2 bg-white rounded-xl shadow-lg border border-gray-100 z-50 w-80 max-h-96 overflow-y-auto">
+          <div className="fixed inset-0 z-40" onClick={() => setOpen(false)} />
+          <div className="fixed left-2 right-2 top-14 sm:absolute sm:left-auto sm:right-0 sm:top-full sm:mt-2 sm:w-80 bg-white rounded-xl shadow-lg border border-gray-100 z-50 max-h-96 overflow-y-auto">
             <div className="sticky top-0 bg-white px-4 py-3 border-b border-gray-50 flex items-center justify-between">
-              <h3 className="font-bold text-sm text-gray-900">알림</h3>
+              <h3 className="font-bold text-sm text-gray-900">{t("title")}</h3>
               {notifications.length > 0 && (
-                <button
-                  onClick={markAllRead}
-                  className="text-xs text-amber-500 hover:text-amber-600"
-                >
-                  모두 읽음
+                <button onClick={markAllRead} className="text-xs text-amber-500 hover:text-amber-600">
+                  {t("markAllRead")}
                 </button>
               )}
             </div>
@@ -117,7 +103,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
             {notifications.length === 0 ? (
               <div className="px-4 py-8 text-center">
                 <p className="text-2xl mb-2">🔔</p>
-                <p className="text-xs text-gray-400">알림이 없다냥~</p>
+                <p className="text-xs text-gray-400">{t("empty")}</p>
               </div>
             ) : (
               <div>
@@ -129,37 +115,21 @@ export default function NotificationBell({ userId }: { userId: string }) {
                     }`}
                   >
                     {n.party_id ? (
-                      <Link
-                        href={`/party/${n.party_id}`}
-                        onClick={() => setOpen(false)}
-                        className="block"
-                      >
+                      <Link href={`/party/${n.party_id}`} onClick={() => setOpen(false)} className="block">
                         <div className="flex gap-2">
-                          <span className="text-sm flex-shrink-0">
-                            {typeEmoji[n.type] ?? "🐱"}
-                          </span>
+                          <span className="text-sm flex-shrink-0">{typeEmoji[n.type] ?? "🐱"}</span>
                           <div className="min-w-0">
-                            <p className="text-xs text-gray-700 leading-relaxed">
-                              {n.message}
-                            </p>
-                            <p className="text-[10px] text-gray-400 mt-1">
-                              {timeAgo(n.created_at)}
-                            </p>
+                            <p className="text-xs text-gray-700 leading-relaxed">{n.message}</p>
+                            <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                           </div>
                         </div>
                       </Link>
                     ) : (
                       <div className="flex gap-2">
-                        <span className="text-sm flex-shrink-0">
-                          {typeEmoji[n.type] ?? "🐱"}
-                        </span>
+                        <span className="text-sm flex-shrink-0">{typeEmoji[n.type] ?? "🐱"}</span>
                         <div className="min-w-0">
-                          <p className="text-xs text-gray-700 leading-relaxed">
-                            {n.message}
-                          </p>
-                          <p className="text-[10px] text-gray-400 mt-1">
-                            {timeAgo(n.created_at)}
-                          </p>
+                          <p className="text-xs text-gray-700 leading-relaxed">{n.message}</p>
+                          <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                         </div>
                       </div>
                     )}

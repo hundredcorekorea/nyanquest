@@ -36,7 +36,7 @@ export async function GET(request: Request) {
   const { data: party } = await supabase
     .from("parties")
     .select(
-      "title, content, max_players, current_players, meeting_type, status, scheduled_at, gm:profiles!parties_gm_id_fkey(nickname, manner_temp), system:trpg_systems(name)"
+      "title, content, max_players, current_players, meeting_type, status, scheduled_at, looking_for_gm, creator:profiles!parties_creator_id_fkey(nickname, manner_temp), gm:profiles!parties_gm_id_fkey(nickname, manner_temp), system:trpg_systems(name)"
     )
     .eq("id", id)
     .single();
@@ -70,6 +70,8 @@ export async function GET(request: Request) {
     meeting_type: string;
     status: string;
     scheduled_at: string | null;
+    looking_for_gm: boolean;
+    creator: { nickname: string; manner_temp: number } | null;
     gm: { nickname: string; manner_temp: number } | null;
     system: { name: string } | null;
   };
@@ -240,7 +242,7 @@ export async function GET(request: Request) {
           {/* Spacer */}
           <div style={{ flex: 1 }} />
 
-          {/* GM info */}
+          {/* Creator info */}
           <div
             style={{
               display: "flex",
@@ -253,10 +255,10 @@ export async function GET(request: Request) {
             <span style={{ fontSize: "32px" }}>😺</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span style={{ fontWeight: 700 }}>
-                {p.gm?.nickname ?? "GM"}
+                {p.creator?.nickname ?? p.gm?.nickname ?? "파티장"}
               </span>
               <span style={{ fontSize: "18px", color: "#D97706" }}>
-                {p.gm?.manner_temp ?? 36.5}°
+                {p.creator?.manner_temp ?? p.gm?.manner_temp ?? 36.5}°
               </span>
             </div>
           </div>
