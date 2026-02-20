@@ -436,6 +436,26 @@
     "catLevel4Name": "Archmage Cat",
     "catLevel4Title": "Legendary Adventurer"
   },
+  "PlayProfile": {
+    "title": "Play Profile",
+    "favoriteWorksTitle": "Works That Define Me",
+    "favoriteWorksGuide": "Share 3 favorite movies/games/novels to express your taste!",
+    "workTitle": "Title",
+    "workTitlePlaceholder": "e.g., Baldur's Gate 3",
+    "workReason": "Why",
+    "workReasonPlaceholder": "e.g., Love the tactical combat and meaningful choices",
+    "preferredTitle": "Preferred Elements",
+    "preferredPlaceholder": "Add a preferred element",
+    "avoidedTitle": "Avoided Elements",
+    "avoidedPlaceholder": "Add an avoided element",
+    "suggestedPreferred": ["Tactical Combat", "Dungeon Crawling", "Character Drama", "Epic Narrative", "Mystery/Investigation", "Politics/Diplomacy", "Comedy/Humor", "Horror", "Worldbuilding", "High Freedom Play"],
+    "suggestedAvoided": ["PvP", "Forced Roleplay", "Excessive Combat", "Adult Content", "Hardcore Rules", "Improv GM", "Long Sessions (4h+)"],
+    "empty": "No play profile written yet, nya",
+    "emptyOther": "No play profile yet, nya",
+    "writeNow": "Write Now",
+    "saved": "Play profile saved, nya!",
+    "ntcCredit": "Inspired by NTC's 'Self-Introduction Post' culture"
+  },
   "Premium": {
     "title": "nyanQuest Premium",
     "subtitle": "Unlock a more powerful AI, unlimited training, and premium scenarios, nya!",

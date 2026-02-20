@@ -10,6 +10,9 @@ import { usePremium } from "@/hooks/usePremium";
 import { TITLES, getTitleDef } from "@/lib/titles";
 import Image from "next/image";
 import { useTranslations, useLocale } from "next-intl";
+import PlayProfileDisplay from "@/components/PlayProfileDisplay";
+import PlayProfileEditor from "@/components/PlayProfileEditor";
+import type { FavoriteWork } from "@/types/database";
 
 async function resizeImage(file: File, maxSize: number): Promise<Blob> {
   return new Promise((resolve, reject) => {
@@ -48,6 +51,7 @@ export default function MyPage() {
   const t = useTranslations("MyPage");
   const tCommon = useTranslations("Common");
   const tStatus = useTranslations("Status");
+  const tPlayProfile = useTranslations("PlayProfile");
   const locale = useLocale();
   const dateLocale = locale === "ko" ? "ko-KR" : "en-US";
   const [user, setUser] = useState<User | null>(null);
@@ -62,6 +66,7 @@ export default function MyPage() {
   const [uploading, setUploading] = useState(false);
   const [earnedTitles, setEarnedTitles] = useState<UserTitle[]>([]);
   const [showTitleModal, setShowTitleModal] = useState(false);
+  const [editingPlayProfile, setEditingPlayProfile] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const CAT_LEVELS = [
@@ -484,6 +489,48 @@ export default function MyPage() {
           </div>
         )}
       </div>
+
+      {/* Play Profile */}
+      {editingPlayProfile ? (
+        <PlayProfileEditor
+          userId={user.id}
+          initialWorks={profile.favorite_works ?? []}
+          initialPreferred={profile.preferred_elements ?? []}
+          initialAvoided={profile.avoided_elements ?? []}
+          onSave={(works, preferred, avoided) => {
+            setProfile((prev) =>
+              prev
+                ? { ...prev, favorite_works: works, preferred_elements: preferred, avoided_elements: avoided }
+                : prev
+            );
+            setEditingPlayProfile(false);
+          }}
+          onCancel={() => setEditingPlayProfile(false)}
+        />
+      ) : (profile.favorite_works?.length > 0 ||
+          profile.preferred_elements?.length > 0 ||
+          profile.avoided_elements?.length > 0) ? (
+        <div className="space-y-2">
+          <PlayProfileDisplay
+            favoriteWorks={profile.favorite_works ?? []}
+            preferredElements={profile.preferred_elements ?? []}
+            avoidedElements={profile.avoided_elements ?? []}
+          />
+          <button
+            onClick={() => setEditingPlayProfile(true)}
+            className="text-xs text-amber-500 hover:text-amber-600 font-medium"
+          >
+            ✏️ {tCommon("edit")}
+          </button>
+        </div>
+      ) : (
+        <button
+          onClick={() => setEditingPlayProfile(true)}
+          className="w-full py-3 rounded-xl border-2 border-dashed border-amber-200 text-sm font-medium text-amber-500 hover:bg-amber-50 transition-colors"
+        >
+          🎭 {tPlayProfile("empty")} — {tPlayProfile("writeNow")}
+        </button>
+      )}
 
       {/* Premium subscription card */}
       {isPremium && subscription ? (

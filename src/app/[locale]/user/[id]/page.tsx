@@ -8,6 +8,7 @@ import GmStatsBadge from "@/components/GmStatsBadge";
 import ProfileActions from "./ProfileActions";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
+import PlayProfileDisplay from "@/components/PlayProfileDisplay";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 interface Props {
@@ -258,6 +259,13 @@ export default async function PublicProfilePage({ params }: Props) {
           </div>
         </div>
       </div>
+
+      {/* Play Profile */}
+      <PlayProfileDisplay
+        favoriteWorks={p.favorite_works ?? []}
+        preferredElements={p.preferred_elements ?? []}
+        avoidedElements={p.avoided_elements ?? []}
+      />
 
       {/* Review Summary */}
       {totalReviews > 0 && (

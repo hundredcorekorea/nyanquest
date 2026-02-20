@@ -1,3 +1,8 @@
+export interface FavoriteWork {
+  title: string;
+  reason: string;
+}
+
 export interface Profile {
   id: string;
   nickname: string;
@@ -8,6 +13,9 @@ export interface Profile {
   style_tags: string[];
   manner_temp: number;
   active_title: string | null;
+  favorite_works: FavoriteWork[];
+  preferred_elements: string[];
+  avoided_elements: string[];
   created_at: string;
   updated_at: string;
 }
