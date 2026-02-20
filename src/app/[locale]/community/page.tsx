@@ -7,6 +7,7 @@ import { getTranslations, setRequestLocale } from "next-intl/server";
 
 interface SearchParams {
   category?: string;
+  lang?: string;
 }
 
 export default async function CommunityPage({
@@ -58,6 +59,12 @@ export default async function CommunityPage({
     query = query.eq("category", sp.category);
   }
 
+  // Language filter: default to current locale, "all" shows everything
+  const langFilter = sp.lang ?? locale;
+  if (langFilter !== "all") {
+    query = query.eq("language", langFilter);
+  }
+
   const { data: posts } = await query;
   const typedPosts = (posts ?? []) as unknown as Post[];
 
@@ -76,7 +83,7 @@ export default async function CommunityPage({
 
       {/* Category tabs */}
       <Suspense>
-        <CommunityFilters />
+        <CommunityFilters currentLang={sp.lang ?? locale} />
       </Suspense>
 
       {/* Post list */}

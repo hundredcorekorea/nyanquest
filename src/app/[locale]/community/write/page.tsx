@@ -6,7 +6,7 @@ import { useRouter } from "@/i18n/navigation";
 import type { User } from "@supabase/supabase-js";
 import type { TrpgSystem, PostCategory } from "@/types/database";
 import { useToast } from "@/components/Toast";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 export default function WritePostPage() {
   const router = useRouter();
@@ -15,6 +15,7 @@ export default function WritePostPage() {
   const t = useTranslations("CommunityWrite");
   const tCommon = useTranslations("Common");
   const tCommunity = useTranslations("Community");
+  const locale = useLocale();
   const [user, setUser] = useState<User | null>(null);
   const [systems, setSystems] = useState<TrpgSystem[]>([]);
   const [submitting, setSubmitting] = useState(false);
@@ -62,6 +63,7 @@ export default function WritePostPage() {
         title: form.title.trim(),
         content: form.content.trim(),
         system_id: form.system_id || null,
+        language: locale,
       })
       .select("id")
       .single();

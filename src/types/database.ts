@@ -94,6 +94,7 @@ export interface Post {
   title: string;
   content: string;
   system_id: string | null;
+  language: "ko" | "en";
   view_count: number;
   likes_count: number;
   comments_count: number;
