@@ -5,6 +5,7 @@ import { buildMultiplayerSystemPrompt } from "@/lib/party-session/prompts";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import { NextRequest } from "next/server";
 import type { SessionMessage } from "@/types/party-session";
+import { apiMsg } from "@/lib/api-messages";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -13,7 +14,7 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return Response.json({ error: "로그인이 필요하다냥!" }, { status: 401 });
+    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const body = await request.json();
@@ -24,12 +25,12 @@ export async function POST(request: NextRequest) {
   };
 
   if (!sessionId || !playerMessage) {
-    return Response.json({ error: "잘못된 요청이다냥" }, { status: 400 });
+    return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
   if (playerMessage.length > 500) {
     return Response.json(
-      { error: "메시지가 너무 길다냥! 500자 이내로 줄여달라냥." },
+      { error: apiMsg("messageTooLong", request) },
       { status: 400 }
     );
   }
@@ -42,21 +43,21 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!session) {
-    return Response.json({ error: "세션을 찾을 수 없다냥" }, { status: 404 });
+    return Response.json({ error: apiMsg("sessionNotFound", request) }, { status: 404 });
   }
 
   if (session.status !== "active") {
-    return Response.json({ error: "종료된 세션이다냥" }, { status: 400 });
+    return Response.json({ error: apiMsg("sessionEnded", request) }, { status: 400 });
   }
 
   if (!session.use_ai_gm) {
-    return Response.json({ error: "AI GM이 아닌 세션이다냥" }, { status: 400 });
+    return Response.json({ error: apiMsg("notAiGmSession", request) }, { status: 400 });
   }
 
   // Check turn limit
   if ((session.turn_count ?? 0) >= (session.total_turns ?? 20)) {
     return Response.json(
-      { error: "턴 제한에 도달했다냥! 세션이 종료된다냥." },
+      { error: apiMsg("turnLimitReached", request) },
       { status: 400 }
     );
   }
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!membership) {
-    return Response.json({ error: "파티 멤버가 아니다냥" }, { status: 403 });
+    return Response.json({ error: apiMsg("notPartyMember", request) }, { status: 403 });
   }
 
   const playerName = (membership.user as unknown as { nickname: string })?.nickname ?? "모험가";
@@ -190,7 +191,7 @@ export async function POST(request: NextRequest) {
       `[party-session] OpenRouter ${openRouterResponse.status}: ${errBody}`
     );
     return Response.json(
-      { error: "AI GM이 잠시 쉬고 있다냥... 다시 시도해달라냥!" },
+      { error: apiMsg("aiGmUnavailable", request) },
       { status: 502 }
     );
   }

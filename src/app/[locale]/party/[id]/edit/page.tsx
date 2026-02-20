@@ -10,6 +10,8 @@ import { useToast } from "@/components/Toast";
 import DateTimePicker from "@/components/DateTimePicker";
 import { useTranslations } from "next-intl";
 
+const CUSTOM_SYSTEM_NAME = "기타 (직접 입력)";
+
 export default function EditPartyPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -129,7 +131,7 @@ export default function EditPartyPage() {
   }
 
   const isCustomSystem =
-    systems.find((s) => s.id === form.system_id)?.name === "기타 (직접 입력)";
+    systems.find((s) => s.id === form.system_id)?.name === CUSTOM_SYSTEM_NAME;
 
   return (
     <div className="pb-24 max-w-lg mx-auto space-y-5">
@@ -166,7 +168,7 @@ export default function EditPartyPage() {
               key={sys.id}
               onClick={() => {
                 update("system_id", sys.id);
-                if (sys.name !== "기타 (직접 입력)")
+                if (sys.name !== CUSTOM_SYSTEM_NAME)
                   update("custom_system_name", "");
               }}
               className={`p-3 rounded-xl border text-sm font-medium text-left transition-all ${

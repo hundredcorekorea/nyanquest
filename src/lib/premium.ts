@@ -23,15 +23,20 @@ export const PLANS = {
   monthly: {
     price: 4900,
     label: "월간 구독",
+    labelEn: "Monthly",
     period: "월",
+    periodEn: "mo",
     durationDays: 30,
   },
   yearly: {
     price: 39000,
     label: "연간 구독",
+    labelEn: "Yearly",
     period: "년",
+    periodEn: "yr",
     durationDays: 365,
     discount: "33% 할인",
+    discountEn: "33% off",
   },
 } as const;
 

@@ -6,6 +6,7 @@ export const runtime = "edge";
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const id = searchParams.get("id");
+  const lang = searchParams.get("lang") === "en" ? "en" : "ko";
 
   if (!id) {
     return new ImageResponse(
@@ -55,7 +56,7 @@ export async function GET(request: Request) {
             fontSize: 36,
           }}
         >
-          😿 파티를 찾을 수 없다냥...
+          {lang === "ko" ? "😿 파티를 찾을 수 없다냥..." : "😿 Party not found, meow..."}
         </div>
       ),
       { width: 1200, height: 630 }
@@ -78,19 +79,19 @@ export async function GET(request: Request) {
 
   const meetingLabel =
     p.meeting_type === "online"
-      ? "💻 온라인"
+      ? (lang === "ko" ? "💻 온라인" : "💻 Online")
       : p.meeting_type === "offline"
-        ? "🏠 오프라인"
-        : "🔄 하이브리드";
+        ? (lang === "ko" ? "🏠 오프라인" : "🏠 Offline")
+        : (lang === "ko" ? "🔄 하이브리드" : "🔄 Hybrid");
 
   const statusLabel =
     p.status === "recruiting"
-      ? "모집중"
+      ? (lang === "ko" ? "모집중" : "Recruiting")
       : p.status === "filled"
-        ? "마감"
+        ? (lang === "ko" ? "마감" : "Filled")
         : p.status === "completed"
-          ? "완료"
-          : "취소";
+          ? (lang === "ko" ? "완료" : "Completed")
+          : (lang === "ko" ? "취소" : "Cancelled");
 
   const statusColor =
     p.status === "recruiting"
@@ -203,7 +204,7 @@ export async function GET(request: Request) {
               color: "#B45309",
             }}
           >
-            🎲 {p.system?.name ?? "미정"}
+            🎲 {p.system?.name ?? (lang === "ko" ? "미정" : "TBD")}
           </div>
 
           {/* Meeting type */}
@@ -236,7 +237,7 @@ export async function GET(request: Request) {
               color: "#15803D",
             }}
           >
-            👥 {p.current_players}/{p.max_players}명
+            👥 {p.current_players}/{p.max_players}{lang === "ko" ? "명" : ""}
           </div>
 
           {/* Spacer */}
@@ -255,7 +256,7 @@ export async function GET(request: Request) {
             <span style={{ fontSize: "32px" }}>😺</span>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <span style={{ fontWeight: 700 }}>
-                {p.creator?.nickname ?? p.gm?.nickname ?? "파티장"}
+                {p.creator?.nickname ?? p.gm?.nickname ?? (lang === "ko" ? "파티장" : "Leader")}
               </span>
               <span style={{ fontSize: "18px", color: "#D97706" }}>
                 {p.creator?.manner_temp ?? p.gm?.manner_temp ?? 36.5}°

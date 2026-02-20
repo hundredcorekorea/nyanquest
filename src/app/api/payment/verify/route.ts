@@ -2,21 +2,23 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyPayment } from "@/lib/portone";
 import { PLANS } from "@/lib/premium";
+import { NextRequest } from "next/server";
+import { apiMsg } from "@/lib/api-messages";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return Response.json({ error: "로그인이 필요하다냥!" }, { status: 401 });
+    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const { paymentId, plan } = await request.json();
 
   const planConfig = PLANS[plan as keyof typeof PLANS];
   if (!planConfig) {
-    return Response.json({ error: "잘못된 플랜이다냥" }, { status: 400 });
+    return Response.json({ error: apiMsg("invalidPlan", request) }, { status: 400 });
   }
 
   // Verify with Portone
@@ -26,21 +28,21 @@ export async function POST(request: Request) {
   } catch (err) {
     console.error("[payment/verify] Portone error:", err);
     return Response.json(
-      { error: "결제 확인에 실패했다냥" },
+      { error: apiMsg("paymentVerificationFailed", request) },
       { status: 502 }
     );
   }
 
   if (verified.status !== "PAID") {
     return Response.json(
-      { error: "결제가 확인되지 않았다냥" },
+      { error: apiMsg("paymentNotConfirmed", request) },
       { status: 400 }
     );
   }
 
   if (verified.amount?.total !== planConfig.price) {
     return Response.json(
-      { error: "금액이 일치하지 않다냥" },
+      { error: apiMsg("amountMismatch", request) },
       { status: 400 }
     );
   }

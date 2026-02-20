@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getScenario } from "@/lib/solo-quest/scenarios";
 import { buildSystemPrompt } from "@/lib/solo-quest/prompts";
 import { PREMIUM_CONFIG } from "@/lib/premium";
+import { apiMsg } from "@/lib/api-messages";
 import { NextRequest } from "next/server";
 import type { QuestMessage } from "@/types/solo-quest";
 
@@ -12,7 +13,7 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return Response.json({ error: "로그인이 필요하다냥!" }, { status: 401 });
+    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const body = await request.json();
@@ -34,19 +35,19 @@ export async function POST(request: NextRequest) {
 
   // Validate input
   if (!questId || !scenarioId || !playerMessage) {
-    return Response.json({ error: "잘못된 요청이다냥" }, { status: 400 });
+    return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
   if (playerMessage.length > 500) {
     return Response.json(
-      { error: "메시지가 너무 길다냥! 500자 이내로 줄여달라냥." },
+      { error: apiMsg("messageTooLong", request) },
       { status: 400 }
     );
   }
 
   if (turnCount > 100) {
     return Response.json(
-      { error: "턴 제한을 초과했다냥!" },
+      { error: apiMsg("turnLimitExceeded", request) },
       { status: 400 }
     );
   }
@@ -59,12 +60,12 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!quest || quest.user_id !== user.id) {
-    return Response.json({ error: "퀘스트를 찾을 수 없다냥" }, { status: 404 });
+    return Response.json({ error: apiMsg("questNotFound", request) }, { status: 404 });
   }
 
   if (quest.status !== "in_progress") {
     return Response.json(
-      { error: "이미 종료된 퀘스트다냥" },
+      { error: apiMsg("questAlreadyEnded", request) },
       { status: 400 }
     );
   }
@@ -73,7 +74,7 @@ export async function POST(request: NextRequest) {
   const scenario = getScenario(scenarioId);
   if (!scenario) {
     return Response.json(
-      { error: "시나리오를 찾을 수 없다냥" },
+      { error: apiMsg("scenarioNotFound", request) },
       { status: 404 }
     );
   }
@@ -135,7 +136,7 @@ export async function POST(request: NextRequest) {
       `[solo-quest] OpenRouter ${openRouterResponse.status}: ${errBody}`
     );
     return Response.json(
-      { error: "AI가 잠시 쉬고 있다냥... 다시 시도해달라냥!" },
+      { error: apiMsg("aiUnavailable", request) },
       { status: 502 }
     );
   }

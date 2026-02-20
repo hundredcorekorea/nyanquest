@@ -1,13 +1,15 @@
+import { NextRequest } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { apiMsg } from "@/lib/api-messages";
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return Response.json({ error: "로그인이 필요하다냥!" }, { status: 401 });
+    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const admin = createAdminClient();
@@ -23,7 +25,7 @@ export async function POST() {
 
   if (!sub) {
     return Response.json(
-      { error: "활성 구독이 없다냥" },
+      { error: apiMsg("noActiveSubscription", request) },
       { status: 404 }
     );
   }

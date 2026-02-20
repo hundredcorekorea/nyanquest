@@ -1,19 +1,21 @@
 import { createClient } from "@/lib/supabase/server";
 import { PLANS, type PlanType } from "@/lib/premium";
 import { randomUUID } from "crypto";
+import { NextRequest } from "next/server";
+import { apiMsg } from "@/lib/api-messages";
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
   if (!user) {
-    return Response.json({ error: "로그인이 필요하다냥!" }, { status: 401 });
+    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const { plan } = (await request.json()) as { plan: PlanType };
   if (!PLANS[plan]) {
-    return Response.json({ error: "잘못된 구독 플랜이다냥" }, { status: 400 });
+    return Response.json({ error: apiMsg("invalidPlan", request) }, { status: 400 });
   }
 
   // Check if user already has active subscription
@@ -22,7 +24,7 @@ export async function POST(request: Request) {
   });
   if (isPremium) {
     return Response.json(
-      { error: "이미 프리미엄 구독 중이다냥!" },
+      { error: apiMsg("alreadyPremium", request) },
       { status: 400 }
     );
   }

@@ -12,7 +12,7 @@ function buildStats(
 
   const systemCounts: Record<string, number> = {};
   for (const p of parties) {
-    const name = p.system?.name ?? "기타";
+    const name = p.system?.name ?? "Other";
     systemCounts[name] = (systemCounts[name] ?? 0) + 1;
   }
   const systems = Object.entries(systemCounts)
