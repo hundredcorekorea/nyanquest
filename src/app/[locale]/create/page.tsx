@@ -100,6 +100,7 @@ export default function CreatePartyPage() {
         scheduled_at: form.scheduled_at || null,
         use_ai_gm: form.use_ai_gm,
         play_mode: form.play_mode,
+        language: locale,
       })
       .select("id")
       .single();

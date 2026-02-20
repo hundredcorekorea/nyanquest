@@ -12,12 +12,14 @@ interface Props {
   initialCount: number;
   meeting?: string;
   system?: string;
+  lang?: string;
 }
 
 export default function LoadMoreParties({
   initialCount,
   meeting,
   system,
+  lang,
 }: Props) {
   const t = useTranslations("Common");
   const supabase = createClient();
@@ -39,6 +41,7 @@ export default function LoadMoreParties({
 
     if (meeting) query = query.eq("meeting_type", meeting);
     if (system) query = query.eq("system_id", system);
+    if (lang && lang !== "all") query = query.eq("language", lang);
 
     const { data } = await query;
 

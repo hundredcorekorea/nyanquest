@@ -42,6 +42,7 @@ const mockParty: Party = {
   thumbnail_url: null,
   use_ai_gm: false,
   play_mode: "realtime",
+  language: "ko",
   created_at: new Date().toISOString(),
   updated_at: new Date().toISOString(),
   creator: {

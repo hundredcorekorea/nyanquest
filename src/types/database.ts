@@ -45,6 +45,7 @@ export interface Party {
   thumbnail_url: string | null;
   use_ai_gm: boolean;
   play_mode: "realtime" | "async";
+  language: "ko" | "en";
   created_at: string;
   updated_at: string;
   // Joined fields

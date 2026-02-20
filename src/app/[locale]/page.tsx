@@ -11,6 +11,7 @@ interface SearchParams {
   meeting?: string;
   system?: string;
   gm_wanted?: string;
+  lang?: string;
 }
 
 export default async function HomePage({
@@ -58,6 +59,12 @@ export default async function HomePage({
     query = query.eq("looking_for_gm", true);
   }
 
+  // Language filter: default to current locale, "all" shows everything
+  const langFilter = sp.lang ?? locale;
+  if (langFilter !== "all") {
+    query = query.eq("language", langFilter);
+  }
+
   const { data: parties } = await query;
 
   return (
@@ -67,7 +74,7 @@ export default async function HomePage({
 
       {/* Filters */}
       <Suspense>
-        <PartyFilters systems={(systems as TrpgSystem[]) ?? []} />
+        <PartyFilters systems={(systems as TrpgSystem[]) ?? []} currentLang={sp.lang ?? locale} />
       </Suspense>
 
       {/* Party list */}
@@ -81,6 +88,7 @@ export default async function HomePage({
               initialCount={parties.length}
               meeting={sp.meeting}
               system={sp.system}
+              lang={sp.lang ?? locale}
             />
           </>
         ) : (

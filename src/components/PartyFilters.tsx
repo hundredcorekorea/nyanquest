@@ -3,22 +3,30 @@
 import { useRouter } from "@/i18n/navigation";
 import { useSearchParams } from "next/navigation";
 import { useCallback } from "react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Props {
   systems: { id: string; name: string }[];
+  currentLang: string;
 }
 
-export default function PartyFilters({ systems }: Props) {
+export default function PartyFilters({ systems, currentLang }: Props) {
   const t = useTranslations();
   const router = useRouter();
   const searchParams = useSearchParams();
+  const locale = useLocale();
 
   const meetingTypes = [
     { value: "", label: t("MeetingType.all") },
     { value: "online", label: t("MeetingType.online") },
     { value: "offline", label: t("MeetingType.offline") },
     { value: "hybrid", label: t("MeetingType.hybrid") },
+  ];
+
+  const langOptions = [
+    { value: locale, label: locale === "ko" ? "🇰🇷 한국어" : "🇺🇸 English" },
+    { value: locale === "ko" ? "en" : "ko", label: locale === "ko" ? "🇺🇸 English" : "🇰🇷 한국어" },
+    { value: "all", label: t("Party.allLanguages") },
   ];
 
   const currentMeeting = searchParams.get("meeting") ?? "";
@@ -52,6 +60,22 @@ export default function PartyFilters({ systems }: Props) {
             }`}
           >
             {type.label}
+          </button>
+        ))}
+      </div>
+
+      <div className="flex gap-1 bg-gray-50 rounded-xl p-1">
+        {langOptions.map((opt) => (
+          <button
+            key={opt.value}
+            onClick={() => updateFilter("lang", opt.value === locale ? "" : opt.value)}
+            className={`px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
+              currentLang === opt.value
+                ? "bg-amber-500 text-white shadow-sm"
+                : "text-gray-500 hover:text-gray-700"
+            }`}
+          >
+            {opt.label}
           </button>
         ))}
       </div>

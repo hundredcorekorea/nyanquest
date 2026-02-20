@@ -53,6 +53,11 @@ export default function PartyCard({ party }: { party: Party }) {
             <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${meeting.color}`}>
               {meeting.text}
             </span>
+            {party.language && party.language !== locale && (
+              <span className="text-xs font-medium px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                {party.language === "ko" ? "🇰🇷" : "🇺🇸"}
+              </span>
+            )}
           </div>
           <span className="text-xs text-gray-400">
             {timeAgo(party.created_at)}
