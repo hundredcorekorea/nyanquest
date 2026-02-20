@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import CatMascot from "@/components/CatMascot";
+import StatsHero from "@/components/StatsHero";
 import PartyCard from "@/components/PartyCard";
 import PartyFilters from "@/components/PartyFilters";
 import LoadMoreParties from "@/components/LoadMoreParties";
@@ -71,6 +72,11 @@ export default async function HomePage({
     <div className="space-y-6 pb-20">
       {/* Cat mascot greeting */}
       <CatMascot />
+
+      {/* Platform stats */}
+      <Suspense>
+        <StatsHero />
+      </Suspense>
 
       {/* Filters */}
       <Suspense>

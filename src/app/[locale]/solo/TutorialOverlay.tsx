@@ -43,6 +43,10 @@ export default function TutorialOverlay({
     },
     {
       speaker: "🧙‍♂️🐱",
+      text: t("steps.explainPlayProfile"),
+    },
+    {
+      speaker: "🧙‍♂️🐱",
       text: t("steps.askTrpg"),
       action: "choice",
     },
@@ -57,11 +61,7 @@ export default function TutorialOverlay({
     },
     {
       speaker: "🧙‍♂️🐱",
-      text: t("steps.afterDice"),
-    },
-    {
-      speaker: "🧙‍♂️🐱",
-      text: t("steps.explainTraining"),
+      text: t("steps.afterDiceAndTraining"),
     },
     {
       speaker: "🧙‍♂️🐱",
@@ -82,9 +82,9 @@ export default function TutorialOverlay({
       onComplete();
       return;
     }
-    // After step 1 (choice), if they already know TRPG, skip explanation
-    if (step === 1 && skippedExplanation) {
-      setStep(3); // Jump to dice step
+    // After step 2 (choice), if they already know TRPG, skip explanation
+    if (step === 2 && skippedExplanation) {
+      setStep(4); // Jump to dice step
       return;
     }
     setStep((s) => s + 1);
@@ -103,9 +103,9 @@ export default function TutorialOverlay({
   const handleChoice = (knows: boolean) => {
     setSkippedExplanation(knows);
     if (knows) {
-      setStep(3); // Skip to dice
+      setStep(4); // Skip to dice
     } else {
-      setStep(2); // Go to explanation
+      setStep(3); // Go to explanation
     }
   };
 

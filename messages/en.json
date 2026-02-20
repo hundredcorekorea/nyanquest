@@ -67,6 +67,14 @@
     "selectRulebook": "Select Rulebook",
     "lookingForGm": "GM Wanted"
   },
+  "Stats": {
+    "adventurers": "Adventurers",
+    "quests": "Quests Cleared",
+    "parties": "Recruiting Parties",
+    "diceRolls": "Dice Rolled",
+    "earlyHero": "Be among the first adventurers of this secret dungeon!",
+    "startQuest": "Start Adventure"
+  },
   "CatMascot": {
     "msg1": "Today's roll is gonna be a Critical Success, nya! 🎲",
     "msg2": "A new quest just popped up on the board, nya~",
@@ -313,8 +321,8 @@
       "askTrpg": "Have you ever heard of TRPG, nya?",
       "explainTrpg": "TRPG stands for 'Tabletop Role-Playing Game', nya. You gather together like a board game, and the GM (Game Master) tells the story while you, the PL (Player), make choices, nya!",
       "explainDice": "The key thing here is the dice, nya! Dice decide whether your actions succeed or fail. Shall we give it a roll, nya?",
-      "afterDice": "Nice, nya! That's how you roll dice during adventures to overcome challenges. Don't worry about failing — failures make for great stories too, nya!",
-      "explainTraining": "Here in the Training Grounds, I'll take on the role of GM, nya. You can pick from choices or type in whatever action you want, nya!",
+      "afterDiceAndTraining": "Nice, nya! That's how dice work. Here I'll be your GM — pick from choices or type whatever action you want, nya!",
+      "explainPlayProfile": "Oh, check out 'Play Profile' on your page, nya! List your fave works and play style to find the purr-fect party 🎭",
       "ready": "Alright, are you ready, nya? Pick a scenario below and start your first adventure! NaYang will be waiting for you, nya~"
     },
     "rollD20": "Roll a d20!"
@@ -461,7 +469,7 @@
     "subtitle": "Unlock a more powerful AI, unlimited training, and premium scenarios, nya!",
     "benefits": "Premium Benefits",
     "benefitUnlimited": "Unlimited daily training (Free: 3 per day)",
-    "benefitAiModel": "High-performance AI model (Gemini 2.5 Flash)",
+    "benefitAiModel": "High-performance AI model",
     "benefitLongResponse": "2x longer AI responses (1000 chars)",
     "benefitExtendedTurns": "2.5x more turns (deeper adventures)",
     "benefitExpBonus": "1.5x EXP bonus",

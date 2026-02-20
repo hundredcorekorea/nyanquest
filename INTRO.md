@@ -27,6 +27,7 @@
 
 👉 nyanquest.vercel.app
 
+@nyanQuest_kr
 #nyanQuest #TRPG #AI_GM #인디게임 #웹게임
 ```
 
@@ -42,6 +43,7 @@
 
 👉 nyanquest.vercel.app/ko/solo
 
+@nyanQuest_kr
 #nyanQuest #TRPG #AI던전마스터
 ```
 
@@ -57,7 +59,22 @@
 
 👉 nyanquest.vercel.app
 
+@nyanQuest_kr
 #nyanQuest #TRPG #DnD #파티모집
+```
+
+### 플레이 프로필편
+
+```
+🎭 "나를 드러내는 작품 3가지"
+
+좋아하는 영화·게임·소설로 TRPG 취향을 표현하세요.
+플레이 프로필을 꾸미면 딱 맞는 파티를 찾을 수 있다냥!
+
+👉 nyanquest.vercel.app
+
+@nyanQuest_kr
+#nyanQuest #TRPG #플레이프로필
 ```
 
 ### 성장 시스템편
@@ -72,6 +89,7 @@
 
 👉 nyanquest.vercel.app
 
+@nyanQuest_kr
 #nyanQuest #TRPG #캐릭터성장
 ```
 
@@ -87,6 +105,7 @@ Roll the dice and start your quest, meow!
 
 👉 nyanquest.vercel.app/en
 
+@nyanQuest_kr
 #nyanQuest #TRPG #indiegame #AI #tabletop
 ```
 
@@ -227,7 +246,7 @@ TRPG를 사랑하는 집사들의 소통 공간입니다.
 
 - **웹**: [nyanquest.vercel.app](https://nyanquest.vercel.app)
 - **GitHub**: [github.com/hundredcorekorea/nyanquest](https://github.com/hundredcorekorea/nyanquest)
-- **Twitter/X**: (계정 추가 예정)
+- **Twitter/X**: [@nyanQuest_kr](https://x.com/nyanQuest_kr)
 
 ---
 

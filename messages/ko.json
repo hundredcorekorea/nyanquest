@@ -67,6 +67,14 @@
     "selectRulebook": "룰북 선택",
     "lookingForGm": "GM 구인"
   },
+  "Stats": {
+    "adventurers": "모험가",
+    "quests": "퀘스트 클리어",
+    "parties": "모집 중인 파티",
+    "diceRolls": "주사위 굴림",
+    "earlyHero": "비밀 던전의 초대 모험가가 되어보세요!",
+    "startQuest": "모험 시작하기"
+  },
   "CatMascot": {
     "msg1": "오늘의 판정은 대성공(Critical)일 것 같다냥! 🎲",
     "msg2": "새로운 퀘스트가 의뢰판에 올라왔다냥~",
@@ -313,8 +321,8 @@
       "askTrpg": "혹시 TRPG라는 걸 들어본 적 있냥?",
       "explainTrpg": "TRPG는 '테이블탑 롤플레잉 게임'의 약자다냥. 보드게임처럼 모여서, GM(게임 마스터)이 이야기를 들려주면 PL(플레이어)인 집사가 선택을 하는 거다냥!",
       "explainDice": "여기서 중요한 건 '주사위'다냥! 집사의 행동이 성공할지 실패할지를 주사위가 결정한다냥. 한 번 굴려볼까냥?",
-      "afterDice": "좋다냥! 이런 식으로 모험 중에 주사위를 굴려서 위기를 넘기는 거다냥. 실패해도 괜찮다냥, 실패도 재미있는 이야기가 되니까!",
-      "explainTraining": "여기 '수련장'에서는 내가 GM 역할을 맡아줄 거다냥. 집사는 선택지를 고르거나, 원하는 행동을 직접 타이핑하면 된다냥!",
+      "afterDiceAndTraining": "좋다냥! 이렇게 주사위로 위기를 넘기는 거다냥. 여기 수련장에서는 내가 GM을 맡을 테니, 선택지를 고르거나 직접 행동을 타이핑하면 된다냥!",
+      "explainPlayProfile": "참, 마이페이지에서 '플레이 프로필'도 꾸며보라냥! 좋아하는 작품이랑 선호 스타일을 적어두면 딱 맞는 파티를 찾을 수 있다냥 🎭",
       "ready": "자, 이제 준비 됐냥? 아래에서 시나리오를 골라서 첫 모험을 시작해 보자냥! 나양이 기다리고 있겠다냥~"
     },
     "rollD20": "d20 주사위 굴리기!"
@@ -461,7 +469,7 @@
     "subtitle": "더 강력한 AI, 무제한 수련, 프리미엄 시나리오를 즐겨보라냥!",
     "benefits": "프리미엄 혜택",
     "benefitUnlimited": "일일 수련 무제한 (무료: 3회)",
-    "benefitAiModel": "고성능 AI 모델 (Gemini 2.5 Flash)",
+    "benefitAiModel": "고성능 AI 모델",
     "benefitLongResponse": "2배 긴 AI 응답 (1000자)",
     "benefitExtendedTurns": "2.5배 턴 확장 (더 깊은 모험)",
     "benefitExpBonus": "EXP 1.5배 보너스",

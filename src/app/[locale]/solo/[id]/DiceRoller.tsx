@@ -8,6 +8,7 @@ import type { DiceRoll } from "@/types/solo-quest";
 interface Props {
   request: ParsedDiceRequest;
   onRoll: (result: DiceRoll) => void;
+  onRolling?: () => void;
 }
 
 const DICE_EMOJI: Record<string, string> = {
@@ -20,13 +21,14 @@ const DICE_EMOJI: Record<string, string> = {
   d100: "💯",
 };
 
-export default function DiceRoller({ request, onRoll }: Props) {
+export default function DiceRoller({ request, onRoll, onRolling }: Props) {
   const t = useTranslations("SoloQuest");
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState<DiceRoll | null>(null);
 
   function handleRoll() {
     setRolling(true);
+    onRolling?.();
 
     // Animate for 1.2 seconds, then show result
     setTimeout(() => {
@@ -47,23 +49,23 @@ export default function DiceRoller({ request, onRoll }: Props) {
         <div
           className={`rounded-2xl px-6 py-4 text-center ${
             result.success
-              ? "bg-green-50 border border-green-200"
+              ? "bg-green-900/40 border border-green-500/30"
               : result.success === false
-              ? "bg-red-50 border border-red-200"
-              : "bg-gray-50 border border-gray-200"
+              ? "bg-red-900/40 border border-red-500/30"
+              : "bg-white/10 border border-white/20"
           }`}
         >
           <div className="text-3xl mb-1">
             {DICE_EMOJI[result.type] ?? "🎲"}
           </div>
-          <div className="text-xl font-bold text-gray-900">
+          <div className="text-xl font-bold text-white">
             {result.result}
             {result.modifier ? ` + ${result.modifier} = ${result.total}` : ""}
           </div>
           {result.dc && (
             <div
               className={`text-sm font-medium mt-1 ${
-                result.success ? "text-green-600" : "text-red-500"
+                result.success ? "text-green-400" : "text-red-400"
               }`}
             >
               vs DC {result.dc} — {result.success ? t("diceSuccessNyan") : t("diceFailNyan")}

@@ -50,6 +50,7 @@ export default async function SoloQuestPlayPage({ params }: Props) {
       totalTurns={effectiveTurns}
       suggestedActions={scenario.suggestedActions}
       isPremium={isPremium}
+      theme={scenario.theme}
     />
   );
 }

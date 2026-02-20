@@ -6,7 +6,8 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { parseDiceRequest } from "@/lib/solo-quest/dice";
-import type { SoloQuest, QuestMessage, DiceRoll } from "@/types/solo-quest";
+import { useQuestSounds } from "@/hooks/useQuestSounds";
+import type { SoloQuest, QuestMessage, DiceRoll, ScenarioTheme } from "@/types/solo-quest";
 import ChatBubble from "./ChatBubble";
 import DiceRoller from "./DiceRoller";
 import ActionInput from "./ActionInput";
@@ -19,6 +20,7 @@ interface Props {
   totalTurns: number;
   suggestedActions: string[];
   isPremium: boolean;
+  theme: ScenarioTheme;
 }
 
 export default function QuestChat({
@@ -28,12 +30,14 @@ export default function QuestChat({
   totalTurns,
   suggestedActions: initialSuggestions,
   isPremium,
+  theme,
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const tQuest = useTranslations("SoloQuest");
   const tSolo = useTranslations("Solo");
   const tCommon = useTranslations("Common");
+  const sounds = useQuestSounds();
   const [messages, setMessages] = useState<QuestMessage[]>(quest.messages);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingText, setStreamingText] = useState("");
@@ -130,6 +134,7 @@ export default function QuestChat({
         setMessages([...updatedMessages, gmMsg]);
         setStreamingText("");
         setTurnCount((prev) => prev + 1);
+        sounds.playMessage();
       } catch (err) {
         toast(
           err instanceof Error ? err.message : tCommon("errorOccurred"),
@@ -145,6 +150,13 @@ export default function QuestChat({
   );
 
   function handleDiceRoll(result: DiceRoll) {
+    // Play success/failure sound
+    if (result.success) {
+      sounds.playSuccess();
+    } else if (result.success === false) {
+      sounds.playFailure();
+    }
+
     // Create a system message for the dice result
     const diceMsg: QuestMessage = {
       role: "system",
@@ -176,29 +188,39 @@ export default function QuestChat({
   }
 
   return (
-    <div className="pb-24 max-w-lg mx-auto flex flex-col min-h-[calc(100vh-8rem)]">
+    <div className={`pb-24 max-w-lg flex flex-col min-h-[calc(100vh-8rem)] -mt-4 pt-4 bg-linear-to-b ${theme.bgGradient}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
-          <h1 className="text-sm font-bold text-gray-900">{scenarioTitle}</h1>
+          <h1 className={`text-sm font-bold ${theme.accentColor}`}>{scenarioTitle}</h1>
           <p className="text-xs text-gray-400">
             {tQuest("turnProgress", { current: turnCount, total: totalTurns })}
           </p>
         </div>
-        {questStatus === "in_progress" && (
+        <div className="flex items-center gap-2">
+          {/* Sound toggle */}
           <button
-            onClick={handleAbandon}
-            className="text-xs text-gray-400 hover:text-red-500 transition-colors px-3 py-1 rounded-lg hover:bg-red-50"
+            onClick={sounds.toggle}
+            className="text-sm px-2 py-1 rounded-lg text-gray-400 hover:text-gray-200 transition-colors"
+            title={sounds.enabled ? "Mute" : "Unmute"}
           >
-            {tSolo("abandon")}
+            {sounds.enabled ? "🔊" : "🔇"}
           </button>
-        )}
+          {questStatus === "in_progress" && (
+            <button
+              onClick={handleAbandon}
+              className="text-xs text-gray-400 hover:text-red-400 transition-colors px-3 py-1 rounded-lg hover:bg-red-950/30"
+            >
+              {tSolo("abandon")}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Turn progress bar */}
-      <div className="h-1.5 bg-gray-100 rounded-full mb-4 overflow-hidden">
+      <div className="h-1.5 bg-white/10 rounded-full mb-4 overflow-hidden">
         <div
-          className="h-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-full transition-all duration-500"
+          className="h-full bg-linear-to-r from-amber-400 to-orange-400 rounded-full transition-all duration-500"
           style={{
             width: `${Math.min((turnCount / totalTurns) * 100, 100)}%`,
           }}
@@ -208,7 +230,7 @@ export default function QuestChat({
       {/* Chat area */}
       <div className="flex-1 space-y-4 mb-4">
         {messages.map((msg, i) => (
-          <ChatBubble key={i} message={msg} />
+          <ChatBubble key={i} message={msg} theme={theme} />
         ))}
 
         {/* Streaming text */}
@@ -220,24 +242,25 @@ export default function QuestChat({
               timestamp: new Date().toISOString(),
             }}
             isStreaming
+            theme={theme}
           />
         )}
 
         {/* Loading indicator */}
         {isStreaming && !streamingText && (
           <div className="flex gap-2 items-center">
-            <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-sm">
+            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm">
               🧙‍♂️
             </div>
-            <div className="bg-amber-50 rounded-2xl rounded-tl-sm px-4 py-3">
+            <div className={`${theme.bubbleColor} rounded-2xl rounded-tl-sm px-4 py-3`}>
               <div className="flex gap-1">
-                <span className="w-2 h-2 bg-amber-300 rounded-full animate-bounce" />
+                <span className="w-2 h-2 bg-white/40 rounded-full animate-bounce" />
                 <span
-                  className="w-2 h-2 bg-amber-300 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-white/40 rounded-full animate-bounce"
                   style={{ animationDelay: "0.15s" }}
                 />
                 <span
-                  className="w-2 h-2 bg-amber-300 rounded-full animate-bounce"
+                  className="w-2 h-2 bg-white/40 rounded-full animate-bounce"
                   style={{ animationDelay: "0.3s" }}
                 />
               </div>
@@ -247,7 +270,7 @@ export default function QuestChat({
 
         {/* Dice roller */}
         {pendingDice && !isStreaming && questStatus === "in_progress" && (
-          <DiceRoller request={pendingDice} onRoll={handleDiceRoll} />
+          <DiceRoller request={pendingDice} onRoll={handleDiceRoll} onRolling={sounds.playDiceRoll} />
         )}
 
         <div ref={chatEndRef} />
@@ -260,11 +283,12 @@ export default function QuestChat({
 
       {/* Input area */}
       {questStatus === "in_progress" && !pendingDice && (
-        <div className="sticky bottom-16 bg-white/90 backdrop-blur-sm pt-2 pb-2 -mx-4 px-4 border-t border-gray-50">
+        <div className="sticky bottom-16 bg-black/60 backdrop-blur-sm pt-2 pb-2 border-t border-white/10">
           <ActionInput
             onSend={(msg) => sendMessage(msg)}
             disabled={isStreaming}
             suggestedActions={suggestions}
+            darkMode
           />
         </div>
       )}

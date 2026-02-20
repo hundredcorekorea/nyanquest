@@ -1,23 +1,24 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import type { QuestMessage } from "@/types/solo-quest";
+import type { QuestMessage, ScenarioTheme } from "@/types/solo-quest";
 
 interface Props {
   message: QuestMessage;
   isStreaming?: boolean;
+  theme?: ScenarioTheme;
 }
 
-export default function ChatBubble({ message, isStreaming }: Props) {
+export default function ChatBubble({ message, isStreaming, theme }: Props) {
   const t = useTranslations("SoloQuest");
   if (message.role === "system") {
     return (
       <div className="flex justify-center animate-bubble-in">
-        <div className="bg-gray-100 rounded-xl px-4 py-2 text-xs text-gray-500 text-center max-w-xs">
+        <div className="bg-white/10 rounded-xl px-4 py-2 text-xs text-gray-300 text-center max-w-xs">
           {message.diceRoll && (
             <div className="mb-1">
               <span className="text-lg">🎲</span>{" "}
-              <span className="font-bold text-gray-700">
+              <span className="font-bold text-white">
                 {message.diceRoll.type} = {message.diceRoll.result}
                 {message.diceRoll.modifier
                   ? ` + ${message.diceRoll.modifier}`
@@ -28,8 +29,8 @@ export default function ChatBubble({ message, isStreaming }: Props) {
                 <span
                   className={`ml-1 font-medium ${
                     message.diceRoll.success
-                      ? "text-green-600"
-                      : "text-red-500"
+                      ? "text-green-400"
+                      : "text-red-400"
                   }`}
                 >
                   vs DC {message.diceRoll.dc}{" "}
@@ -45,6 +46,7 @@ export default function ChatBubble({ message, isStreaming }: Props) {
   }
 
   const isGm = message.role === "gm";
+  const bubbleBg = theme?.bubbleColor ?? "bg-amber-950/60";
 
   return (
     <div
@@ -53,22 +55,22 @@ export default function ChatBubble({ message, isStreaming }: Props) {
       }`}
     >
       {isGm && (
-        <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center text-sm flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm shrink-0">
           🧙‍♂️
         </div>
       )}
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
           isGm
-            ? "bg-amber-50 text-gray-800 rounded-tl-sm"
-            : "bg-amber-500 text-white rounded-tr-sm"
+            ? `${bubbleBg} text-gray-100 rounded-tl-sm`
+            : "bg-white/20 text-white rounded-tr-sm"
         }`}
       >
         {message.content}
         {isStreaming && <span className="streaming-cursor" />}
       </div>
       {!isGm && (
-        <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-sm flex-shrink-0">
+        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm shrink-0">
           🧑
         </div>
       )}

@@ -33,6 +33,11 @@ export const SCENARIOS: Scenario[] = [
 
 💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
     suggestedActions: ["정면 돌격", "은밀 잠입", "주변 정찰"],
+    theme: {
+      bgGradient: "from-stone-900 via-amber-950 to-stone-900",
+      accentColor: "text-amber-400",
+      bubbleColor: "bg-amber-950/60",
+    },
   },
   {
     id: "haunted-library",
@@ -68,6 +73,11 @@ export const SCENARIOS: Scenario[] = [
 
 💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
     suggestedActions: ["소리 방향 이동", "책장 조사", "대답하기"],
+    theme: {
+      bgGradient: "from-slate-950 via-purple-950 to-slate-950",
+      accentColor: "text-purple-400",
+      bubbleColor: "bg-purple-950/60",
+    },
   },
   {
     id: "space-station",
@@ -102,6 +112,11 @@ AI 음성이 울려퍼지고, 바닥이 흔들린다냥! 복도의 비상등이 
 
 💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
     suggestedActions: ["탈출선으로 이동", "상황 파악", "동료 구출"],
+    theme: {
+      bgGradient: "from-gray-950 via-cyan-950 to-gray-950",
+      accentColor: "text-cyan-400",
+      bubbleColor: "bg-cyan-950/60",
+    },
   },
   {
     id: "cat-kingdom",
@@ -138,6 +153,11 @@ NPC: 고양이 왕 (근엄), 궁정 고양이들 (수다쟁이), 용의자 3마�
 
 💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
     suggestedActions: ["용의자 심문", "보물실 조사", "소문 수집"],
+    theme: {
+      bgGradient: "from-amber-950 via-yellow-950 to-amber-950",
+      accentColor: "text-yellow-400",
+      bubbleColor: "bg-yellow-950/60",
+    },
   },
   // === Premium Scenarios ===
   {
@@ -177,6 +197,11 @@ NPC: 아우렐리온 (현명하지만 오만한 고대 용), 용족 수호자들
 
 💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
     suggestedActions: ["정중한 인사", "선물 바치기", "평화 역설"],
+    theme: {
+      bgGradient: "from-red-950 via-orange-950 to-red-950",
+      accentColor: "text-orange-400",
+      bubbleColor: "bg-orange-950/60",
+    },
   },
   {
     id: "time-loop",
@@ -215,6 +240,11 @@ NPC: 주점 주인 할머니 (비밀을 알고 있음), 음유시인 (힌트를 
 
 💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
     suggestedActions: ["할머니에게 질문", "음유시인 접근", "여행자 관찰"],
+    theme: {
+      bgGradient: "from-indigo-950 via-violet-950 to-indigo-950",
+      accentColor: "text-violet-400",
+      bubbleColor: "bg-violet-950/60",
+    },
   },
 ];
 

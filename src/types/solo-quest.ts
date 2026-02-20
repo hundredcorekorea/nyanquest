@@ -16,6 +16,15 @@ export interface QuestMessage {
   diceRoll?: DiceRoll;
 }
 
+export interface ScenarioTheme {
+  /** Tailwind gradient for the quest chat background */
+  bgGradient: string;
+  /** Tailwind color for the header accent */
+  accentColor: string;
+  /** Tailwind color for GM chat bubble */
+  bubbleColor: string;
+}
+
 export interface Scenario {
   id: string;
   title: string;
@@ -31,6 +40,7 @@ export interface Scenario {
   openingMessage: string;
   suggestedActions: string[];
   isPremium?: boolean;
+  theme: ScenarioTheme;
 }
 
 export interface SoloQuest {
