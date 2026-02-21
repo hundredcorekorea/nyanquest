@@ -202,15 +202,25 @@ export default function QuestChat({
   }
 
   return (
-    <div className={`-mx-4 -mt-4 min-h-[calc(100vh-5rem)] bg-linear-to-b ${theme.bgGradient}`}>
-    <div className="max-w-2xl mx-auto px-4 pt-4 pb-24 flex flex-col min-h-[calc(100vh-5rem)]">
+    <div className={`relative -mx-4 -mt-4 min-h-[calc(100vh-5rem)] bg-linear-to-b ${theme.bgGradient} ${isPremium ? "ring-1 ring-inset ring-amber-500/20" : ""}`}>
+    {isPremium && (
+      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-amber-500/5 via-transparent to-amber-500/5" />
+    )}
+    <div className="relative max-w-2xl mx-auto px-4 pt-4 pb-24 flex flex-col min-h-[calc(100vh-5rem)]">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
           <h1 className={`text-sm font-bold ${theme.accentColor}`}>{scenarioTitle}</h1>
-          <p className="text-xs text-gray-400">
-            {tQuest("turnProgress", { current: turnCount, total: totalTurns })}
-          </p>
+          <div className="flex items-center gap-2">
+            <p className="text-xs text-gray-400">
+              {tQuest("turnProgress", { current: turnCount, total: totalTurns })}
+            </p>
+            {isPremium && (
+              <span className="text-[10px] font-bold text-amber-400 bg-amber-500/20 rounded-full px-1.5 py-0.5">
+                👑 Premium
+              </span>
+            )}
+          </div>
         </div>
         <div className="flex items-center gap-2">
           {/* BGM toggle + volume */}
@@ -331,12 +341,12 @@ export default function QuestChat({
 
       {/* Input area */}
       {questStatus === "in_progress" && !pendingDice && (
-        <div className="sticky bottom-16 bg-black/60 backdrop-blur-sm pt-2 pb-2 border-t border-white/10">
+        <div className={`sticky bottom-16 backdrop-blur-sm pt-2 pb-2 border-t border-white/10 ${isPremium ? "bg-black/40" : "bg-black/60"}`}>
           <ActionInput
             onSend={(msg) => sendMessage(msg)}
             disabled={isStreaming}
             suggestedActions={suggestions}
-            darkMode
+            theme={theme}
           />
         </div>
       )}
