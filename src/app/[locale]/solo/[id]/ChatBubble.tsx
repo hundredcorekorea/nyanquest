@@ -55,15 +55,15 @@ export default function ChatBubble({ message, isStreaming, theme }: Props) {
       }`}
     >
       {isGm && (
-        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm shrink-0">
+        <div className="w-8 h-8 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-sm shrink-0">
           🧙‍♂️
         </div>
       )}
       <div
         className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
           isGm
-            ? `${bubbleBg} text-gray-100 rounded-tl-sm`
-            : "bg-white/20 text-white rounded-tr-sm"
+            ? `${bubbleBg} text-gray-100 rounded-tl-sm border border-white/5 backdrop-blur-xs`
+            : "bg-white/15 text-white rounded-tr-sm border border-white/10"
         }`}
       >
         {message.content}

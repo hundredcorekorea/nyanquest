@@ -203,6 +203,8 @@ export default function QuestChat({
 
   return (
     <div className={`relative -mx-4 -mt-4 min-h-[calc(100vh-5rem)] bg-linear-to-b ${theme.bgGradient} ${isPremium ? "ring-1 ring-inset ring-amber-500/20" : ""}`}>
+    {/* Vignette + radial glow for depth */}
+    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.4)_100%)]" />
     {isPremium && (
       <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-amber-500/5 via-transparent to-amber-500/5" />
     )}
@@ -341,7 +343,7 @@ export default function QuestChat({
 
       {/* Input area */}
       {questStatus === "in_progress" && !pendingDice && (
-        <div className={`sticky bottom-16 backdrop-blur-sm pt-2 pb-2 border-t border-white/10 ${isPremium ? "bg-black/40" : "bg-black/60"}`}>
+        <div className={`sticky bottom-16 backdrop-blur-md pt-4 pb-2 ${isPremium ? "bg-linear-to-t from-black/60 to-black/20" : "bg-linear-to-t from-black/70 to-black/30"}`}>
           <ActionInput
             onSend={(msg) => sendMessage(msg)}
             disabled={isStreaming}

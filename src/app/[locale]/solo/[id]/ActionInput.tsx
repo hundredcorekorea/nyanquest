@@ -58,9 +58,9 @@ export default function ActionInput({
               key={action}
               onClick={() => onSend(action)}
               disabled={disabled}
-              className={`text-xs px-3 py-1.5 rounded-full transition-all disabled:opacity-50 ${
+              className={`text-xs px-3.5 py-2 rounded-full transition-all disabled:opacity-50 backdrop-blur-xs ${
                 theme
-                  ? `${theme.bubbleColor} ${theme.accentColor} border border-white/10 hover:border-white/30 hover:brightness-125`
+                  ? `${theme.bubbleColor} ${theme.accentColor} border border-white/10 hover:border-white/25 hover:scale-[1.02] active:scale-95`
                   : isDark
                     ? "bg-white/10 text-gray-200 border border-white/20 hover:bg-white/20"
                     : "bg-amber-50 text-amber-700 border border-amber-200 hover:bg-amber-100"
