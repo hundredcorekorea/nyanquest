@@ -561,6 +561,8 @@
   "AdGate": {
     "title": "잠깐! 모험 준비 중이다냥~",
     "loadingAd": "광고를 불러오는 중...",
+    "adPlaceholder": "나양이가 모험을 준비하고 있다냥!",
+    "adPlaceholderSub": "곧 이 자리에 광고가 들어올 예정이다냥~",
     "countdown": "초 후 시작할 수 있다냥!",
     "startAdventure": "모험 시작하기!",
     "premiumUpsell": "프리미엄이면 광고 없이 바로 시작!"

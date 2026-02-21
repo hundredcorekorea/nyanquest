@@ -100,9 +100,10 @@ export default function AdGate({ onComplete, onCancel, open }: Props) {
                 data-full-width-responsive="true"
               />
             ) : (
-              <div className="text-center text-gray-400 text-sm">
-                <p className="text-3xl mb-2">📜</p>
-                <p>{t("loadingAd")}</p>
+              <div className="text-center text-gray-400 text-sm px-4">
+                <p className="text-4xl mb-3">🐱</p>
+                <p className="font-medium text-gray-500">{t("adPlaceholder")}</p>
+                <p className="text-xs mt-1 text-gray-300">{t("adPlaceholderSub")}</p>
               </div>
             )}
           </div>
