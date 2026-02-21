@@ -37,14 +37,18 @@ export default function AdGate({ onComplete, onCancel, open }: Props) {
           window.adsbygoogle.push({});
           adPushed.current = true;
           setAdLoaded(true);
+        } else {
+          // Ad SDK not available - skip gate entirely
+          onComplete();
         }
       } catch {
-        setAdLoaded(false);
+        // Ad failed to load - skip gate
+        onComplete();
       }
     }, 300);
 
     return () => clearTimeout(timer);
-  }, [open]);
+  }, [open, onComplete]);
 
   useEffect(() => {
     if (!open) return;
