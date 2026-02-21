@@ -203,11 +203,7 @@ export default function TutorialOverlay({
             !(current.action === "dice" && !diceResult) && (
               <button
                 onClick={handleNext}
-                className={`w-full py-3 font-medium rounded-xl text-sm transition-colors ${
-                  isLast
-                    ? "bg-amber-500 hover:bg-amber-600 text-white"
-                    : "bg-gray-100 hover:bg-gray-200 text-gray-700"
-                }`}
+                className="w-full py-3 font-medium rounded-xl text-sm transition-colors bg-amber-500 hover:bg-amber-600 text-white"
               >
                 {isLast ? t("startAdventure") : tCommon("next")}
               </button>

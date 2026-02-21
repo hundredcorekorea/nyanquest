@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import AuthErrorToast from "@/components/AuthErrorToast";
 import CatMascot from "@/components/CatMascot";
 import ProfileNudge from "@/components/ProfileNudge";
 import StatsHero from "@/components/StatsHero";
@@ -71,6 +72,11 @@ export default async function HomePage({
 
   return (
     <div className="space-y-6 pb-20">
+      {/* Auth error toast */}
+      <Suspense>
+        <AuthErrorToast />
+      </Suspense>
+
       {/* Cat mascot greeting */}
       <CatMascot />
 
