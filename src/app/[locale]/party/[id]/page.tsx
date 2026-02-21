@@ -100,6 +100,21 @@ export default async function PartyDetailPage({ params }: Props) {
 
   const typedMembers = (members ?? []) as unknown as PartyMember[];
 
+  // Check if current user is the creator
+  const { data: { user: currentUser } } = await supabase.auth.getUser();
+  const isCreator = currentUser?.id === p.creator_id;
+
+  // Count pending join requests
+  let pendingCount = 0;
+  if (isCreator) {
+    const { count } = await supabase
+      .from("party_members")
+      .select("*", { count: "exact", head: true })
+      .eq("party_id", id)
+      .eq("status", "pending");
+    pendingCount = count ?? 0;
+  }
+
   // Fetch GM stats if GM is assigned
   const gmStats = p.gm_id ? await fetchGmStats(supabase, p.gm_id) : null;
 
@@ -139,8 +154,23 @@ export default async function PartyDetailPage({ params }: Props) {
         )}
       </div>
 
-      {/* Title */}
-      <h1 className="text-2xl font-bold text-gray-900">{p.title}</h1>
+      {/* Title + Manage */}
+      <div className="flex items-start justify-between gap-3">
+        <h1 className="text-2xl font-bold text-gray-900">{p.title}</h1>
+        {isCreator && (
+          <Link
+            href={`/party/${p.id}/manage`}
+            className="shrink-0 inline-flex items-center gap-1.5 text-sm font-medium px-3 py-1.5 rounded-lg bg-amber-500 text-white hover:bg-amber-600 transition-colors"
+          >
+            ⚙️ {t("manageParty")}
+            {pendingCount > 0 && (
+              <span className="inline-flex items-center justify-center text-[10px] font-bold bg-red-500 text-white rounded-full min-w-4.5 h-4.5 px-1">
+                {pendingCount}
+              </span>
+            )}
+          </Link>
+        )}
+      </div>
 
       {/* Creator (파티장) info */}
       <Link
