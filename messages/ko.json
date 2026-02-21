@@ -65,7 +65,9 @@
     "emptyBoardDesc": "첫 번째 퀘스트를 등록해보는 건 어떨까냥?",
     "gmWanted": "GM 구인",
     "selectRulebook": "룰북 선택",
-    "lookingForGm": "GM 구인"
+    "lookingForGm": "GM 구인",
+    "profileNudge": "나냥이 아직 집사를 잘 모른다냥! 플레이 프로필을 작성하면 더 잘 맞는 파티원을 찾을 수 있다냥~",
+    "profileNudgeAction": "작성하러 가기"
   },
   "Stats": {
     "adventurers": "모험가",

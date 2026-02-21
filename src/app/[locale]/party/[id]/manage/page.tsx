@@ -322,58 +322,75 @@ export default function ManagePartyPage() {
             {pendingGmApplicants.map((m) => (
               <div
                 key={m.id}
-                className="flex items-center gap-3 bg-white rounded-xl p-3"
+                className="bg-white rounded-xl p-3 space-y-2"
               >
-                <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-sm">
-                  {m.user?.avatar_url ? (
-                    <Image
-                      src={m.user.avatar_url}
-                      alt=""
-                      width={36}
-                      height={36}
-                      className="w-9 h-9 rounded-full"
-                    />
-                  ) : (
-                    "🧙"
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {m.user?.nickname ?? tCommon("adventurer")}
-                    </p>
-                    <span className="text-xs text-purple-500">
-                      {m.user?.manner_temp ?? 36.5}°
-                    </span>
-                    <Link
-                      href={`/user/${m.user_id}`}
-                      className="text-xs text-purple-400 hover:text-purple-600 ml-auto"
-                      target="_blank"
-                    >
-                      {t("profile")}
-                    </Link>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-purple-100 flex items-center justify-center text-sm">
+                    {m.user?.avatar_url ? (
+                      <Image
+                        src={m.user.avatar_url}
+                        alt=""
+                        width={36}
+                        height={36}
+                        className="w-9 h-9 rounded-full"
+                      />
+                    ) : (
+                      "🧙"
+                    )}
                   </div>
-                  {gmStatsMap[m.user_id] && (
-                    <GmStatsBadge
-                      stats={gmStatsMap[m.user_id]}
-                      variant="compact"
-                    />
-                  )}
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {m.user?.nickname ?? tCommon("adventurer")}
+                      </p>
+                      <span className="text-xs text-purple-500">
+                        {m.user?.manner_temp ?? 36.5}°
+                      </span>
+                      <Link
+                        href={`/user/${m.user_id}`}
+                        className="text-xs text-purple-400 hover:text-purple-600 ml-auto"
+                        target="_blank"
+                      >
+                        {t("profile")}
+                      </Link>
+                    </div>
+                    {gmStatsMap[m.user_id] && (
+                      <GmStatsBadge
+                        stats={gmStatsMap[m.user_id]}
+                        variant="compact"
+                      />
+                    )}
+                  </div>
+                  <div className="flex gap-1.5">
+                    <button
+                      onClick={() => handleGmApproval(m.id, m.user_id)}
+                      className="px-3 py-1.5 bg-purple-500 text-white text-xs font-medium rounded-lg hover:bg-purple-600 transition-colors"
+                    >
+                      {t("gmAccept")}
+                    </button>
+                    <button
+                      onClick={() => handleMember(m.id, "rejected")}
+                      className="px-3 py-1.5 border border-gray-200 text-xs text-gray-500 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      {t("reject")}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-1.5">
-                  <button
-                    onClick={() => handleGmApproval(m.id, m.user_id)}
-                    className="px-3 py-1.5 bg-purple-500 text-white text-xs font-medium rounded-lg hover:bg-purple-600 transition-colors"
-                  >
-                    {t("gmAccept")}
-                  </button>
-                  <button
-                    onClick={() => handleMember(m.id, "rejected")}
-                    className="px-3 py-1.5 border border-gray-200 text-xs text-gray-500 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    {t("reject")}
-                  </button>
-                </div>
+                {/* Play profile summary */}
+                {m.user && (m.user.preferred_elements?.length > 0 || m.user.avoided_elements?.length > 0) && (
+                  <div className="flex flex-wrap gap-1 pl-12">
+                    {m.user.preferred_elements?.slice(0, 4).map((el) => (
+                      <span key={el} className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full">
+                        👍 {el}
+                      </span>
+                    ))}
+                    {m.user.avoided_elements?.slice(0, 3).map((el) => (
+                      <span key={el} className="text-[10px] bg-red-50 text-red-500 px-2 py-0.5 rounded-full">
+                        🚫 {el}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>
@@ -390,50 +407,67 @@ export default function ManagePartyPage() {
             {pendingPlApplicants.map((m) => (
               <div
                 key={m.id}
-                className="flex items-center gap-3 bg-white rounded-xl p-3"
+                className="bg-white rounded-xl p-3 space-y-2"
               >
-                <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-sm">
-                  {m.user?.avatar_url ? (
-                    <Image
-                      src={m.user.avatar_url}
-                      alt=""
-                      width={36}
-                      height={36}
-                      className="w-9 h-9 rounded-full"
-                    />
-                  ) : (
-                    "🐱"
-                  )}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-gray-900 truncate">
-                    {m.user?.nickname ?? tCommon("adventurer")}
-                  </p>
-                  <div className="flex items-center gap-2">
-                    <span className="text-xs text-amber-500">
-                      {m.user?.manner_temp ?? 36.5}°
-                    </span>
-                    {m.user?.style_tags && m.user.style_tags.length > 0 && (
-                      <span className="text-xs text-gray-400">
-                        {m.user.style_tags.slice(0, 2).join(", ")}
-                      </span>
+                <div className="flex items-center gap-3">
+                  <div className="w-9 h-9 rounded-full bg-amber-100 flex items-center justify-center text-sm">
+                    {m.user?.avatar_url ? (
+                      <Image
+                        src={m.user.avatar_url}
+                        alt=""
+                        width={36}
+                        height={36}
+                        className="w-9 h-9 rounded-full"
+                      />
+                    ) : (
+                      "🐱"
                     )}
                   </div>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium text-gray-900 truncate">
+                      {m.user?.nickname ?? tCommon("adventurer")}
+                    </p>
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-amber-500">
+                        {m.user?.manner_temp ?? 36.5}°
+                      </span>
+                      {m.user?.style_tags && m.user.style_tags.length > 0 && (
+                        <span className="text-xs text-gray-400">
+                          {m.user.style_tags.slice(0, 2).join(", ")}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex gap-1.5">
+                    <button
+                      onClick={() => handleMember(m.id, "accepted")}
+                      className="px-3 py-1.5 bg-amber-500 text-white text-xs font-medium rounded-lg hover:bg-amber-600 transition-colors"
+                    >
+                      {t("accept")}
+                    </button>
+                    <button
+                      onClick={() => handleMember(m.id, "rejected")}
+                      className="px-3 py-1.5 border border-gray-200 text-xs text-gray-500 rounded-lg hover:bg-gray-50 transition-colors"
+                    >
+                      {t("reject")}
+                    </button>
+                  </div>
                 </div>
-                <div className="flex gap-1.5">
-                  <button
-                    onClick={() => handleMember(m.id, "accepted")}
-                    className="px-3 py-1.5 bg-amber-500 text-white text-xs font-medium rounded-lg hover:bg-amber-600 transition-colors"
-                  >
-                    {t("accept")}
-                  </button>
-                  <button
-                    onClick={() => handleMember(m.id, "rejected")}
-                    className="px-3 py-1.5 border border-gray-200 text-xs text-gray-500 rounded-lg hover:bg-gray-50 transition-colors"
-                  >
-                    {t("reject")}
-                  </button>
-                </div>
+                {/* Play profile summary */}
+                {m.user && (m.user.preferred_elements?.length > 0 || m.user.avoided_elements?.length > 0) && (
+                  <div className="flex flex-wrap gap-1 pl-12">
+                    {m.user.preferred_elements?.slice(0, 4).map((el) => (
+                      <span key={el} className="text-[10px] bg-green-50 text-green-600 px-2 py-0.5 rounded-full">
+                        👍 {el}
+                      </span>
+                    ))}
+                    {m.user.avoided_elements?.slice(0, 3).map((el) => (
+                      <span key={el} className="text-[10px] bg-red-50 text-red-500 px-2 py-0.5 rounded-full">
+                        🚫 {el}
+                      </span>
+                    ))}
+                  </div>
+                )}
               </div>
             ))}
           </div>

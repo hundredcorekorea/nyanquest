@@ -1,5 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import CatMascot from "@/components/CatMascot";
+import ProfileNudge from "@/components/ProfileNudge";
 import StatsHero from "@/components/StatsHero";
 import PartyCard from "@/components/PartyCard";
 import PartyFilters from "@/components/PartyFilters";
@@ -72,6 +73,9 @@ export default async function HomePage({
     <div className="space-y-6 pb-20">
       {/* Cat mascot greeting */}
       <CatMascot />
+
+      {/* Profile nudge for empty profiles */}
+      <ProfileNudge />
 
       {/* Platform stats */}
       <Suspense>

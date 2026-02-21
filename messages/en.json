@@ -65,7 +65,9 @@
     "emptyBoardDesc": "How about posting the first quest, nya?",
     "gmWanted": "GM Wanted",
     "selectRulebook": "Select Rulebook",
-    "lookingForGm": "GM Wanted"
+    "lookingForGm": "GM Wanted",
+    "profileNudge": "NaYang doesn't know you yet, nya! Write your play profile to find better party matches~",
+    "profileNudgeAction": "Set it up"
   },
   "Stats": {
     "adventurers": "Adventurers",
