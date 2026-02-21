@@ -343,7 +343,7 @@ export default function QuestChat({
 
       {/* Input area */}
       {questStatus === "in_progress" && !pendingDice && (
-        <div className={`sticky bottom-16 backdrop-blur-md pt-4 pb-2 ${isPremium ? "bg-linear-to-t from-black/60 to-black/20" : "bg-linear-to-t from-black/70 to-black/30"}`}>
+        <div className="sticky bottom-16 backdrop-blur-md pt-6 pb-3 bg-linear-to-t from-black/50 via-black/30 to-transparent">
           <ActionInput
             onSend={(msg) => sendMessage(msg)}
             disabled={isStreaming}

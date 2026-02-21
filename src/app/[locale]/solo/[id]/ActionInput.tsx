@@ -49,7 +49,7 @@ export default function ActionInput({
   const isDark = darkMode || !!theme;
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-3">
       {/* Suggested actions */}
       {suggestedActions.length > 0 && !disabled && (
         <div className="flex gap-2 flex-wrap">
@@ -73,7 +73,9 @@ export default function ActionInput({
       )}
 
       {/* Input area */}
-      <div className="flex gap-2 items-end">
+      <div className={`flex gap-2 items-end rounded-2xl p-2 ${
+        theme ? `${theme.bubbleColor} border border-white/10` : isDark ? "bg-white/5 border border-white/10" : "bg-white border border-gray-200"
+      }`}>
         <textarea
           ref={textareaRef}
           value={input}
@@ -83,17 +85,21 @@ export default function ActionInput({
           placeholder={
             disabled ? tQuest("waitingPlaceholder") : tQuest("inputPlaceholder")
           }
-          rows={1}
-          className={`flex-1 px-4 py-2.5 rounded-xl border text-sm resize-none focus:outline-none focus:ring-2 ${
+          rows={2}
+          className={`flex-1 px-3 py-2 rounded-xl text-sm resize-none focus:outline-none bg-transparent ${
             isDark
-              ? "bg-white/10 border-white/20 text-white placeholder-gray-400 focus:ring-white/30 disabled:bg-white/5 disabled:text-gray-500"
-              : "border-gray-200 focus:ring-amber-300 disabled:bg-gray-50 disabled:text-gray-400"
+              ? "text-white placeholder-gray-400 disabled:text-gray-500"
+              : "placeholder-gray-400 disabled:text-gray-400"
           }`}
         />
         <button
           onClick={handleSubmit}
           disabled={disabled || !input.trim()}
-          className="px-4 py-2.5 bg-amber-500 text-white rounded-xl font-medium text-sm hover:bg-amber-600 transition-colors disabled:bg-gray-600 disabled:text-gray-400 shrink-0"
+          className={`px-5 py-2.5 rounded-xl font-medium text-sm transition-all shrink-0 disabled:opacity-40 ${
+            theme
+              ? `${theme.accentColor.replace("text-", "bg-").replace("-400", "-500")} text-white hover:brightness-110`
+              : "bg-amber-500 text-white hover:bg-amber-600"
+          } disabled:bg-gray-600 disabled:text-gray-400`}
         >
           {tCommon("send")}
         </button>
