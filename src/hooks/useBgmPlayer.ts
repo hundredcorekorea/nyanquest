@@ -200,9 +200,15 @@ export function useBgmPlayer() {
       }
       if (category === currentCategory) return;
       setCurrentCategory(category);
+
+      // Stop BGM if the category has no tracks
+      if (BGM_CATALOG[category].length === 0) {
+        stopAll();
+        return;
+      }
       startCrossfadeLoop(category);
     },
-    [enabled, currentCategory, startCrossfadeLoop]
+    [enabled, currentCategory, stopAll, startCrossfadeLoop]
   );
 
   /** Toggle BGM on/off */
