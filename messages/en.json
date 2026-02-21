@@ -59,7 +59,12 @@
     "discord": "Start with Discord",
     "google": "Start with Google",
     "loginAndJoin": "Log in and apply to join",
-    "loginFailed": "Login failed, nya... Please try again!"
+    "loginFailed": "Login failed, nya... Please try again!",
+    "loginModalTitle": "You need to log in, nya!",
+    "loginModalDesc": "Sign up and get a 7-day premium free trial, nya!",
+    "loginWithDiscord": "Start with Discord",
+    "loginWithGoogle": "Start with Google",
+    "loginModalClose": "Maybe later"
   },
   "Home": {
     "emptyBoardTitle": "The quest board is empty, nya...",

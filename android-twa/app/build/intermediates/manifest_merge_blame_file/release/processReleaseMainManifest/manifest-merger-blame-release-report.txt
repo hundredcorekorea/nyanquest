@@ -1,0 +1,239 @@
+1<?xml version="1.0" encoding="utf-8"?>
+2<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+3    package="com.reaf.nyanquest"
+4    android:versionCode="1"
+5    android:versionName="1.0.0" >
+6
+7    <uses-sdk
+8        android:minSdkVersion="21"
+9        android:targetSdkVersion="35" />
+10
+11    <queries>
+11-->[com.google.androidbrowserhelper:androidbrowserhelper:2.5.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\93c1c3f025f967fed7b79951647965e0\transformed\androidbrowserhelper-2.5.0\AndroidManifest.xml:26:5-34:15
+12        <intent>
+12-->[com.google.androidbrowserhelper:androidbrowserhelper:2.5.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\93c1c3f025f967fed7b79951647965e0\transformed\androidbrowserhelper-2.5.0\AndroidManifest.xml:27:9-33:18
+13            <action android:name="android.intent.action.VIEW" />
+13-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:71:17-69
+13-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:71:25-66
+14
+15            <category android:name="android.intent.category.BROWSABLE" />
+15-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:73:17-78
+15-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:73:27-75
+16
+17            <data android:scheme="https" />
+17-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:74:17-76:59
+17-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:75:21-43
+18        </intent>
+19    </queries>
+20
+21    <permission
+21-->[androidx.core:core:1.13.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\301ce9e5f40bd2d24d1016f76917b2c4\transformed\core-1.13.0\AndroidManifest.xml:22:5-24:47
+22        android:name="com.reaf.nyanquest.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION"
+22-->[androidx.core:core:1.13.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\301ce9e5f40bd2d24d1016f76917b2c4\transformed\core-1.13.0\AndroidManifest.xml:23:9-81
+23        android:protectionLevel="signature" />
+23-->[androidx.core:core:1.13.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\301ce9e5f40bd2d24d1016f76917b2c4\transformed\core-1.13.0\AndroidManifest.xml:24:9-44
+24
+25    <uses-permission android:name="com.reaf.nyanquest.DYNAMIC_RECEIVER_NOT_EXPORTED_PERMISSION" />
+25-->[androidx.core:core:1.13.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\301ce9e5f40bd2d24d1016f76917b2c4\transformed\core-1.13.0\AndroidManifest.xml:26:5-97
+25-->[androidx.core:core:1.13.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\301ce9e5f40bd2d24d1016f76917b2c4\transformed\core-1.13.0\AndroidManifest.xml:26:22-94
+26
+27    <application
+27-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:5:5-79:19
+28        android:allowBackup="true"
+28-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:6:9-35
+29        android:appComponentFactory="androidx.core.app.CoreComponentFactory"
+29-->[androidx.core:core:1.13.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\301ce9e5f40bd2d24d1016f76917b2c4\transformed\core-1.13.0\AndroidManifest.xml:28:18-86
+30        android:extractNativeLibs="true"
+31        android:icon="@mipmap/ic_launcher"
+31-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:7:9-43
+32        android:label="@string/app_name"
+32-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:8:9-41
+33        android:supportsRtl="true"
+33-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:9:9-35
+34        android:theme="@style/AppTheme" >
+34-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:10:9-40
+35        <meta-data
+35-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:13:9-15:59
+36            android:name="asset_statements"
+36-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:14:13-44
+37            android:resource="@string/asset_statements" />
+37-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:15:13-56
+38
+39        <provider
+39-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:17:9-25:20
+40            android:name="androidx.core.content.FileProvider"
+40-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:18:13-62
+41            android:authorities="com.reaf.nyanquest.fileprovider"
+41-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:19:13-66
+42            android:exported="false"
+42-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:21:13-37
+43            android:grantUriPermissions="true" >
+43-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:20:13-47
+44            <meta-data
+44-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:22:13-24:53
+45                android:name="android.support.FILE_PROVIDER_PATHS"
+45-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:23:17-67
+46                android:resource="@xml/filepaths" />
+46-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:24:17-50
+47        </provider>
+48
+49        <activity
+49-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:27:9-78:20
+50            android:name="com.google.androidbrowserhelper.trusted.LauncherActivity"
+50-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:28:13-84
+51            android:exported="true"
+51-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:30:13-36
+52            android:label="@string/app_name"
+52-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:29:13-45
+53            android:theme="@style/LaunchTheme" >
+53-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:31:13-47
+54            <meta-data
+54-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:33:13-35:64
+55                android:name="android.support.customtabs.trusted.DEFAULT_URL"
+55-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:34:17-78
+56                android:value="https://nyanquest.vercel.app" />
+56-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:35:17-61
+57            <meta-data
+57-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:37:13-39:58
+58                android:name="android.support.customtabs.trusted.STATUS_BAR_COLOR"
+58-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:38:17-83
+59                android:resource="@color/colorPrimary" />
+59-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:39:17-55
+60            <meta-data
+60-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:41:13-43:61
+61                android:name="android.support.customtabs.trusted.NAVIGATION_BAR_COLOR"
+61-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:42:17-87
+62                android:resource="@color/navigationColor" />
+62-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:43:17-58
+63            <meta-data
+63-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:45:13-47:55
+64                android:name="android.support.customtabs.trusted.SPLASH_IMAGE_DRAWABLE"
+64-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:46:17-88
+65                android:resource="@drawable/splash" />
+65-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:47:17-52
+66            <meta-data
+66-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:49:13-51:61
+67                android:name="android.support.customtabs.trusted.SPLASH_SCREEN_BACKGROUND_COLOR"
+67-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:50:17-97
+68                android:resource="@color/backgroundColor" />
+68-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:51:17-58
+69            <meta-data
+69-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:53:13-55:39
+70                android:name="android.support.customtabs.trusted.SPLASH_SCREEN_FADE_OUT_DURATION"
+70-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:54:17-98
+71                android:value="300" />
+71-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:55:17-36
+72            <meta-data
+72-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:57:13-59:67
+73                android:name="android.support.customtabs.trusted.FILE_PROVIDER_AUTHORITY"
+73-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:58:17-90
+74                android:value="com.reaf.nyanquest.fileprovider" />
+74-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:59:17-64
+75            <meta-data
+75-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:61:13-63:44
+76                android:name="android.support.customtabs.trusted.SCREEN_ORIENTATION"
+76-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:62:17-85
+77                android:value="portrait" />
+77-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:63:17-41
+78
+79            <intent-filter>
+79-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:65:13-68:29
+80                <action android:name="android.intent.action.MAIN" />
+80-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:66:17-69
+80-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:66:25-66
+81
+82                <category android:name="android.intent.category.LAUNCHER" />
+82-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:67:17-77
+82-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:67:27-74
+83            </intent-filter>
+84            <intent-filter android:autoVerify="true" >
+84-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:70:13-77:29
+84-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:70:28-53
+85                <action android:name="android.intent.action.VIEW" />
+85-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:71:17-69
+85-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:71:25-66
+86
+87                <category android:name="android.intent.category.DEFAULT" />
+87-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:72:17-76
+87-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:72:27-73
+88                <category android:name="android.intent.category.BROWSABLE" />
+88-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:73:17-78
+88-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:73:27-75
+89
+90                <data
+90-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:74:17-76:59
+91                    android:host="nyanquest.vercel.app"
+91-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:76:21-56
+92                    android:scheme="https" />
+92-->E:\Projects\nyanquest\android-twa\app\src\main\AndroidManifest.xml:75:21-43
+93            </intent-filter>
+94        </activity>
+95
+96        <provider
+96-->[androidx.emoji2:emoji2:1.3.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\f80625029a223ca1f6446085fe87fb4d\transformed\emoji2-1.3.0\AndroidManifest.xml:24:9-32:20
+97            android:name="androidx.startup.InitializationProvider"
+97-->[androidx.emoji2:emoji2:1.3.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\f80625029a223ca1f6446085fe87fb4d\transformed\emoji2-1.3.0\AndroidManifest.xml:25:13-67
+98            android:authorities="com.reaf.nyanquest.androidx-startup"
+98-->[androidx.emoji2:emoji2:1.3.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\f80625029a223ca1f6446085fe87fb4d\transformed\emoji2-1.3.0\AndroidManifest.xml:26:13-68
+99            android:exported="false" >
+99-->[androidx.emoji2:emoji2:1.3.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\f80625029a223ca1f6446085fe87fb4d\transformed\emoji2-1.3.0\AndroidManifest.xml:27:13-37
+100            <meta-data
+100-->[androidx.emoji2:emoji2:1.3.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\f80625029a223ca1f6446085fe87fb4d\transformed\emoji2-1.3.0\AndroidManifest.xml:29:13-31:52
+101                android:name="androidx.emoji2.text.EmojiCompatInitializer"
+101-->[androidx.emoji2:emoji2:1.3.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\f80625029a223ca1f6446085fe87fb4d\transformed\emoji2-1.3.0\AndroidManifest.xml:30:17-75
+102                android:value="androidx.startup" />
+102-->[androidx.emoji2:emoji2:1.3.0] C:\Users\from_\.gradle\caches\8.11.1\transforms\f80625029a223ca1f6446085fe87fb4d\transformed\emoji2-1.3.0\AndroidManifest.xml:31:17-49
+103            <meta-data
+103-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\from_\.gradle\caches\8.11.1\transforms\2c0e5ce565d75bfa22b96df232c96979\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:29:13-31:52
+104                android:name="androidx.lifecycle.ProcessLifecycleInitializer"
+104-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\from_\.gradle\caches\8.11.1\transforms\2c0e5ce565d75bfa22b96df232c96979\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:30:17-78
+105                android:value="androidx.startup" />
+105-->[androidx.lifecycle:lifecycle-process:2.6.2] C:\Users\from_\.gradle\caches\8.11.1\transforms\2c0e5ce565d75bfa22b96df232c96979\transformed\lifecycle-process-2.6.2\AndroidManifest.xml:31:17-49
+106            <meta-data
+106-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:29:13-31:52
+107                android:name="androidx.profileinstaller.ProfileInstallerInitializer"
+107-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:30:17-85
+108                android:value="androidx.startup" />
+108-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:31:17-49
+109        </provider>
+110
+111        <receiver
+111-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:34:9-52:20
+112            android:name="androidx.profileinstaller.ProfileInstallReceiver"
+112-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:35:13-76
+113            android:directBootAware="false"
+113-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:36:13-44
+114            android:enabled="true"
+114-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:37:13-35
+115            android:exported="true"
+115-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:38:13-36
+116            android:permission="android.permission.DUMP" >
+116-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:39:13-57
+117            <intent-filter>
+117-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:40:13-42:29
+118                <action android:name="androidx.profileinstaller.action.INSTALL_PROFILE" />
+118-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:17-91
+118-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:41:25-88
+119            </intent-filter>
+120            <intent-filter>
+120-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:43:13-45:29
+121                <action android:name="androidx.profileinstaller.action.SKIP_FILE" />
+121-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:17-85
+121-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:44:25-82
+122            </intent-filter>
+123            <intent-filter>
+123-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:46:13-48:29
+124                <action android:name="androidx.profileinstaller.action.SAVE_PROFILE" />
+124-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:17-88
+124-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:47:25-85
+125            </intent-filter>
+126            <intent-filter>
+126-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:49:13-51:29
+127                <action android:name="androidx.profileinstaller.action.BENCHMARK_OPERATION" />
+127-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:17-95
+127-->[androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\from_\.gradle\caches\8.11.1\transforms\9587475b468d9b96a89543e0fd3b364e\transformed\profileinstaller-1.3.1\AndroidManifest.xml:50:25-92
+128            </intent-filter>
+129        </receiver>
+130    </application>
+131
+132</manifest>

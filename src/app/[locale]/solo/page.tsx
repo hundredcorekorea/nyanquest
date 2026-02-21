@@ -4,6 +4,7 @@ import { PREMIUM_CONFIG } from "@/lib/premium";
 import ScenarioCard from "./ScenarioCard";
 import TutorialWrapper from "./TutorialWrapper";
 import AbandonQuestButton from "./AbandonQuestButton";
+import LoginBanner from "./LoginBanner";
 import type { SoloQuest } from "@/types/solo-quest";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
@@ -21,6 +22,8 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
   let inProgressQuest: SoloQuest | null = null;
   let dailyCount = 0;
   let isPremium = false;
+  let isTrial = false;
+  let trialDaysLeft = 0;
 
   if (user) {
     // Check premium status
@@ -28,6 +31,23 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
       p_user_id: user.id,
     });
     isPremium = !!premiumStatus;
+
+    // Check if trial (premium but no subscription)
+    if (isPremium) {
+      const { data: sub } = await supabase.rpc("get_active_subscription", {
+        p_user_id: user.id,
+      });
+      if (!sub || sub.length === 0) {
+        const { data: trialData } = await supabase.rpc("get_trial_info", {
+          p_user_id: user.id,
+        });
+        if (trialData && trialData.length > 0 && trialData[0].is_trial) {
+          isTrial = true;
+          trialDaysLeft = trialData[0].trial_days_left;
+        }
+      }
+    }
+
     // Check for in-progress quest
     const { data: activeQuest } = await supabase
       .from("solo_quests")
@@ -70,9 +90,11 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
           {t("subtitle")}
         </p>
         {user && (
-          <p className="text-xs text-amber-600">
+          <p className={`text-xs ${isTrial && trialDaysLeft <= 3 ? "text-orange-600 font-medium" : "text-amber-600"}`}>
             {isPremium
-              ? t("unlimitedTraining")
+              ? isTrial
+                ? `${trialDaysLeft <= 3 ? "⏳ " : ""}${t("trialDaysLeft", { days: trialDaysLeft })}`
+                : t("unlimitedTraining")
               : t("dailyCount", { count: dailyCount, limit: PREMIUM_CONFIG.free.dailyQuestLimit })}
           </p>
         )}
@@ -118,15 +140,8 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
         ))}
       </div>
 
-      {/* Not logged in message */}
-      {!user && (
-        <div className="text-center bg-gray-50 rounded-2xl p-6">
-          <p className="text-3xl mb-2">🔒</p>
-          <p className="text-sm text-gray-500">
-            {t("loginRequiredForTraining")}
-          </p>
-        </div>
-      )}
+      {/* Not logged in — clickable login banner */}
+      {!user && <LoginBanner />}
     </div>
   );
 }

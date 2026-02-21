@@ -7,6 +7,7 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import AdGate from "@/components/AdGate";
+import LoginModal from "@/components/LoginModal";
 import type { Scenario } from "@/types/solo-quest";
 
 interface Props {
@@ -33,6 +34,7 @@ export default function ScenarioCard({
   const locale = useLocale();
   const [loading, setLoading] = useState(false);
   const [showAdGate, setShowAdGate] = useState(false);
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
 
   const isLocked = scenario.isPremium && !isPremium;
   const effectiveTurns = Math.round(
@@ -48,7 +50,7 @@ export default function ScenarioCard({
       return;
     }
     if (!isLoggedIn) {
-      toast(tCommon("loginRequired"), "error");
+      setShowLoginPrompt(true);
       return;
     }
     if (dailyLimitReached) {
@@ -125,7 +127,7 @@ export default function ScenarioCard({
   }
 
   const disabled =
-    (!isLocked && (!isLoggedIn || dailyLimitReached || hasActiveQuest)) || loading;
+    (!isLocked && isLoggedIn && (dailyLimitReached || hasActiveQuest)) || loading;
 
   return (
     <div
@@ -162,6 +164,10 @@ export default function ScenarioCard({
         open={showAdGate}
         onComplete={startQuest}
         onCancel={() => setShowAdGate(false)}
+      />
+      <LoginModal
+        open={showLoginPrompt}
+        onClose={() => setShowLoginPrompt(false)}
       />
       <button
         onClick={handleClick}

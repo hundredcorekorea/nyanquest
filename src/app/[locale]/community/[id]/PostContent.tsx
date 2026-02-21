@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import type { Post, Comment, PostCategory } from "@/types/database";
 import { useToast } from "@/components/Toast";
 import ReportButton from "@/components/ReportButton";
+import LoginModal from "@/components/LoginModal";
 
 export default function PostContent({ post }: { post: Post }) {
   const t = useTranslations("CommunityPost");
@@ -40,6 +41,7 @@ export default function PostContent({ post }: { post: Post }) {
   const [comments, setComments] = useState<Comment[]>([]);
   const [commentText, setCommentText] = useState("");
   const [submittingComment, setSubmittingComment] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   const cat = categoryConfig[post.category];
 
@@ -264,9 +266,18 @@ export default function PostContent({ post }: { post: Post }) {
             </button>
           </div>
         ) : (
-          <p className="text-xs text-gray-400 text-center">
-            {t("commentLoginRequired")}
-          </p>
+          <>
+            <button
+              onClick={() => setShowLoginModal(true)}
+              className="w-full py-2.5 text-sm text-amber-600 hover:text-amber-700 bg-amber-50 hover:bg-amber-100 rounded-lg transition-colors font-medium"
+            >
+              🔒 {t("commentLoginRequired")}
+            </button>
+            <LoginModal
+              open={showLoginModal}
+              onClose={() => setShowLoginModal(false)}
+            />
+          </>
         )}
 
         {/* Comment list */}

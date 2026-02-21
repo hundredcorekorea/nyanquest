@@ -6,7 +6,7 @@ import { usePremium } from "@/hooks/usePremium";
 
 export default function CatMascot() {
   const t = useTranslations("CatMascot");
-  const { isPremium, loading } = usePremium();
+  const { isPremium, isTrial, trialDaysLeft, loading } = usePremium();
 
   const normalMessages = [
     t("msg1"), t("msg2"), t("msg3"), t("msg4"),
@@ -57,8 +57,14 @@ export default function CatMascot() {
       <div className="flex-1 min-w-0">
         {isPremium && (
           <div className="mb-1.5">
-            <span className="inline-flex items-center gap-1 text-[10px] font-bold text-amber-700 bg-amber-200/80 rounded-full px-2 py-0.5">
-              ⭐ {t("premiumBadge")}
+            <span className={`inline-flex items-center gap-1 text-[10px] font-bold rounded-full px-2 py-0.5 ${
+              isTrial
+                ? trialDaysLeft <= 3
+                  ? "text-orange-700 bg-orange-200/80"
+                  : "text-purple-700 bg-purple-200/80"
+                : "text-amber-700 bg-amber-200/80"
+            }`}>
+              {isTrial ? `${trialDaysLeft <= 3 ? "⏳" : "🎁"} ${t("trialBadge")}` : `⭐ ${t("premiumBadge")}`}
             </span>
           </div>
         )}

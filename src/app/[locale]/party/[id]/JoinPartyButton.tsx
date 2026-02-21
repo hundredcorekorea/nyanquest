@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useToast } from "@/components/Toast";
 import { useTranslations } from "next-intl";
+import LoginModal from "@/components/LoginModal";
 
 interface Props {
   partyId: string;
@@ -35,6 +36,7 @@ export default function JoinPartyButton({
   >("idle");
   const [memberRole, setMemberRole] = useState<"GM" | "PL" | null>(null);
   const [showRoleSelect, setShowRoleSelect] = useState(false);
+  const [showLoginModal, setShowLoginModal] = useState(false);
 
   useEffect(() => {
     const check = async () => {
@@ -62,13 +64,7 @@ export default function JoinPartyButton({
 
   const handleJoin = async (role: "GM" | "PL" = "PL") => {
     if (!userId) {
-      // Trigger login
-      await supabase.auth.signInWithOAuth({
-        provider: "discord",
-        options: {
-          redirectTo: `${window.location.origin}/auth/callback?next=/party/${partyId}`,
-        },
-      });
+      setShowLoginModal(true);
       return;
     }
 
@@ -152,6 +148,11 @@ export default function JoinPartyButton({
 
   return (
     <div className="space-y-2">
+      <LoginModal
+        open={showLoginModal}
+        onClose={() => setShowLoginModal(false)}
+        redirectAfterLogin={`/party/${partyId}`}
+      />
       {lookingForGm ? (
         <button
           onClick={() =>

@@ -1,0 +1,4 @@
+#Wed Feb 18 16:10:17 KST 2026
+base.0=E\:\\Projects\\nyanquest\\android-twa\\app\\build\\intermediates\\dex\\release\\minifyReleaseWithR8\\classes.dex
+renamed.0=classes.dex
+path.0=classes.dex

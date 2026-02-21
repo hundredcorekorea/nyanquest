@@ -47,7 +47,7 @@ export default function MyPage() {
   const supabase = createClient();
   const router = useRouter();
   const { toast } = useToast();
-  const { isPremium, subscription } = usePremium();
+  const { isPremium, isTrial, trialDaysLeft, subscription } = usePremium();
   const t = useTranslations("MyPage");
   const tCommon = useTranslations("Common");
   const tStatus = useTranslations("Status");
@@ -547,6 +547,31 @@ export default function MyPage() {
                 </div>
               </div>
               <span className="text-xs text-purple-500">{t("premiumManage")} &rarr;</span>
+            </div>
+          </div>
+        </Link>
+      ) : isPremium && isTrial ? (
+        <Link href="/premium">
+          <div className={`rounded-2xl border p-4 hover:shadow-md transition-all ${
+            trialDaysLeft <= 3
+              ? "bg-gradient-to-r from-orange-100 to-red-100 border-orange-300"
+              : "bg-gradient-to-r from-purple-100 to-pink-100 border-purple-200"
+          }`}>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl">{trialDaysLeft <= 3 ? "⏳" : "🎁"}</span>
+                <div>
+                  <p className={`text-sm font-bold ${trialDaysLeft <= 3 ? "text-orange-700" : "text-purple-700"}`}>
+                    {t("premiumTrialActive")}
+                  </p>
+                  <p className={`text-xs ${trialDaysLeft <= 3 ? "text-orange-600 font-medium" : "text-purple-500"}`}>
+                    {t("premiumTrialDays", { days: trialDaysLeft })}
+                  </p>
+                </div>
+              </div>
+              <span className={`text-xs font-medium ${trialDaysLeft <= 3 ? "text-orange-600" : "text-purple-500"}`}>
+                {t("premiumTrialSubscribe")} &rarr;
+              </span>
             </div>
           </div>
         </Link>

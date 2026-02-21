@@ -11,7 +11,7 @@ import { useTranslations, useLocale } from "next-intl";
 export default function PremiumPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { isPremium, subscription, loading } = usePremium();
+  const { isPremium, isTrial, trialDaysLeft, subscription, loading } = usePremium();
   const [selectedPlan, setSelectedPlan] = useState<PlanType>("monthly");
   const [processing, setProcessing] = useState(false);
   const t = useTranslations("Premium");
@@ -140,6 +140,93 @@ export default function PremiumPage() {
         >
           {t("goToTraining")}
         </Link>
+      </div>
+    );
+  }
+
+  // Trial active — show trial status + upsell
+  if (isPremium && isTrial) {
+    return (
+      <div className="pb-24 max-w-lg mx-auto space-y-6">
+        <div className="text-center space-y-2">
+          <div className="text-5xl">🎁</div>
+          <h1 className="text-xl font-bold text-gray-900">{t("trialTitle")}</h1>
+          <p className="text-sm text-gray-500">{t("trialSubtitle")}</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-6 space-y-4">
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-600">{t("status")}</span>
+            <span className="text-sm font-bold text-purple-600">{t("trialActive")}</span>
+          </div>
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-gray-600">{t("trialRemaining")}</span>
+            <span className="text-sm font-bold text-purple-700">
+              {t("trialDaysRemaining", { days: trialDaysLeft })}
+            </span>
+          </div>
+          <p className="text-xs text-center text-gray-400 pt-2">{t("trialExpireNote")}</p>
+        </div>
+
+        {/* Benefits currently enjoying */}
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl border border-purple-200 p-6 space-y-4">
+          <h2 className="font-bold text-gray-900 text-sm">{t("benefits")}</h2>
+          <ul className="space-y-3">
+            {[
+              { icon: "🎯", text: t("benefitUnlimited") },
+              { icon: "🤖", text: t("benefitAiModel") },
+              { icon: "📝", text: t("benefitLongResponse") },
+              { icon: "🔄", text: t("benefitExtendedTurns") },
+              { icon: "⭐", text: t("benefitExpBonus") },
+              { icon: "🐉", text: t("benefitPremiumScenario") },
+            ].map(({ icon, text }) => (
+              <li key={icon} className="flex items-center gap-3 text-sm text-gray-700">
+                <span className="text-lg">{icon}</span>
+                {text}
+              </li>
+            ))}
+          </ul>
+        </div>
+
+        {/* Plan selection */}
+        <div className="space-y-3">
+          {(Object.entries(PLANS) as [PlanType, typeof PLANS[PlanType]][]).map(
+            ([key, plan]) => (
+              <button
+                key={key}
+                onClick={() => setSelectedPlan(key)}
+                className={`w-full p-4 rounded-2xl border-2 transition-all text-left ${
+                  selectedPlan === key
+                    ? "border-purple-500 bg-purple-50"
+                    : "border-gray-200 bg-white hover:border-gray-300"
+                }`}
+              >
+                <div className="flex justify-between items-center">
+                  <div>
+                    <p className="font-bold text-gray-900 text-sm">{plan.label}</p>
+                    {"discount" in plan && (
+                      <p className="text-xs text-purple-600 font-medium mt-0.5">{plan.discount}</p>
+                    )}
+                  </div>
+                  <p className="text-lg font-bold text-gray-900">
+                    {plan.price.toLocaleString()}{t("won")}
+                    <span className="text-xs text-gray-400 font-normal">/{plan.period}</span>
+                  </p>
+                </div>
+              </button>
+            )
+          )}
+        </div>
+
+        <button
+          onClick={handleSubscribe}
+          disabled={processing}
+          className="w-full py-4 bg-gradient-to-r from-purple-500 to-pink-500 text-white rounded-2xl font-bold text-base hover:from-purple-600 hover:to-pink-600 transition-colors disabled:opacity-50"
+        >
+          {processing ? t("subscribing") : t("trialSubscribeNow")}
+        </button>
+
+        <p className="text-xs text-center text-gray-400">{t("autoRenewalNote")}</p>
       </div>
     );
   }
