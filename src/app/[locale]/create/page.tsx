@@ -351,39 +351,41 @@ export default function CreatePartyPage() {
       {/* Step 2: Schedule & Location */}
       {step === 2 && (
         <div className="space-y-4">
-          {/* Role selector */}
-          <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">
-              {t("myRole")}
-            </label>
-            <div className="flex gap-2">
-              <button
-                onClick={() => update("creator_role", "GM")}
-                className={`flex-1 py-3 rounded-xl border text-sm font-medium transition-all ${
-                  form.creator_role === "GM"
-                    ? "border-amber-400 bg-amber-50 text-amber-700"
-                    : "border-gray-200 text-gray-500 hover:border-amber-200"
-                }`}
-              >
-                {`🧙 ${t("joinAsGm")}`}
-              </button>
-              <button
-                onClick={() => update("creator_role", "PL")}
-                className={`flex-1 py-3 rounded-xl border text-sm font-medium transition-all ${
-                  form.creator_role === "PL"
-                    ? "border-purple-400 bg-purple-50 text-purple-700"
-                    : "border-gray-200 text-gray-500 hover:border-purple-200"
-                }`}
-              >
-                {`⚔️ ${t("joinAsPl")}`}
-              </button>
+          {/* Role selector - hidden when AI GM is enabled */}
+          {!form.use_ai_gm && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t("myRole")}
+              </label>
+              <div className="flex gap-2">
+                <button
+                  onClick={() => update("creator_role", "GM")}
+                  className={`flex-1 py-3 rounded-xl border text-sm font-medium transition-all ${
+                    form.creator_role === "GM"
+                      ? "border-amber-400 bg-amber-50 text-amber-700"
+                      : "border-gray-200 text-gray-500 hover:border-amber-200"
+                  }`}
+                >
+                  {`🧙 ${t("joinAsGm")}`}
+                </button>
+                <button
+                  onClick={() => update("creator_role", "PL")}
+                  className={`flex-1 py-3 rounded-xl border text-sm font-medium transition-all ${
+                    form.creator_role === "PL"
+                      ? "border-purple-400 bg-purple-50 text-purple-700"
+                      : "border-gray-200 text-gray-500 hover:border-purple-200"
+                  }`}
+                >
+                  {`⚔️ ${t("joinAsPl")}`}
+                </button>
+              </div>
+              {form.creator_role === "PL" && (
+                <p className="text-xs text-purple-500 mt-1.5">
+                  {t("gmRecruitNote")}
+                </p>
+              )}
             </div>
-            {form.creator_role === "PL" && (
-              <p className="text-xs text-purple-500 mt-1.5">
-                {t("gmRecruitNote")}
-              </p>
-            )}
-          </div>
+          )}
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">
