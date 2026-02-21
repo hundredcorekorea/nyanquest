@@ -38,12 +38,14 @@ export default function AdGate({ onComplete, onCancel, open }: Props) {
           adPushed.current = true;
           setAdLoaded(true);
         } else {
-          // Ad SDK not available - skip gate entirely
-          onComplete();
+          // Ad SDK not available - skip countdown
+          setAdLoaded(false);
+          setCountdown(0);
         }
       } catch {
-        // Ad failed to load - skip gate
-        onComplete();
+        // Ad failed to load - skip countdown
+        setAdLoaded(false);
+        setCountdown(0);
       }
     }, 300);
 
@@ -67,10 +69,8 @@ export default function AdGate({ onComplete, onCancel, open }: Props) {
   }, [open]);
 
   const handleProceed = useCallback(() => {
-    if (countdown <= 0) {
-      onComplete();
-    }
-  }, [countdown, onComplete]);
+    onComplete();
+  }, [onComplete]);
 
   if (!open) return null;
 
