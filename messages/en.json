@@ -84,7 +84,15 @@
     "msg4": "Shall we roll a d20? I bet it'll be a natural 20, nya! ✨",
     "msg5": "A legendary Game Master is recruiting party members, nya!",
     "msg6": "Today's saving throw... success, nya! 🛡️",
-    "msg7": "A new quest has arrived at the Adventurers' Guild, nya~ 📜"
+    "msg7": "A new quest has arrived at the Adventurers' Guild, nya~ 📜",
+    "premiumBadge": "Premium Adventurer",
+    "premiumMsg1": "Premium Adventurer, shall we write another legend today, nya! ✨",
+    "premiumMsg2": "Unlimited quests await you, nya~ 🗡️",
+    "premiumMsg3": "The enhanced AI GM prepared a special adventure, nya! 🎭",
+    "premiumMsg4": "A premium adventurer's dice are blessed with luck, nya! 🎲",
+    "premiumMsg5": "Today's dungeon has a special difficulty just for you, nya~ 🏰",
+    "premiumMsg6": "With 2.5x extended turns, let's dive deeper, nya! ⚔️",
+    "premiumMsg7": "Legendary adventurer, the guild awaits you, nya! 👑"
   },
   "Party": {
     "playerCount": "{current}/{max}",
