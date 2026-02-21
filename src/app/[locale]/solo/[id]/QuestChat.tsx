@@ -202,7 +202,8 @@ export default function QuestChat({
   }
 
   return (
-    <div className={`pb-24 max-w-lg flex flex-col min-h-[calc(100vh-8rem)] -mt-4 pt-4 bg-linear-to-b ${theme.bgGradient}`}>
+    <div className={`-mx-4 -mt-4 min-h-[calc(100vh-5rem)] bg-linear-to-b ${theme.bgGradient}`}>
+    <div className="max-w-2xl mx-auto px-4 pt-4 pb-24 flex flex-col min-h-[calc(100vh-5rem)]">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -339,6 +340,7 @@ export default function QuestChat({
           />
         </div>
       )}
+    </div>
     </div>
   );
 }
