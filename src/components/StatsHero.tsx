@@ -59,7 +59,7 @@ export default async function StatsHero() {
           🧙‍♂️ {t("soloPlay")}
         </Link>
         <Link
-          href="/party"
+          href="/create"
           className="flex items-center justify-center gap-2 py-3 bg-purple-500 hover:bg-purple-600 text-white font-medium rounded-xl transition-colors text-sm"
         >
           👥 {t("partyPlay")}
