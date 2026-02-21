@@ -7,6 +7,8 @@ import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { parseDiceRequest } from "@/lib/solo-quest/dice";
 import { useQuestSounds } from "@/hooks/useQuestSounds";
+import { useBgmPlayer } from "@/hooks/useBgmPlayer";
+import { useBgmMood } from "@/hooks/useBgmMood";
 import type { SoloQuest, QuestMessage, DiceRoll, ScenarioTheme } from "@/types/solo-quest";
 import ChatBubble from "./ChatBubble";
 import DiceRoller from "./DiceRoller";
@@ -38,6 +40,9 @@ export default function QuestChat({
   const tSolo = useTranslations("Solo");
   const tCommon = useTranslations("Common");
   const sounds = useQuestSounds();
+  const bgm = useBgmPlayer();
+  const bgmMood = useBgmMood(bgm.playCategory);
+  const [showBgmVolume, setShowBgmVolume] = useState(false);
   const [messages, setMessages] = useState<QuestMessage[]>(quest.messages);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingText, setStreamingText] = useState("");
@@ -46,6 +51,13 @@ export default function QuestChat({
   const [pendingDice, setPendingDice] = useState<ReturnType<typeof parseDiceRequest>>(null);
   const [suggestions, setSuggestions] = useState(initialSuggestions);
   const chatEndRef = useRef<HTMLDivElement>(null);
+
+  // Analyze initial GM message mood on mount
+  useEffect(() => {
+    const lastGm = [...quest.messages].reverse().find((m) => m.role === "gm");
+    if (lastGm) bgmMood.analyzeMessage(lastGm.content);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Auto-scroll
   useEffect(() => {
@@ -135,6 +147,7 @@ export default function QuestChat({
         setStreamingText("");
         setTurnCount((prev) => prev + 1);
         sounds.playMessage();
+        bgmMood.analyzeMessage(fullText);
       } catch (err) {
         toast(
           err instanceof Error ? err.message : tCommon("errorOccurred"),
@@ -178,6 +191,7 @@ export default function QuestChat({
   }
 
   async function handleAbandon() {
+    bgm.stopAll();
     const supabase = createClient();
     await supabase
       .from("solo_quests")
@@ -198,11 +212,44 @@ export default function QuestChat({
           </p>
         </div>
         <div className="flex items-center gap-2">
-          {/* Sound toggle */}
+          {/* BGM toggle + volume */}
+          <div className="relative flex items-center gap-1">
+            <button
+              onClick={bgm.toggle}
+              className={`text-sm px-2 py-1 rounded-lg transition-colors ${
+                bgm.enabled ? "text-amber-400 hover:text-amber-300" : "text-gray-500 hover:text-gray-300"
+              }`}
+              title={bgm.enabled ? "BGM Off" : "BGM On"}
+            >
+              {bgm.enabled ? "♫" : "♪"}
+            </button>
+            {bgm.enabled && (
+              <button
+                onClick={() => setShowBgmVolume((v) => !v)}
+                className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
+                title="Volume"
+              >
+                ▾
+              </button>
+            )}
+            {showBgmVolume && bgm.enabled && (
+              <div className="absolute top-full right-0 mt-1 bg-gray-900/95 backdrop-blur-sm rounded-lg p-2 z-50 border border-white/10">
+                <input
+                  type="range"
+                  min={0}
+                  max={100}
+                  value={Math.round(bgm.volume * 100)}
+                  onChange={(e) => bgm.setVolume(Number(e.target.value) / 100)}
+                  className="w-24 h-1 accent-amber-400"
+                />
+              </div>
+            )}
+          </div>
+          {/* SFX toggle */}
           <button
             onClick={sounds.toggle}
             className="text-sm px-2 py-1 rounded-lg text-gray-400 hover:text-gray-200 transition-colors"
-            title={sounds.enabled ? "Mute" : "Unmute"}
+            title={sounds.enabled ? "Mute SFX" : "Unmute SFX"}
           >
             {sounds.enabled ? "🔊" : "🔇"}
           </button>
