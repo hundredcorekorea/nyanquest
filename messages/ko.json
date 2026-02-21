@@ -73,7 +73,9 @@
     "parties": "모집 중인 파티",
     "diceRolls": "주사위 굴림",
     "earlyHero": "비밀 던전의 초대 모험가가 되어보세요!",
-    "startQuest": "모험 시작하기"
+    "startQuest": "모험 시작하기",
+    "soloPlay": "혼자 모험하기",
+    "partyPlay": "함께 모험하기"
   },
   "CatMascot": {
     "msg1": "오늘의 판정은 대성공(Critical)일 것 같다냥! 🎲",

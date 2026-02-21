@@ -73,7 +73,9 @@
     "parties": "Recruiting Parties",
     "diceRolls": "Dice Rolled",
     "earlyHero": "Be among the first adventurers of this secret dungeon!",
-    "startQuest": "Start Adventure"
+    "startQuest": "Start Adventure",
+    "soloPlay": "Solo Quest",
+    "partyPlay": "Party Up"
   },
   "CatMascot": {
     "msg1": "Today's roll is gonna be a Critical Success, nya! 🎲",

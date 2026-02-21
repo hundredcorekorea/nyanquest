@@ -51,12 +51,20 @@ export default async function StatsHero() {
         ))}
       </div>
 
-      <Link
-        href="/solo"
-        className="block mt-4 text-center py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl transition-colors text-sm"
-      >
-        {t("startQuest")}
-      </Link>
+      <div className="grid grid-cols-2 gap-3 mt-4">
+        <Link
+          href="/solo"
+          className="flex items-center justify-center gap-2 py-3 bg-amber-500 hover:bg-amber-600 text-white font-medium rounded-xl transition-colors text-sm"
+        >
+          🧙‍♂️ {t("soloPlay")}
+        </Link>
+        <Link
+          href="/party"
+          className="flex items-center justify-center gap-2 py-3 bg-purple-500 hover:bg-purple-600 text-white font-medium rounded-xl transition-colors text-sm"
+        >
+          👥 {t("partyPlay")}
+        </Link>
+      </div>
     </div>
   );
 }
