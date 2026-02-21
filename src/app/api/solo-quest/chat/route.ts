@@ -45,12 +45,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  if (turnCount > 100) {
-    return Response.json(
-      { error: apiMsg("turnLimitExceeded", request) },
-      { status: 400 }
-    );
-  }
+  // Hard turn limit checked after scenario load (see below)
 
   // Verify quest ownership
   const { data: quest } = await supabase
@@ -87,6 +82,20 @@ export async function POST(request: NextRequest) {
 
   // Calculate total turns with premium multiplier
   const effectiveTotalTurns = Math.round(scenario.estimatedTurns * config.turnMultiplier);
+
+  // Enforce turn limit (allow 2 extra turns for AI to wrap up)
+  if (turnCount >= effectiveTotalTurns + 2) {
+    // Force complete the quest
+    await supabase
+      .from("solo_quests")
+      .update({ status: "completed", updated_at: new Date().toISOString() })
+      .eq("id", questId);
+
+    return Response.json(
+      { error: apiMsg("turnLimitExceeded", request) },
+      { status: 400 }
+    );
+  }
 
   // Build system prompt
   const systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens);

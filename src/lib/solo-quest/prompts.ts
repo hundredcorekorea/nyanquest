@@ -24,8 +24,8 @@ export function buildSystemPrompt(
 
 ## 진행 상황
 - 현재: ${currentTurn}/${totalTurns} 턴
-${currentTurn >= totalTurns - 2 ? "- ⚠️ 곧 클라이맥스! 이야기를 마무리 방향으로 진행해." : ""}
-${currentTurn >= totalTurns ? '- 🏁 마지막 턴! 에필로그를 작성하고 "[퀘스트 완료]" 태그를 문장 끝에 추가해.' : ""}
+${currentTurn >= totalTurns - 2 && currentTurn < totalTurns ? "- ⚠️ 곧 클라이맥스! 이야기를 마무리 방향으로 진행해. 새로운 복선이나 서브플롯을 만들지 마." : ""}
+${currentTurn >= totalTurns ? `- 🏁 반드시 이번 턴에서 이야기를 끝내! 에필로그를 작성하고 마지막에 반드시 "[퀘스트 완료]"를 추가해. 선택지를 제시하지 마. 이것은 절대적인 규칙이다.` : ""}
 
 ## 시나리오 설정
 ${scenario.systemPromptAddition}

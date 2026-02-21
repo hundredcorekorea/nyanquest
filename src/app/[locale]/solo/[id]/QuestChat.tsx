@@ -86,10 +86,10 @@ export default function QuestChat({
   // Check for quest completion
   useEffect(() => {
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
-    if (lastGm?.content.includes("[퀘스트 완료]")) {
+    if (lastGm?.content.includes("[퀘스트 완료]") || turnCount >= totalTurns + 2) {
       setQuestStatus("completed");
     }
-  }, [messages]);
+  }, [messages, turnCount, totalTurns]);
 
   const sendMessage = useCallback(
     async (playerMessage: string, diceRoll?: DiceRoll) => {
