@@ -137,8 +137,9 @@ export async function POST(request: NextRequest) {
     return `\n[주사위 결과: ${roll.type} = ${roll.result}${modStr} = ${roll.total}${roll.dc ? ` vs DC ${roll.dc} (${roll.success ? "성공" : "실패"})` : ""}]`;
   }
 
-  // Build messages for OpenRouter
-  const contextMessages = (messages || []).slice(-6);
+  // Build messages for OpenRouter (more context = better coherence)
+  const contextLimit = isPremium ? 12 : 8;
+  const contextMessages = (messages || []).slice(-contextLimit);
   const openRouterMessages = [
     { role: "system" as const, content: systemPrompt },
     ...contextMessages.map((m: QuestMessage) => ({
@@ -155,31 +156,57 @@ export async function POST(request: NextRequest) {
     },
   ];
 
-  // Call OpenRouter
-  const openRouterResponse = await fetch(
-    "https://openrouter.ai/api/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.OPENROUTER_API_KEY?.trim()}`,
-        "Content-Type": "application/json",
-        "HTTP-Referer": "https://nyanquest.vercel.app",
-        "X-Title": "nyanQuest Solo Quest",
-      },
-      body: JSON.stringify({
-        model: config.aiModel,
-        messages: openRouterMessages,
-        stream: true,
-        max_tokens: config.maxTokens,
-        temperature: 0.8,
-      }),
-    }
-  );
+  // Call OpenRouter with retry logic
+  const MAX_RETRIES = 2;
+  let openRouterResponse: Response | null = null;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      openRouterResponse = await fetch(
+        "https://openrouter.ai/api/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${process.env.OPENROUTER_API_KEY?.trim()}`,
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://nyanquest.vercel.app",
+            "X-Title": "nyanQuest Solo Quest",
+          },
+          body: JSON.stringify({
+            model: config.aiModel,
+            messages: openRouterMessages,
+            stream: true,
+            max_tokens: config.maxTokens,
+            temperature: 0.7,
+          }),
+        }
+      );
 
-  if (!openRouterResponse.ok) {
-    const errBody = await openRouterResponse.text().catch(() => "");
+      if (openRouterResponse.ok) break;
+
+      // Retry on 5xx server errors or 429 rate limit
+      const status = openRouterResponse.status;
+      if (attempt < MAX_RETRIES && (status >= 500 || status === 429)) {
+        const delay = (attempt + 1) * 1000;
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
+      }
+    } catch (err) {
+      if (attempt < MAX_RETRIES) {
+        await new Promise((r) => setTimeout(r, (attempt + 1) * 1000));
+        continue;
+      }
+      console.error(`[solo-quest] OpenRouter network error:`, err);
+      return Response.json(
+        { error: apiMsg("aiUnavailable", request) },
+        { status: 502 }
+      );
+    }
+  }
+
+  if (!openRouterResponse || !openRouterResponse.ok) {
+    const errBody = await openRouterResponse?.text().catch(() => "") ?? "";
     console.error(
-      `[solo-quest] OpenRouter ${openRouterResponse.status}: ${errBody}`
+      `[solo-quest] OpenRouter ${openRouterResponse?.status}: ${errBody}`
     );
     return Response.json(
       { error: apiMsg("aiUnavailable", request) },
@@ -224,6 +251,15 @@ export async function POST(request: NextRequest) {
           }
         }
       } finally {
+        // Fallback if AI returned empty/too-short response
+        if (!fullResponse || fullResponse.trim().length < 10) {
+          const fallback = "...나양 GM이 잠시 생각에 잠겼다냥. 집사, 다시 한 번 말해줄 수 있겠냥?";
+          if (!fullResponse) {
+            controller.enqueue(encoder.encode(fallback));
+          }
+          fullResponse = fullResponse || fallback;
+        }
+
         // Save messages to DB (fire-and-forget)
         const newMessages = [
           ...messages,
