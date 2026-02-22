@@ -23,7 +23,10 @@ export async function updateSession(
             ? response
             : NextResponse.next({ request });
           cookiesToSet.forEach(({ name, value, options }) =>
-            supabaseResponse.cookies.set(name, value, options)
+            supabaseResponse.cookies.set(name, value, {
+              ...options,
+              httpOnly: false,
+            })
           );
         },
       },

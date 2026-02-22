@@ -67,7 +67,12 @@ export async function GET(request: Request) {
         console.log("[auth/callback] Redirecting to:", redirectUrl);
         const redirectResponse = NextResponse.redirect(redirectUrl);
         for (const { name, value, options } of cookiesToSet) {
-          redirectResponse.cookies.set(name, value, options as Parameters<typeof redirectResponse.cookies.set>[2]);
+          console.log("[auth/callback] Cookie options for", name, ":", JSON.stringify(options));
+          // Ensure cookies are browser-readable (not httpOnly)
+          redirectResponse.cookies.set(name, value, {
+            ...(options as Record<string, unknown>),
+            httpOnly: false,
+          } as Parameters<typeof redirectResponse.cookies.set>[2]);
         }
         console.log("[auth/callback] Set cookies on response:", cookiesToSet.map(c => c.name));
         return redirectResponse;
