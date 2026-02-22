@@ -62,9 +62,11 @@
     "loginFailed": "Login failed, nya... Please try again!",
     "loginModalTitle": "You need to log in, nya!",
     "loginModalDesc": "Sign up and get a 7-day premium free trial, nya!",
-    "loginWithDiscord": "Start with Discord",
-    "loginWithGoogle": "Start with Google",
-    "loginModalClose": "Maybe later"
+    "loginWithDiscord": "Continue with Discord",
+    "loginWithGoogle": "Continue with Google",
+    "loginModalClose": "Maybe later",
+    "hcSubtitle": "Log in with Hundred Core account",
+    "hcAppsNote": "One Hundred Core account for all HC apps — nyanQuest, G-Bus, JellyPocket & more, nya!"
   },
   "Home": {
     "emptyBoardTitle": "The quest board is empty, nya...",

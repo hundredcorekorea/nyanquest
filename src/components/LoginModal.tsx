@@ -1,7 +1,8 @@
 "use client";
 
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { PROMO_APPS } from "@/lib/self-promo";
 
 interface Props {
   open: boolean;
@@ -18,6 +19,8 @@ function isInAppBrowser(): boolean {
 
 export default function LoginModal({ open, onClose, redirectAfterLogin }: Props) {
   const t = useTranslations("Auth");
+  const locale = useLocale();
+  const isKo = locale === "ko";
 
   if (!open) return null;
 
@@ -46,18 +49,23 @@ export default function LoginModal({ open, onClose, redirectAfterLogin }: Props)
     <>
       <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
       <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-        <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full p-6 space-y-4 animate-in zoom-in-95 fade-in duration-200">
-          <div className="text-center space-y-2">
-            <div className="text-4xl">🧙‍♂️🐱</div>
+        <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 fade-in duration-200">
+          {/* Header */}
+          <div className="bg-gradient-to-b from-amber-50 to-white px-6 pt-6 pb-4 text-center">
+            <div className="text-4xl mb-2">🧙‍♂️🐱</div>
             <h3 className="text-lg font-bold text-gray-900">
               {t("loginModalTitle")}
             </h3>
-            <p className="text-sm text-gray-500">
+            <p className="text-xs text-amber-600 mt-1 font-medium">
+              {t("hcSubtitle")}
+            </p>
+            <p className="text-sm text-gray-500 mt-2">
               {t("loginModalDesc")}
             </p>
           </div>
 
-          <div className="space-y-3">
+          {/* OAuth Buttons */}
+          <div className="px-6 pb-4 space-y-3">
             <button
               onClick={() => handleLogin("discord")}
               className="flex items-center justify-center gap-3 w-full py-3 bg-indigo-500 hover:bg-indigo-600 text-white rounded-xl font-medium transition-colors"
@@ -81,12 +89,31 @@ export default function LoginModal({ open, onClose, redirectAfterLogin }: Props)
             </button>
           </div>
 
-          <button
-            onClick={onClose}
-            className="w-full py-2.5 text-sm text-gray-400 hover:text-gray-600 transition-colors"
-          >
-            {t("loginModalClose")}
-          </button>
+          {/* HC Apps Section */}
+          <div className="px-6 pb-4">
+            <div className="bg-amber-50/70 rounded-xl px-4 py-3 border border-amber-100">
+              <p className="text-[11px] text-amber-700 text-center leading-relaxed mb-2.5">
+                {t("hcAppsNote")}
+              </p>
+              <div className="flex flex-wrap justify-center gap-x-3 gap-y-1">
+                {PROMO_APPS.slice(0, 5).map((app) => (
+                  <span key={app.id} className="text-[10px] text-amber-600/70">
+                    {app.emoji} {isKo ? app.nameKo : app.nameEn}
+                  </span>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Close */}
+          <div className="px-6 pb-5">
+            <button
+              onClick={onClose}
+              className="w-full py-2.5 text-sm text-gray-400 hover:text-gray-600 transition-colors"
+            >
+              {t("loginModalClose")}
+            </button>
+          </div>
         </div>
       </div>
     </>

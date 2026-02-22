@@ -8,7 +8,7 @@ export interface SelfPromo {
   link: string;
 }
 
-const PROMO_APPS: SelfPromo[] = [
+export const PROMO_APPS: SelfPromo[] = [
   {
     id: "dreamflow",
     nameKo: "DreamFlow",
