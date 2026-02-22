@@ -1,6 +1,7 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import { createBrowserClient } from "@supabase/ssr";
+import { createClient as createRawClient } from "@supabase/supabase-js";
 import { useEffect, useState } from "react";
 
 function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | "TIMEOUT"> {
@@ -17,16 +18,13 @@ export default function AuthDebug() {
     const check = async () => {
       try {
         const lines: string[] = [];
+        const url = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+        const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
 
-        // Step 1: Cookie check
-        const cookies = document.cookie;
-        const authCookies = cookies.split(";").filter(c => c.trim().startsWith("sb-"));
-        lines.push(`cookies: ${authCookies.length}`);
-
-        // Step 2: Direct API test (bypasses Supabase client)
+        // Parse token from cookies
         const prefix = "sb-gkqodrrlfifachndgfdt-auth-token";
         const chunks: Record<string, string> = {};
-        cookies.split(";").forEach(c => {
+        document.cookie.split(";").forEach(c => {
           const t = c.trim();
           if (t.startsWith(prefix)) {
             const [k, ...v] = t.split("=");
@@ -34,40 +32,39 @@ export default function AuthDebug() {
           }
         });
         const raw = decodeURIComponent((chunks[`${prefix}.0`] ?? "") + (chunks[`${prefix}.1`] ?? ""));
+        let accessToken = "";
+        let refreshToken = "";
         if (raw.startsWith("base64-")) {
           const parsed = JSON.parse(atob(raw.slice(7)));
-          lines.push(`direct: ${parsed.user?.email} (${parsed.user?.app_metadata?.provider})`);
+          accessToken = parsed.access_token ?? "";
+          refreshToken = parsed.refresh_token ?? "";
+          lines.push(`cookie: ${parsed.user?.email} (${parsed.user?.app_metadata?.provider})`);
+        } else {
+          lines.push("no base64 token");
         }
 
-        // Step 3: Test createClient() with timeout
-        setInfo(lines.join("\n") + "\ntesting createClient()...");
-        const supabase = createClient();
+        // Test 1: Non-singleton createBrowserClient
+        setInfo(lines.join("\n") + "\ntest1: non-singleton...");
+        const client1 = createBrowserClient(url, key, {
+          cookieEncoding: "base64url",
+          isSingleton: false,
+        });
+        const r1 = await withTimeout(client1.auth.getSession(), 3000);
+        lines.push(`test1 (non-singleton): ${r1 === "TIMEOUT" ? "TIMEOUT" : r1.data.session ? "OK " + r1.data.session.user.email : "null"}`);
+        setInfo(lines.join("\n"));
 
-        // Test getSession with 3s timeout
-        const sessResult = await withTimeout(
-          supabase.auth.getSession(),
-          3000
-        );
-        if (sessResult === "TIMEOUT") {
-          lines.push("getSession: TIMEOUT (3s) - STILL BROKEN");
-          setInfo(lines.join("\n"));
-          return;
+        // Test 2: Raw supabase-js client + setSession
+        if (accessToken && refreshToken) {
+          setInfo(lines.join("\n") + "\ntest2: raw client...");
+          const client2 = createRawClient(url, key, {
+            auth: { persistSession: false },
+          });
+          const { data, error } = await client2.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken,
+          });
+          lines.push(`test2 (raw+setSession): ${error ? "ERR " + error.message : data.user ? "OK " + data.user.email : "null"}`);
         }
-        const { data: { session }, error: sessErr } = sessResult;
-        lines.push(`getSession: ${session ? "OK (" + session.user.email + ")" : "null"} err: ${sessErr?.message ?? "none"}`);
-
-        // Test getUser with 3s timeout
-        const userResult = await withTimeout(
-          supabase.auth.getUser(),
-          3000
-        );
-        if (userResult === "TIMEOUT") {
-          lines.push("getUser: TIMEOUT (3s)");
-          setInfo(lines.join("\n"));
-          return;
-        }
-        const { data: { user }, error: userErr } = userResult;
-        lines.push(`getUser: ${user ? "OK (" + user.email + ")" : "null"} err: ${userErr?.message ?? "none"}`);
 
         setInfo(lines.join("\n"));
       } catch (e) {
