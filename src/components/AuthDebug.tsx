@@ -72,11 +72,11 @@ export default function AuthDebug() {
         // Step 4: Check navigator.locks
         if (navigator.locks) {
           const locks = await navigator.locks.query();
-          const sbLocks = locks.held?.filter(l => l.name.includes("supabase")) ?? [];
-          const pending = locks.pending?.filter(l => l.name.includes("supabase")) ?? [];
+          const sbLocks = locks.held?.filter(l => l.name?.includes("supabase")) ?? [];
+          const pending = locks.pending?.filter(l => l.name?.includes("supabase")) ?? [];
           lines.push(`locks held: ${sbLocks.length}, pending: ${pending.length}`);
-          if (sbLocks.length > 0) lines.push(`held names: ${sbLocks.map(l => l.name).join(", ")}`);
-          if (pending.length > 0) lines.push(`pending names: ${pending.map(l => l.name).join(", ")}`);
+          if (sbLocks.length > 0) lines.push(`held names: ${sbLocks.map(l => l.name ?? "?").join(", ")}`);
+          if (pending.length > 0) lines.push(`pending names: ${pending.map(l => l.name ?? "?").join(", ")}`);
         }
 
         setInfo(lines.join("\n"));
