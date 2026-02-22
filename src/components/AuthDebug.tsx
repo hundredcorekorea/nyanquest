@@ -1,16 +1,6 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
-
-function withTimeout<T>(promise: Promise<T>, ms: number, label: string): Promise<T | { timeout: true; label: string }> {
-  return Promise.race([
-    promise,
-    new Promise<{ timeout: true; label: string }>((resolve) =>
-      setTimeout(() => resolve({ timeout: true, label }), ms)
-    ),
-  ]);
-}
 
 export default function AuthDebug() {
   const [info, setInfo] = useState<string>("1. starting...");
@@ -18,46 +8,78 @@ export default function AuthDebug() {
   useEffect(() => {
     const check = async () => {
       try {
-        // Step 1: Check cookies visible to JS (sync)
+        // Step 1: Read auth cookies directly
         const cookies = document.cookie;
-        const authCookies = cookies.split(";").filter(c => c.trim().startsWith("sb-"));
-        const cookieNames = authCookies.map(c => c.trim().split("=")[0]);
+        const authCookies = cookies.split(";")
+          .filter(c => c.trim().startsWith("sb-"))
+          .reduce((acc, c) => {
+            const [key, ...rest] = c.trim().split("=");
+            acc[key] = rest.join("=");
+            return acc;
+          }, {} as Record<string, string>);
 
-        setInfo(`cookies: ${authCookies.length} [${cookieNames.join(", ")}]\nchecking getUser (5s timeout)...`);
+        const cookieNames = Object.keys(authCookies);
+        const lines: string[] = [`cookies: ${cookieNames.length} [${cookieNames.join(", ")}]`];
 
-        // Step 2: Try getUser with timeout (what AuthButton uses)
-        const supabase = createClient();
-        const userResult = await withTimeout(
-          supabase.auth.getUser(),
-          5000,
-          "getUser"
-        );
+        // Step 2: Try to parse the chunked auth token
+        const prefix = "sb-gkqodrrlfifachndgfdt-auth-token";
+        const chunk0 = authCookies[`${prefix}.0`];
+        const chunk1 = authCookies[`${prefix}.1`];
 
-        if (userResult && "timeout" in userResult) {
-          setInfo(`cookies: ${authCookies.length} [${cookieNames.join(", ")}]\ngetUser: TIMEOUT (5s)\nThis means Supabase client is hanging.`);
-          return;
+        if (chunk0) {
+          try {
+            const raw = decodeURIComponent(chunk0 + (chunk1 ?? ""));
+            const parsed = JSON.parse(raw);
+            const accessToken = parsed.access_token;
+            const expiresAt = parsed.expires_at;
+            const now = Math.floor(Date.now() / 1000);
+            const expired = expiresAt ? expiresAt < now : "unknown";
+
+            lines.push(`token: ${accessToken ? "exists (" + accessToken.slice(0, 20) + "...)" : "null"}`);
+            lines.push(`expires_at: ${expiresAt} (now: ${now}, expired: ${expired})`);
+            lines.push(`user_email: ${parsed.user?.email ?? "none"}`);
+            lines.push(`provider: ${parsed.user?.app_metadata?.provider ?? "none"}`);
+
+            // Step 3: Try direct API call with the token
+            if (accessToken) {
+              setInfo(lines.join("\n") + "\nfetching /auth/v1/user...");
+
+              const resp = await fetch(
+                `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${accessToken}`,
+                    apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+                  },
+                }
+              );
+              const body = await resp.text();
+              lines.push(`API status: ${resp.status}`);
+              if (resp.ok) {
+                const user = JSON.parse(body);
+                lines.push(`API user: ${user.email} (${user.id?.slice(0, 8)})`);
+              } else {
+                lines.push(`API error: ${body.slice(0, 100)}`);
+              }
+            }
+          } catch (e) {
+            lines.push(`parse error: ${e instanceof Error ? e.message : String(e)}`);
+          }
+        } else {
+          lines.push("no auth token cookies found");
         }
 
-        const { data: { user }, error: userErr } = userResult as { data: { user: unknown }; error: { message: string } | null };
-        const u = user as { id: string; email?: string; app_metadata?: { provider?: string } } | null;
-
-        // Step 3: Check profile if user exists
-        let profileInfo = "no user";
-        if (u) {
-          const { data, error } = await supabase
-            .from("profiles")
-            .select("id, nickname")
-            .eq("id", u.id)
-            .single();
-          profileInfo = error ? `err: ${error.message}` : data ? (data as { nickname: string }).nickname : "null";
+        // Step 4: Check navigator.locks
+        if (navigator.locks) {
+          const locks = await navigator.locks.query();
+          const sbLocks = locks.held?.filter(l => l.name.includes("supabase")) ?? [];
+          const pending = locks.pending?.filter(l => l.name.includes("supabase")) ?? [];
+          lines.push(`locks held: ${sbLocks.length}, pending: ${pending.length}`);
+          if (sbLocks.length > 0) lines.push(`held names: ${sbLocks.map(l => l.name).join(", ")}`);
+          if (pending.length > 0) lines.push(`pending names: ${pending.map(l => l.name).join(", ")}`);
         }
 
-        setInfo(JSON.stringify({
-          cookies: { count: authCookies.length, names: cookieNames },
-          user: u ? { id: u.id.slice(0, 8), email: u.email, provider: u.app_metadata?.provider } : null,
-          userErr: userErr?.message ?? null,
-          profile: profileInfo,
-        }, null, 1));
+        setInfo(lines.join("\n"));
       } catch (e) {
         setInfo(`ERROR: ${e instanceof Error ? e.message : String(e)}`);
       }
