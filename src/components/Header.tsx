@@ -3,17 +3,15 @@
 import { Link } from "@/i18n/navigation";
 import AuthButton from "./AuthButton";
 import NotificationBell from "./NotificationBell";
-import { createClient } from "@/lib/supabase/client";
+import { getUserFromCookies } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 
 export default function Header() {
   const [userId, setUserId] = useState<string | null>(null);
 
   useEffect(() => {
-    const supabase = createClient();
-    supabase.auth.getUser().then(({ data: { user } }) => {
-      setUserId(user?.id ?? null);
-    });
+    const user = getUserFromCookies();
+    setUserId(user?.id ?? null);
   }, []);
 
   return (

@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient, createAuthClient } from "@/lib/supabase/client";
+import { createClient, getUserFromCookies } from "@/lib/supabase/client";
 import { useEffect, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -24,32 +24,18 @@ export default function AuthButton() {
   const router = useRouter();
 
   useEffect(() => {
-    const getUser = async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      setUser(user);
+    // Read user from cookies directly (bypasses getUser() hang)
+    const cookieUser = getUserFromCookies();
+    setUser(cookieUser);
 
-      if (user) {
-        const { data } = await supabase
-          .from("profiles")
-          .select("*")
-          .eq("id", user.id)
-          .single();
-        setProfile(data);
-      }
-    };
-
-    getUser();
-
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-      if (!session?.user) setProfile(null);
-    });
-
-    return () => subscription.unsubscribe();
+    if (cookieUser) {
+      supabase
+        .from("profiles")
+        .select("*")
+        .eq("id", cookieUser.id)
+        .single()
+        .then(({ data }) => setProfile(data));
+    }
   }, []);
 
   // Close menu on outside click
@@ -76,7 +62,7 @@ export default function AuthButton() {
       return;
     }
 
-    await createAuthClient().auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
@@ -89,6 +75,7 @@ export default function AuthButton() {
     await supabase.auth.signOut();
     setUser(null);
     setProfile(null);
+    window.location.reload();
   };
 
   if (user && profile) {
