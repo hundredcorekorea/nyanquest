@@ -67,6 +67,8 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
   function getResultLabel(r: DiceRoll) {
     // VtM messy critical
     if (system.id === "vtm" && r.messyCritical) return t("diceMessyCriticalNyan");
+    // Blades critical
+    if (system.id === "bitd" && r.messyCritical) return t("diceCriticalBitdNyan");
     // CoC critical/fumble
     if (system.id === "coc") {
       if (r.total <= 5) return t("diceCriticalNyan");
@@ -91,7 +93,7 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
   }
 
   // Dice notation display
-  const isPool = system.judgmentType === "pool-count";
+  const isPool = system.judgmentType === "pool-count" || system.judgmentType === "pool-highest";
   const diceNotation = isPool
     ? `${request.diceCount}${request.diceType}`
     : system.diceCount > 1
@@ -114,13 +116,21 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
   // Pool result display: each die colored by success/fail
   function renderPoolResult(r: DiceRoll) {
     if (!r.results) return null;
+    const isHighest = system.judgmentType === "pool-highest";
+    const highest = isHighest ? Math.max(...r.results) : 0;
     return (
       <div className="flex flex-wrap justify-center gap-1 mb-1">
         {r.results.map((val, i) => (
           <span
             key={i}
             className={`inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-bold ${
-              val === 10
+              isHighest
+                ? val === highest && val === 6
+                  ? "bg-green-400/30 text-green-300 ring-1 ring-green-400/50"
+                  : val === highest
+                  ? "bg-amber-400/30 text-amber-300 ring-1 ring-amber-400/50"
+                  : "bg-white/10 text-gray-400"
+                : val === 10
                 ? "bg-yellow-400/30 text-yellow-300 ring-1 ring-yellow-400/50"
                 : val >= 6
                 ? "bg-green-400/20 text-green-300"
@@ -135,25 +145,39 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
   }
 
   if (result) {
-    // Pool-count result display (VtM)
+    // Pool result display (VtM pool-count / Blades pool-highest)
     if (isPool) {
+      const isHighestPool = system.judgmentType === "pool-highest";
       return (
         <div className="flex justify-center animate-bubble-in">
           <div className={`rounded-2xl px-6 py-4 text-center max-w-xs ${getResultStyle(result)}`}>
             {renderPoolResult(result)}
-            <div className="text-xl font-bold text-white">
-              {t("poolSuccesses", { count: result.successes ?? 0 })}
+            {isHighestPool ? (
+              <>
+                <div className="text-xl font-bold text-white">
+                  {t("poolHighest", { value: result.total })}
+                </div>
+                {result.messyCritical && (
+                  <div className="text-xs text-yellow-400 font-medium mt-0.5">
+                    ⚡ {t("diceCriticalBitd")}
+                  </div>
+                )}
+              </>
+            ) : (
+              <>
+                <div className="text-xl font-bold text-white">
+                  {t("poolSuccesses", { count: result.successes ?? 0 })}
+                </div>
+                {result.messyCritical && (
+                  <div className="text-xs text-yellow-400 font-medium mt-0.5">
+                    ⚡ {t("messyCritical")}
+                  </div>
+                )}
+              </>
+            )}
+            <div className={`text-sm font-medium mt-1 ${getResultColor(result)}`}>
+              {getTargetLabel(result)}{getTargetLabel(result) ? " — " : ""}{getResultLabel(result)}
             </div>
-            {result.messyCritical && (
-              <div className="text-xs text-yellow-400 font-medium mt-0.5">
-                ⚡ {t("messyCritical")}
-              </div>
-            )}
-            {(result.difficulty !== undefined) && (
-              <div className={`text-sm font-medium mt-1 ${getResultColor(result)}`}>
-                {getTargetLabel(result)}{getTargetLabel(result) ? " — " : ""}{getResultLabel(result)}
-              </div>
-            )}
           </div>
         </div>
       );
@@ -199,6 +223,7 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
     if (request.target) return t("diceCheckTarget", { label: request.label, target: request.target });
     if (request.skillValue) return t("diceCheckSkill", { label: request.label, value: request.skillValue });
     if (request.difficulty) return t("diceCheckPool", { label: request.label, pool: request.diceCount, difficulty: request.difficulty });
+    if (system.judgmentType === "pool-highest") return t("diceCheckBitd", { label: request.label, pool: request.diceCount });
     return request.label;
   }
 

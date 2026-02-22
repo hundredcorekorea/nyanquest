@@ -447,6 +447,68 @@ NPC:
       bubbleColor: "bg-red-950/50",
     },
   },
+  {
+    id: "doskvol-heist",
+    isPremium: true,
+    system: "bitd" as TrpgSystemId,
+    title: "The Doskvol Heist",
+    titleKo: "도스크볼의 금고",
+    description:
+      "가스등 아래 어둠이 깔린 도시, 도스크볼. 스커바 크루의 첫 의뢰가 도착했다냥. 성공하면 명성, 실패하면... 감옥이다냥.",
+    descriptionEn:
+      "Under the gaslit darkness of Doskvol, your crew's first job has arrived, meow. Success means reputation — failure means prison.",
+    thumbnailEmoji: "🗡️",
+    difficulty: "hard",
+    estimatedTurns: 10,
+    genre: "고딕 범죄",
+    genreEn: "Gothic Crime",
+    systemPromptAddition: `배경: 도스크볼(Doskvol) - 가스등이 깜빡이는 산업혁명 시대의 고딕 도시. 유령이 떠도는 전기 장벽으로 둘러싸인 도시.
+목표: 로드 카시미르의 저택에서 "유령 열쇠"라는 유물을 훔쳐오라.
+분위기: 블레이즈 인 더 다크 특유의 어둡고 세련된 범죄 드라마. 계획과 즉흥의 긴장.
+
+캐릭터 설정:
+- 크루: "검은 고양이(The Black Cats)" - 소규모 도둑단
+- 포지션: Lurk (잠입 전문) / Spider (계략 전문)
+- 스트레스: 0 (시작). 위험한 행동이나 저항 시 증가. 9 이상이면 트라우마 경고.
+- 행동 등급: 은밀(Prowl) 2, 위장(Finesse) 2, 조사(Survey) 1, 교섭(Consort) 1, 파괴(Wreck) 1
+
+NPC:
+- 의뢰인: "회색 여우" - 정체불명의 중개인. 성공 보수: 코인 8.
+- 적: 로드 카시미르 - 귀족이자 비밀 마술사. 유령 경비원을 부린다.
+- 조력자: "칼" - 크루의 정보원. 저택 구조를 알려줌.
+- 라이벌: "붉은 조" - 같은 유물을 노리는 경쟁 도둑단의 리더.
+
+시스템 특징:
+- "위치(Position)"와 "효과(Effect)"를 매 판정 전에 명시해:
+  예: "(위치: 위험, 효과: 표준)"
+- 실패 시 "틱(Tick)" 또는 상황 악화를 구체적으로 묘사.
+- 부분 성공 시 항상 흥미로운 "합병증" 제시.
+- 크리티컬(6이 2개 이상) 시 추가 이득 묘사.
+- 플래시백을 적극 활용: 플레이어가 준비를 언급하면 과거 장면 삽입.
+- 스트레스 추적: 위험한 행동 시 스트레스 +1~2. 저항 시에도 스트레스 소모.
+주요 판정: 은밀(2d6), 위장(2d6), 조사(1d6), 교섭(1d6), 파괴(1d6).`,
+    openingMessage: `가스등이 깜빡이는 골목이다냥. 비가 내리고 있다냥.
+
+"회색 여우"에게 받은 쪽지를 펼친다냥:
+
+*"로드 카시미르 저택. 3층 서재. '유령 열쇠'라 불리는 유물. 야회가 열리는 내일 밤이 기회다. 성공하면 코인 8. 실패하면... 만나지 못할 거다."*
+
+"칼"이 저택의 약도를 내민다냥. 정문 경비 2명, 뒷문은 잠겨 있고, 지하에는... 뭔가 이상한 게 있다고 한다냥.
+
+크루의 첫 의뢰다냥. 어떤 "접근법"을 택할 거냥?
+
+1. 🎭 야회에 변장해서 잠입한다 (사교)
+2. 🌙 지붕을 타고 은밀하게 침입한다 (잠입)
+3. 💣 지하 통로를 통해 들어간다 (비밀 경로)
+
+💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥! "플래시백"으로 미리 준비한 것을 선언할 수도 있다냥!`,
+    suggestedActions: ["야회 잠입", "지붕 침입", "지하 통로"],
+    theme: {
+      bgGradient: "from-gray-950 via-slate-900/70 to-gray-950",
+      accentColor: "text-slate-300",
+      bubbleColor: "bg-slate-900/50",
+    },
+  },
 ];
 
 export function getScenario(id: string): Scenario | undefined {

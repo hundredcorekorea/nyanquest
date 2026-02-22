@@ -357,7 +357,13 @@
     "poolSuccessesShort": "성공 {count}",
     "messyCritical": "메시 크리티컬",
     "diceMessyCriticalNyan": "메시 크리티컬이다냥!! 야수가 깨어난다냥!",
-    "difficulty": "난이도"
+    "difficulty": "난이도",
+    "poolHighest": "최고값 {value}!",
+    "poolHighestShort": "최고 {value}",
+    "diceCriticalBitd": "크리티컬!",
+    "diceCriticalBitdNyan": "크리티컬이다냥!! 6이 두 개다냥!",
+    "diceRollResultBitd": "주사위를 굴렸다! {pool}d6 → 최고값 {highest} ({result})",
+    "diceCheckBitd": "{label} 판정 ({pool}d6)"
   },
   "Tutorial": {
     "skip": "건너뛰기",

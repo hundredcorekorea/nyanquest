@@ -62,6 +62,13 @@ export function judgeRoll(
     case "pool-count":
       // total = successes count, targetValue = difficulty
       return { success: total >= targetValue };
+    case "pool-highest": {
+      // Blades in the Dark: highest die determines tier
+      // 6 = success, 4-5 = partial, 1-3 = fail
+      if (total >= 6) return { success: true, tier: "success" };
+      if (total >= 4) return { success: true, tier: "partial" };
+      return { success: false, tier: "fail" };
+    }
   }
 }
 
@@ -192,6 +199,19 @@ export function parseSystemDiceRequest(
         systemId: "vtm",
       };
 
+    case "bitd":
+      return {
+        diceType: "d6",
+        diceCount: parseInt(match[1]),
+        modifier: 0,
+        dc: 0,
+        target: 0,
+        skillValue: 0,
+        difficulty: 0,
+        label: match[2] ?? "판정",
+        systemId: "bitd",
+      };
+
     default:
       return null;
   }
@@ -201,6 +221,26 @@ export function rollSystemDice(
   request: ParsedDiceRequest,
   system: TrpgSystemPreset
 ): DiceRoll {
+  // Pool-highest systems (Blades): roll Nd6, take highest, tier by value
+  if (system.judgmentType === "pool-highest") {
+    const poolSize = Math.max(request.diceCount, 1);
+    const { results } = rollMultiDice("d6", poolSize);
+    const highest = Math.max(...results);
+    const sixes = results.filter((r) => r === 6).length;
+    const isCritical = sixes >= 2;
+    const judgment = judgeRoll(system, highest, 0);
+
+    return {
+      type: request.diceType,
+      result: highest,
+      results,
+      total: highest,
+      success: isCritical ? true : judgment.success,
+      tier: isCritical ? "success" as const : judgment.tier,
+      messyCritical: isCritical, // reuse field for "critical" display
+    };
+  }
+
   // Pool-count systems (VtM): roll Nd10, count successes >= 6
   if (system.judgmentType === "pool-count") {
     const { results, successes, tens } = rollDicePool(request.diceCount);

@@ -357,7 +357,13 @@
     "poolSuccessesShort": "{count} successes",
     "messyCritical": "Messy Critical",
     "diceMessyCriticalNyan": "Messy Critical, nya!! The Beast awakens!",
-    "difficulty": "Difficulty"
+    "difficulty": "Difficulty",
+    "poolHighest": "Highest: {value}!",
+    "poolHighestShort": "Highest {value}",
+    "diceCriticalBitd": "Critical!",
+    "diceCriticalBitdNyan": "Critical, nya!! Double sixes!",
+    "diceRollResultBitd": "Rolled the dice! {pool}d6 → Highest {highest} ({result})",
+    "diceCheckBitd": "{label} Check ({pool}d6)"
   },
   "Tutorial": {
     "skip": "Skip",

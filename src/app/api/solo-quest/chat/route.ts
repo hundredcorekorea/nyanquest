@@ -126,6 +126,13 @@ export async function POST(request: NextRequest) {
       const messy = roll.messyCritical ? " 메시 크리티컬!" : "";
       return `\n[주사위 결과: ${roll.results?.length ?? 0}d10 = ${resultsDisplay} → 성공 수 ${roll.successes ?? 0} vs 난이도 ${roll.difficulty ?? 0} (${roll.success ? "성공" : "실패"})${messy}]`;
     }
+    if (system.id === "bitd") {
+      const resultsDisplay = roll.results ? roll.results.map((r: number) => `[${r}]`).join("") : "";
+      const highest = roll.total;
+      const tierLabel = roll.tier === "success" ? "완전 성공" : roll.tier === "partial" ? "부분 성공" : "실패";
+      const critical = roll.messyCritical ? " 크리티컬!" : "";
+      return `\n[주사위 결과: ${roll.results?.length ?? 0}d6 = ${resultsDisplay} → 최고값 ${highest} (${tierLabel})${critical}]`;
+    }
     // D&D 5e default
     return `\n[주사위 결과: ${roll.type} = ${roll.result}${modStr} = ${roll.total}${roll.dc ? ` vs DC ${roll.dc} (${roll.success ? "성공" : "실패"})` : ""}]`;
   }

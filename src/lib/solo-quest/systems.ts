@@ -1,6 +1,6 @@
 import type { DiceType } from "@/types/solo-quest";
 
-export type TrpgSystemId = "dnd5e" | "insane" | "coc" | "dungeon-world" | "vtm";
+export type TrpgSystemId = "dnd5e" | "insane" | "coc" | "dungeon-world" | "vtm" | "bitd";
 
 export interface TrpgSystemPreset {
   id: TrpgSystemId;
@@ -11,7 +11,7 @@ export interface TrpgSystemPreset {
   defaultDice: DiceType;
   diceCount: number;
   hasModifier: boolean;
-  judgmentType: "dc" | "tier" | "target" | "pool-count";
+  judgmentType: "dc" | "tier" | "target" | "pool-count" | "pool-highest";
   promptRules: string;
   parsePattern: RegExp;
 }
@@ -124,6 +124,37 @@ export const SYSTEMS: Record<TrpgSystemId, TrpgSystemPreset> = {
 - 분위기는 어둡고 정치적인 고딕 호러. 물리적 전투보다 사회적 조종과 내면의 갈등 위주.`,
     parsePattern:
       /\[판정 필요:\s*(\d+)d10,\s*난이도\s*(\d+)(?:\s*\(([^)]+)\))?\]/,
+  },
+  bitd: {
+    id: "bitd",
+    name: "블레이즈 인 더 다크",
+    nameEn: "Blades in the Dark",
+    emoji: "🗡️",
+    diceNotation: "Nd6",
+    defaultDice: "d6",
+    diceCount: 3, // default pool size, actual varies
+    hasModifier: false,
+    judgmentType: "pool-highest",
+    promptRules: `- 이 시나리오는 블레이즈 인 더 다크(Blades in the Dark) 시스템이다.
+- 판정은 다이스 풀 방식이다: Nd6을 굴려서 가장 높은 눈을 기준으로 판정한다.
+  - 6: 완전 성공 (원하는 대로 됨)
+  - 4~5: 부분 성공 (해내지만 대가/합병증이 따름)
+  - 1~3: 실패 (상황이 나빠지며 위험에 처함)
+  - 6이 2개 이상: 크리티컬 (대성공! 추가 이득)
+- 판정 요청 형식: [판정 필요: Nd6 (행동명)]
+  예: [판정 필요: 3d6 (은밀)]
+- N은 보통 1~4 범위. 0다이스면 2d6 중 낮은 걸 선택 (불리 판정).
+- "스트레스(Stress)"를 추적해. 위험한 행동이나 저항할 때 스트레스 증가.
+  스트레스가 9 이상이면 "트라우마" 경고.
+- "위치(Position)"와 "효과(Effect)" 개념을 활용해:
+  - 위치: 통제됨(Controlled), 위험(Risky), 절박(Desperate)
+  - 효과: 위대함(Great), 표준(Standard), 제한적(Limited)
+  - 위치가 절박할수록 실패 시 결과가 가혹하지만, 보상도 큼.
+- 분위기는 가스등이 깜빡이는 산업혁명 고딕 도시. 범죄 조직의 활동.
+- 플레이어는 "스커바"(도적단)의 일원. 임무(Score) 수행이 핵심.
+- "플래시백" 시스템: 플레이어가 "사실은 미리 준비했었어"라고 하면, 과거 장면을 삽입해 준비 판정 가능.`,
+    parsePattern:
+      /\[판정 필요:\s*(\d+)d6(?:\s*\(([^)]+)\))?\]/,
   },
 };
 

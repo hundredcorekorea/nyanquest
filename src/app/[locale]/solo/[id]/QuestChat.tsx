@@ -220,6 +220,18 @@ export default function QuestChat({
         difficulty: result.difficulty ?? 0,
         result: result.success ? tQuest("diceResultSuccess") : tQuest("diceResultFail"),
       }) + messy;
+    } else if (system.id === "bitd") {
+      const tierLabel = result.tier === "success"
+        ? tQuest("diceResultSuccess")
+        : result.tier === "partial"
+        ? tQuest("diceResultPartial")
+        : tQuest("diceResultFail");
+      const critical = result.messyCritical ? ` (${tQuest("diceCriticalBitd")})` : "";
+      resultText = tQuest("diceRollResultBitd", {
+        pool: result.results?.length ?? 0,
+        highest: result.total,
+        result: tierLabel,
+      }) + critical;
     } else {
       resultText = tQuest("diceRollResult", {
         type: result.type,
