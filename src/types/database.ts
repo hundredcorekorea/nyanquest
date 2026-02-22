@@ -198,3 +198,19 @@ export interface Notification {
   is_read: boolean;
   created_at: string;
 }
+
+export type AdPlacement = "home" | "adgate" | "solo" | "community";
+
+export interface AdEntry {
+  id: string;
+  app_name: string;
+  title: string;
+  description: string;
+  img_url: string | null;
+  banner_url: string | null;
+  link: string;
+  placement: AdPlacement;
+  priority: number;
+  active: boolean;
+  created_at: string;
+}

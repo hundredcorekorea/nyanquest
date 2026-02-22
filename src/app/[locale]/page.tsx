@@ -7,6 +7,7 @@ import PartyCard from "@/components/PartyCard";
 import PartyFilters from "@/components/PartyFilters";
 import LoadMoreParties from "@/components/LoadMoreParties";
 import TutorialWrapper from "@/components/TutorialWrapper";
+import PromoCard from "@/components/PromoCard";
 import { Suspense } from "react";
 import type { Party, TrpgSystem } from "@/types/database";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -124,6 +125,9 @@ export default async function HomePage({
           </div>
         )}
       </div>
+
+      {/* Self-promo */}
+      <PromoCard placement="home" />
     </div>
   );
 }
