@@ -48,8 +48,8 @@ export default function LoginModal({ open, onClose, redirectAfterLogin }: Props)
   return (
     <>
       <div className="fixed inset-0 bg-black/40 z-40" onClick={onClose} />
-      <div className="fixed inset-0 z-50 flex items-center justify-center p-4 overflow-y-auto">
-        <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 fade-in duration-200 my-auto">
+      <div className="fixed inset-0 z-50 flex justify-center p-4 overflow-y-auto">
+        <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 fade-in duration-200 m-auto shrink-0">
           {/* Header */}
           <div className="bg-gradient-to-b from-amber-50 to-white px-5 pt-5 pb-3 text-center">
             <div className="text-3xl mb-1">🧙‍♂️🐱</div>
