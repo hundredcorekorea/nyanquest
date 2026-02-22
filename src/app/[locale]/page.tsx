@@ -6,6 +6,7 @@ import StatsHero from "@/components/StatsHero";
 import PartyCard from "@/components/PartyCard";
 import PartyFilters from "@/components/PartyFilters";
 import LoadMoreParties from "@/components/LoadMoreParties";
+import TutorialWrapper from "@/components/TutorialWrapper";
 import { Suspense } from "react";
 import type { Party, TrpgSystem } from "@/types/database";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -72,6 +73,9 @@ export default async function HomePage({
 
   return (
     <div className="space-y-6 pb-20">
+      {/* Tutorial for first-time visitors */}
+      <TutorialWrapper />
+
       {/* Auth error toast */}
       <Suspense>
         <AuthErrorToast />

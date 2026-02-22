@@ -344,13 +344,13 @@
     "alreadyKnow": "I already know!",
     "startAdventure": "Start Adventure!",
     "steps": {
-      "welcome": "Welcome, new adventurer, nya! I'm NaYang, the wizard cat who guards this training ground, nya.",
+      "welcome": "Welcome, new adventurer, nya! I'm NaYang, the wizard cat who guards this place, nya.",
       "askTrpg": "Have you ever heard of TRPG, nya?",
       "explainTrpg": "TRPG stands for 'Tabletop Role-Playing Game', nya. You gather together like a board game, and the GM (Game Master) tells the story while you, the PL (Player), make choices, nya!",
       "explainDice": "The key thing here is the dice, nya! Dice decide whether your actions succeed or fail. Shall we give it a roll, nya?",
-      "afterDiceAndTraining": "Nice, nya! That's how dice work. Here I'll be your GM — pick from choices or type whatever action you want, nya!",
+      "afterDiceAndTraining": "Nice, nya! That's how dice work. In the Training Grounds, I'll be your GM — pick from choices or type whatever action you want, nya!",
       "explainPlayProfile": "Oh, check out 'Play Profile' on your page, nya! List your fave works and play style to find the purr-fect party 🎭",
-      "ready": "Alright, are you ready, nya? Pick a scenario below and start your first adventure! NaYang will be waiting for you, nya~"
+      "ready": "Alright, are you ready, nya? Head to 'Training Grounds' in the menu below to pick a scenario and start your first adventure! NaYang will be waiting, nya~"
     },
     "rollD20": "Roll a d20!"
   },
@@ -538,7 +538,14 @@
     "trialRemaining": "Time remaining",
     "trialExpireNote": "After trial: limited to 2/day, 60% fewer AI turns, premium scenarios locked, no EXP bonus",
     "trialSubscribeNow": "Subscribe Now",
-    "trialBadge": "Free Trial"
+    "trialBadge": "Free Trial",
+    "freeTrialTitle": "7-Day Free Trial",
+    "freeTrialDesc": "Try all premium features free for 7 days, no payment required, nya!",
+    "startFreeTrial": "Start Free Trial",
+    "orSubscribe": "or subscribe now",
+    "trialStarted": "Free trial started, nya!",
+    "trialAlreadyUsed": "You've already used the free trial, nya",
+    "loginRequired": "Please log in first, nya"
   },
   "PremiumComplete": {
     "verifying": "Verifying your payment, nya...",

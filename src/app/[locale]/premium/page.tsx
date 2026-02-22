@@ -5,13 +5,14 @@ import { useRouter } from "@/i18n/navigation";
 import { Link } from "@/i18n/navigation";
 import { useToast } from "@/components/Toast";
 import { usePremium } from "@/hooks/usePremium";
+import { createClient, getUserFromCookies } from "@/lib/supabase/client";
 import { PLANS, PREMIUM_CONFIG, type PlanType } from "@/lib/premium";
 import { useTranslations, useLocale } from "next-intl";
 
 export default function PremiumPage() {
   const router = useRouter();
   const { toast } = useToast();
-  const { isPremium, isTrial, trialDaysLeft, subscription, loading } = usePremium();
+  const { isPremium, isTrial, trialDaysLeft, canStartTrial, subscription, loading } = usePremium();
   const [selectedPlan, setSelectedPlan] = useState<PlanType>("monthly");
   const [processing, setProcessing] = useState(false);
   const t = useTranslations("Premium");
@@ -81,6 +82,31 @@ export default function PremiumPage() {
     }
   }
 
+  async function handleStartTrial() {
+    setProcessing(true);
+    try {
+      const user = getUserFromCookies();
+      if (!user) {
+        toast(t("loginRequired"), "error");
+        return;
+      }
+      const supabase = createClient();
+      const { data, error } = await supabase.rpc("start_free_trial", {
+        p_user_id: user.id,
+      });
+      if (error || !data?.success) {
+        toast(t("trialAlreadyUsed"), "error");
+        return;
+      }
+      toast(t("trialStarted"), "success");
+      window.location.reload();
+    } catch {
+      toast(t("paymentError"), "error");
+    } finally {
+      setProcessing(false);
+    }
+  }
+
   if (loading) {
     return (
       <div className="text-center py-20 pb-24">
@@ -109,7 +135,7 @@ export default function PremiumPage() {
           <div className="flex justify-between items-center">
             <span className="text-sm text-gray-600">{t("plan")}</span>
             <span className="text-sm font-bold text-purple-700">
-              {subscription.plan === "yearly" ? t("yearlyPlan") : t("monthlyPlan")}
+              {subscription.plan === "yearly" ? t("yearlyPlan") : subscription.plan === "trial" ? t("trialBadge") : t("monthlyPlan")}
             </span>
           </div>
           <div className="flex justify-between items-center">
@@ -299,6 +325,29 @@ export default function PremiumPage() {
             </button>
           )
         )}
+      </div>
+
+      {/* Free Trial CTA */}
+      {canStartTrial && (
+        <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-5 space-y-3">
+          <div className="text-center space-y-1">
+            <p className="text-sm font-bold text-amber-900">{t("freeTrialTitle")}</p>
+            <p className="text-xs text-amber-700">{t("freeTrialDesc")}</p>
+          </div>
+          <button
+            onClick={handleStartTrial}
+            disabled={processing}
+            className="w-full py-3 bg-gradient-to-r from-amber-400 to-orange-400 text-white rounded-xl font-bold text-sm hover:from-amber-500 hover:to-orange-500 transition-colors disabled:opacity-50"
+          >
+            {processing ? t("subscribing") : t("startFreeTrial")}
+          </button>
+        </div>
+      )}
+
+      <div className="flex items-center gap-3 text-gray-300 text-xs">
+        <div className="flex-1 h-px bg-gray-200" />
+        <span>{t("orSubscribe")}</span>
+        <div className="flex-1 h-px bg-gray-200" />
       </div>
 
       {/* Subscribe button */}

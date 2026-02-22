@@ -2,7 +2,6 @@ import { createClient } from "@/lib/supabase/server";
 import { SCENARIOS } from "@/lib/solo-quest/scenarios";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import ScenarioCard from "./ScenarioCard";
-import TutorialWrapper from "./TutorialWrapper";
 import AbandonQuestButton from "./AbandonQuestButton";
 import LoginBanner from "./LoginBanner";
 import type { SoloQuest } from "@/types/solo-quest";
@@ -77,9 +76,6 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
 
   return (
     <div className="pb-24 max-w-lg mx-auto space-y-6">
-      {/* Tutorial for first-time visitors */}
-      <TutorialWrapper />
-
       {/* Header */}
       <div className="text-center space-y-2">
         <div className="text-4xl">🧙‍♂️🐱</div>
