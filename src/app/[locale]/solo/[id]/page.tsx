@@ -51,6 +51,7 @@ export default async function SoloQuestPlayPage({ params }: Props) {
       suggestedActions={scenario.suggestedActions}
       isPremium={isPremium}
       theme={scenario.theme}
+      systemId={scenario.system}
     />
   );
 }

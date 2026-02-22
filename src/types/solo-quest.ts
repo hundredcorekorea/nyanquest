@@ -1,12 +1,18 @@
+import type { TrpgSystemId } from "@/lib/solo-quest/systems";
+
 export type DiceType = "d4" | "d6" | "d8" | "d10" | "d12" | "d20" | "d100";
 
 export interface DiceRoll {
   type: DiceType;
   result: number;
+  results?: number[];
   modifier?: number;
   total: number;
   dc?: number;
+  target?: number;
+  skillValue?: number;
   success?: boolean;
+  tier?: "success" | "partial" | "fail";
 }
 
 export interface QuestMessage {
@@ -40,6 +46,7 @@ export interface Scenario {
   openingMessage: string;
   suggestedActions: string[];
   isPremium?: boolean;
+  system?: TrpgSystemId;
   theme: ScenarioTheme;
 }
 

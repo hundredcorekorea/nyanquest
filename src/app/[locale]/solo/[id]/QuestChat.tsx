@@ -5,7 +5,8 @@ import { useRouter } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
-import { parseDiceRequest } from "@/lib/solo-quest/dice";
+import { parseSystemDiceRequest, rollSystemDice, type ParsedDiceRequest } from "@/lib/solo-quest/dice";
+import { getSystem, type TrpgSystemId } from "@/lib/solo-quest/systems";
 import { useQuestSounds } from "@/hooks/useQuestSounds";
 import { useBgmPlayer } from "@/hooks/useBgmPlayer";
 import { useBgmMood } from "@/hooks/useBgmMood";
@@ -23,6 +24,7 @@ interface Props {
   suggestedActions: string[];
   isPremium: boolean;
   theme: ScenarioTheme;
+  systemId?: TrpgSystemId;
 }
 
 export default function QuestChat({
@@ -33,6 +35,7 @@ export default function QuestChat({
   suggestedActions: initialSuggestions,
   isPremium,
   theme,
+  systemId,
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();
@@ -48,7 +51,8 @@ export default function QuestChat({
   const [streamingText, setStreamingText] = useState("");
   const [turnCount, setTurnCount] = useState(quest.turn_count);
   const [questStatus, setQuestStatus] = useState(quest.status);
-  const [pendingDice, setPendingDice] = useState<ReturnType<typeof parseDiceRequest>>(null);
+  const system = getSystem(systemId);
+  const [pendingDice, setPendingDice] = useState<ParsedDiceRequest | null>(null);
   const [suggestions, setSuggestions] = useState(initialSuggestions);
   const chatEndRef = useRef<HTMLDivElement>(null);
 
@@ -68,7 +72,7 @@ export default function QuestChat({
   useEffect(() => {
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
     if (lastGm && !isStreaming) {
-      const request = parseDiceRequest(lastGm.content);
+      const request = parseSystemDiceRequest(lastGm.content, system);
       setPendingDice(request);
 
       // Extract numbered suggestions from GM message
@@ -163,8 +167,10 @@ export default function QuestChat({
   );
 
   function handleDiceRoll(result: DiceRoll) {
-    // Play success/failure sound
-    if (result.success) {
+    // Play success/failure sound based on tier or boolean
+    if (result.tier === "partial") {
+      sounds.playSuccess(); // partial is still a success sound
+    } else if (result.success) {
       sounds.playSuccess();
     } else if (result.success === false) {
       sounds.playFailure();
@@ -179,13 +185,41 @@ export default function QuestChat({
     };
     setMessages((prev) => [...prev, diceMsg]);
 
-    // Send to AI with dice context
-    const resultText = tQuest("diceRollResult", {
-      type: result.type,
-      total: result.total,
-      dc: result.dc ?? 0,
-      result: result.success ? tQuest("diceResultSuccess") : tQuest("diceResultFail"),
-    });
+    // Build result text based on system
+    let resultText: string;
+    if (system.id === "dungeon-world") {
+      const tierLabel = result.tier === "success"
+        ? tQuest("diceResultSuccess")
+        : result.tier === "partial"
+        ? tQuest("diceResultPartial")
+        : tQuest("diceResultFail");
+      resultText = tQuest("diceRollResultTier", {
+        total: result.total,
+        result: tierLabel,
+      });
+    } else if (system.id === "insane") {
+      resultText = tQuest("diceRollResultTarget", {
+        total: result.total,
+        target: result.target ?? 0,
+        result: result.success ? tQuest("diceResultSuccess") : tQuest("diceResultFail"),
+      });
+    } else if (system.id === "coc") {
+      let extra = "";
+      if (result.total <= 5) extra = ` (${tQuest("diceCritical")})`;
+      else if (result.total >= 96) extra = ` (${tQuest("diceFumble")})`;
+      resultText = tQuest("diceRollResultSkill", {
+        total: result.total,
+        skillValue: result.skillValue ?? 0,
+        result: result.success ? tQuest("diceResultSuccess") : tQuest("diceResultFail"),
+      }) + extra;
+    } else {
+      resultText = tQuest("diceRollResult", {
+        type: result.type,
+        total: result.total,
+        dc: result.dc ?? 0,
+        result: result.success ? tQuest("diceResultSuccess") : tQuest("diceResultFail"),
+      });
+    }
 
     sendMessage(resultText, result);
   }
@@ -290,7 +324,7 @@ export default function QuestChat({
       {/* Chat area */}
       <div className="flex-1 space-y-4 mb-4">
         {messages.map((msg, i) => (
-          <ChatBubble key={i} message={msg} theme={theme} />
+          <ChatBubble key={i} message={msg} theme={theme} systemId={systemId} />
         ))}
 
         {/* Streaming text */}
@@ -330,7 +364,7 @@ export default function QuestChat({
 
         {/* Dice roller */}
         {pendingDice && !isStreaming && questStatus === "in_progress" && (
-          <DiceRoller request={pendingDice} onRoll={handleDiceRoll} onRolling={sounds.playDiceRoll} />
+          <DiceRoller request={pendingDice} system={system} onRoll={handleDiceRoll} onRolling={sounds.playDiceRoll} />
         )}
 
         <div ref={chatEndRef} />

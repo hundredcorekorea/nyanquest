@@ -336,7 +336,21 @@
     "viewProfile": "View My Profile",
     "questCompleteTag": "[Quest Complete]",
     "diceGreatSuccess": "Amazing, nya!",
-    "diceNextTimeBetter": "No worries, nya~ You'll do better next time, nya!"
+    "diceNextTimeBetter": "No worries, nya~ You'll do better next time, nya!",
+    "dicePartial": "Partial success!",
+    "dicePartialNyan": "Partial success, nya!",
+    "diceCritical": "Critical!",
+    "diceCriticalNyan": "Critical hit, nya!!",
+    "diceFumble": "Fumble!",
+    "diceFumbleNyan": "Fumble, nya...",
+    "diceResultPartial": "Partial success!",
+    "targetValue": "Target",
+    "skillValue": "Skill",
+    "diceCheckTarget": "{label} Check (Target {target})",
+    "diceCheckSkill": "{label} Check (Skill {value})",
+    "diceRollResultTarget": "Rolled the dice! Total {total} (Target {target} {result})",
+    "diceRollResultSkill": "Rolled the dice! Result {total} (Skill {skillValue} {result})",
+    "diceRollResultTier": "Rolled the dice! Total {total} ({result})"
   },
   "Tutorial": {
     "skip": "Skip",

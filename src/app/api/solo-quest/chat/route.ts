@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { getScenario } from "@/lib/solo-quest/scenarios";
 import { buildSystemPrompt } from "@/lib/solo-quest/prompts";
+import { getSystem } from "@/lib/solo-quest/systems";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import { apiMsg } from "@/lib/api-messages";
 import { NextRequest } from "next/server";
@@ -28,7 +29,7 @@ export async function POST(request: NextRequest) {
     questId: string;
     scenarioId: string;
     playerMessage: string;
-    diceRoll?: { type: string; result: number; modifier?: number; total: number; dc?: number; success?: boolean };
+    diceRoll?: { type: string; result: number; results?: number[]; modifier?: number; total: number; dc?: number; target?: number; skillValue?: number; success?: boolean; tier?: string };
     messages: QuestMessage[];
     turnCount: number;
   };
@@ -98,7 +99,31 @@ export async function POST(request: NextRequest) {
   }
 
   // Build system prompt
-  const systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens);
+  const system = getSystem(scenario.system);
+  const systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens, system);
+
+  // Format dice result for AI context based on system
+  function formatDiceForAI(roll: typeof diceRoll): string {
+    if (!roll) return "";
+    const resultsStr = roll.results ? `[${roll.results.join(",")}]` : String(roll.result);
+    const modStr = roll.modifier ? ` + ${roll.modifier}` : "";
+
+    if (system.id === "insane") {
+      return `\n[주사위 결과: 2d6 = ${resultsStr} = ${roll.total} vs 목표치 ${roll.target ?? 0} (${roll.success ? "성공" : "실패"})]`;
+    }
+    if (system.id === "coc") {
+      let extra = "";
+      if (roll.total <= 5) extra = " 크리티컬!";
+      else if (roll.total >= 96) extra = " 펌블!";
+      return `\n[주사위 결과: d100 = ${roll.total} vs 기능치 ${roll.skillValue ?? 0} (${roll.success ? "성공" : "실패"})${extra}]`;
+    }
+    if (system.id === "dungeon-world") {
+      const tierLabel = roll.tier === "success" ? "완전 성공" : roll.tier === "partial" ? "부분 성공" : "실패";
+      return `\n[주사위 결과: 2d6 = ${resultsStr}${modStr} = ${roll.total} (${tierLabel})]`;
+    }
+    // D&D 5e default
+    return `\n[주사위 결과: ${roll.type} = ${roll.result}${modStr} = ${roll.total}${roll.dc ? ` vs DC ${roll.dc} (${roll.success ? "성공" : "실패"})` : ""}]`;
+  }
 
   // Build messages for OpenRouter
   const contextMessages = (messages || []).slice(-6);
@@ -107,13 +132,13 @@ export async function POST(request: NextRequest) {
     ...contextMessages.map((m: QuestMessage) => ({
       role: (m.role === "gm" ? "assistant" : "user") as "assistant" | "user",
       content: m.diceRoll
-        ? `${m.content}\n[주사위 결과: ${m.diceRoll.type} = ${m.diceRoll.result}${m.diceRoll.modifier ? ` + ${m.diceRoll.modifier}` : ""} = ${m.diceRoll.total}${m.diceRoll.dc ? ` vs DC ${m.diceRoll.dc} (${m.diceRoll.success ? "성공" : "실패"})` : ""}]`
+        ? `${m.content}${formatDiceForAI(m.diceRoll)}`
         : m.content,
     })),
     {
       role: "user" as const,
       content: diceRoll
-        ? `${playerMessage}\n[주사위 결과: ${diceRoll.type} = ${diceRoll.result}${diceRoll.modifier ? ` + ${diceRoll.modifier}` : ""} = ${diceRoll.total}${diceRoll.dc ? ` vs DC ${diceRoll.dc} (${diceRoll.success ? "성공" : "실패"})` : ""}]`
+        ? `${playerMessage}${formatDiceForAI(diceRoll)}`
         : playerMessage,
     },
   ];

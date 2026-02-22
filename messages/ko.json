@@ -336,7 +336,21 @@
     "viewProfile": "내 프로필 보기",
     "questCompleteTag": "[퀘스트 완료]",
     "diceGreatSuccess": "대단하다냥!",
-    "diceNextTimeBetter": "괜찮다냥, 다음엔 더 잘할 수 있다냥!"
+    "diceNextTimeBetter": "괜찮다냥, 다음엔 더 잘할 수 있다냥!",
+    "dicePartial": "부분 성공!",
+    "dicePartialNyan": "부분 성공이다냥!",
+    "diceCritical": "크리티컬!",
+    "diceCriticalNyan": "크리티컬이다냥!!",
+    "diceFumble": "펌블!",
+    "diceFumbleNyan": "펌블이다냥...",
+    "diceResultPartial": "부분 성공!",
+    "targetValue": "목표치",
+    "skillValue": "기능치",
+    "diceCheckTarget": "{label} 판정 (목표치 {target})",
+    "diceCheckSkill": "{label} 판정 (기능치 {value})",
+    "diceRollResultTarget": "주사위를 굴렸다! 합계 {total} (목표치 {target} {result})",
+    "diceRollResultSkill": "주사위를 굴렸다! 결과 {total} (기능치 {skillValue} {result})",
+    "diceRollResultTier": "주사위를 굴렸다! 합계 {total} ({result})"
   },
   "Tutorial": {
     "skip": "건너뛰기",

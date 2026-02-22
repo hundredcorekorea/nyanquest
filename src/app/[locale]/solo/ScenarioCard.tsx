@@ -8,6 +8,7 @@ import { useToast } from "@/components/Toast";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import AdGate from "@/components/AdGate";
 import LoginModal from "@/components/LoginModal";
+import { SYSTEMS } from "@/lib/solo-quest/systems";
 import type { Scenario } from "@/types/solo-quest";
 
 interface Props {
@@ -150,6 +151,11 @@ export default function ScenarioCard({
             {scenario.isPremium && (
               <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-700">
                 Premium
+              </span>
+            )}
+            {scenario.system && scenario.system !== "dnd5e" && (
+              <span className="text-xs px-2 py-0.5 rounded-full bg-gray-100 text-gray-600">
+                {SYSTEMS[scenario.system].emoji} {locale === "ko" ? SYSTEMS[scenario.system].name : SYSTEMS[scenario.system].nameEn}
               </span>
             )}
           </div>

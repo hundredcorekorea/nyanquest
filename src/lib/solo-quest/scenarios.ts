@@ -1,4 +1,5 @@
 import type { Scenario } from "@/types/solo-quest";
+import type { TrpgSystemId } from "./systems";
 
 export const SCENARIOS: Scenario[] = [
   {
@@ -244,6 +245,142 @@ NPC: 주점 주인 할머니 (비밀을 알고 있음), 음유시인 (힌트를 
       bgGradient: "from-indigo-950 via-violet-900/70 to-indigo-950",
       accentColor: "text-violet-400",
       bubbleColor: "bg-violet-900/40",
+    },
+  },
+  // === Multi-TRPG System Scenarios ===
+  {
+    id: "midnight-hospital",
+    isPremium: true,
+    system: "insane" as TrpgSystemId,
+    title: "Midnight Hospital",
+    titleKo: "자정의 병원",
+    description:
+      "이상한 병원에 갇혔다냥... 호기심이 이끄는 대로 가면, 진실이 보인다냥. 아니면 광기가.",
+    descriptionEn:
+      "You're trapped in a strange hospital, meow... Follow your curiosity to find truth — or madness.",
+    thumbnailEmoji: "🏥",
+    difficulty: "hard",
+    estimatedTurns: 10,
+    genre: "호러/심리",
+    genreEn: "Horror/Psychological",
+    systemPromptAddition: `배경: 한밤중의 폐병원. 플레이어는 기억을 잃은 채 깨어남.
+목표: 병원에서 탈출하고 자신의 정체를 밝혀라.
+분위기: 인세인 특유의 심리 호러. 호기심과 공포가 공존.
+NPC: 간호사 유령 (도움을 주는 척), 다른 환자 (비밀을 가진 자), 의문의 의사.
+시스템 특징: 각 NPC는 "비밀"을 하나씩 가지고 있으며, 조사할 때마다 하나씩 드러남.
+- 비밀은 "쇼크"로 공개: 극적으로 연출할 것.
+- 광기가 쌓이면 환각 묘사 추가.
+주요 판정: 조사(목표치 8), 교섭(목표치 9), 전투(목표치 10), 의지(목표치 7).
+3개의 비밀을 모두 모으면 탈출 가능.`,
+    openingMessage: `...삐... 삐... 삐...
+
+형광등이 깜빡인다냥. 차가운 병상 위에서 눈을 뜬다냥.
+
+여기가... 어디냥? 기억이 없다냥. 손목에는 환자 팔찌가 채워져 있고, 복도에서 누군가의 발소리가 들린다냥...
+
+집사, 어떻게 하겠냥?
+
+1. 🚪 조용히 복도로 나가본다
+2. 📋 병상 옆 차트를 확인한다
+3. 👂 발소리가 멈출 때까지 숨어서 듣는다
+
+💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
+    suggestedActions: ["복도 탐색", "차트 확인", "숨어서 관찰"],
+    theme: {
+      bgGradient: "from-gray-950 via-emerald-900/40 to-gray-950",
+      accentColor: "text-emerald-400",
+      bubbleColor: "bg-emerald-900/40",
+    },
+  },
+  {
+    id: "innsmouth-files",
+    isPremium: true,
+    system: "coc" as TrpgSystemId,
+    title: "The Innsmouth Files",
+    titleKo: "인스머스 사건 파일",
+    description:
+      "해안 마을에서 사람들이 사라지고 있다냥... 진실을 파헤칠수록, 정신이 위험해진다냥.",
+    descriptionEn:
+      "People are disappearing in a coastal town, meow... The deeper you dig, the more your sanity is at risk.",
+    thumbnailEmoji: "🐙",
+    difficulty: "hard",
+    estimatedTurns: 12,
+    genre: "코즈믹 호러",
+    genreEn: "Cosmic Horror",
+    systemPromptAddition: `배경: 1920년대 미국 해안 마을 '인스머스'. 탐정으로 실종 사건 조사.
+목표: 실종자들의 행방을 밝히고 살아서 마을을 빠져나가라.
+분위기: 크툴루 신화 특유의 서서히 조여오는 공포. 인간의 나약함.
+NPC: 마을 이장 (수상한 눈빛), 늙은 어부 (힌트를 줌), 도서관 사서 (고대 문서 보유).
+시스템 특징:
+- 플레이어 SAN(정신력)을 추적해. 시작 SAN: 65.
+- 공포스러운 존재/진실을 목격하면 SAN 체크 요청.
+- SAN이 0이 되면 영구 광기 → 게임 오버.
+- 조사가 핵심. 전투는 최후의 수단.
+주요 판정: 도서관 이용(기능치 65), 발견(기능치 50), 설득(기능치 55), 은신(기능치 40), SAN 체크(기능치 현재SAN).
+마을 깊숙이 갈수록 비인간적 존재의 흔적이.`,
+    openingMessage: `1927년 가을. 인스머스행 버스에서 내린다냥.
+
+짠 바다 냄새와 함께... 썩은 생선 냄새가 코를 찌른다냥. 마을은 이상하리만큼 조용하고, 지나가는 주민들의 눈빛이 유독 크고... 뭔가 이상하다냥.
+
+실종된 기자 3명. 마지막 목격 장소는 이 마을이다냥.
+
+집사, 조사를 시작하겠냥?
+
+1. 🏛️ 마을 이장을 찾아간다
+2. 📚 마을 도서관에서 자료를 조사한다
+3. 🎣 항구에서 어부들에게 이야기를 듣는다
+
+💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
+    suggestedActions: ["이장 방문", "도서관 조사", "어부 탐문"],
+    theme: {
+      bgGradient: "from-slate-950 via-teal-900/50 to-slate-950",
+      accentColor: "text-teal-400",
+      bubbleColor: "bg-teal-900/40",
+    },
+  },
+  {
+    id: "red-forest-witch",
+    isPremium: false,
+    system: "dungeon-world" as TrpgSystemId,
+    title: "The Red Forest Witch",
+    titleKo: "붉은 숲의 마녀",
+    description:
+      "마녀의 저주가 숲을 뒤덮었다냥! 동료와 함께 저주를 풀어라냥!",
+    descriptionEn:
+      "A witch's curse has engulfed the forest, meow! Break the curse with your allies!",
+    thumbnailEmoji: "🧹",
+    difficulty: "normal",
+    estimatedTurns: 10,
+    genre: "판타지/내러티브",
+    genreEn: "Fantasy/Narrative",
+    systemPromptAddition: `배경: 붉게 물든 마법의 숲. 마녀의 저주로 계절이 멈춤.
+목표: 숲 깊숙한 마녀의 오두막에 도달하여 저주를 풀어라.
+분위기: 동화적이면서 위험한 모험. 던전월드 특유의 즉흥적 내러티브.
+NPC: 숲의 정령 (길 안내, 대가를 요구), 저주받은 사냥꾼 (동료가 될 수 있음), 마녀 (적이 아닐 수도?).
+시스템 특징:
+- PbtA "무브" 시스템: 플레이어의 행동이 무브를 발동시킴.
+- 부분 성공(7-9)을 적극 활용해 재미있는 대가를 제시해.
+  예: "성공하지만 소중한 것을 잃는다", "해내지만 소리를 내서 적이 눈치챈다".
+- 실패(6-)에서는 상황을 흥미롭게 악화시키되 절대 즉사시키지 마.
+주요 무브: 기민하게 행동하기(+1), 간파하기(+1), 위험 감수(+0), 근접 전투(+1), 탐문하기(+2).`,
+    openingMessage: `숲에 들어서자... 모든 나뭇잎이 핏빛으로 물들어 있다냥.
+
+바람도 불지 않는데 나뭇잎이 소곤거리는 것 같다냥. 마을에서 들었던 이야기가 떠오른다냥... "붉은 숲에 들어간 자, 아무도 돌아오지 못했다"고.
+
+하지만 저주를 풀지 않으면 마을이 위험하다냥!
+
+집사, 어디로 가겠냥?
+
+1. 🛤️ 오래된 오솔길을 따라간다
+2. 🌳 나무에 새겨진 이상한 표식을 조사한다
+3. 🔥 횃불을 들고 숲 깊숙이 진입한다
+
+💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
+    suggestedActions: ["오솔길 탐색", "표식 조사", "숲 진입"],
+    theme: {
+      bgGradient: "from-red-950 via-rose-900/50 to-red-950",
+      accentColor: "text-rose-400",
+      bubbleColor: "bg-rose-900/40",
     },
   },
 ];

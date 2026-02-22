@@ -2,14 +2,16 @@
 
 import { useTranslations } from "next-intl";
 import type { QuestMessage, ScenarioTheme } from "@/types/solo-quest";
+import type { TrpgSystemId } from "@/lib/solo-quest/systems";
 
 interface Props {
   message: QuestMessage;
   isStreaming?: boolean;
   theme?: ScenarioTheme;
+  systemId?: TrpgSystemId;
 }
 
-export default function ChatBubble({ message, isStreaming, theme }: Props) {
+export default function ChatBubble({ message, isStreaming, theme, systemId }: Props) {
   const t = useTranslations("SoloQuest");
   if (message.role === "system") {
     return (
@@ -19,11 +21,23 @@ export default function ChatBubble({ message, isStreaming, theme }: Props) {
             <div className="mb-1">
               <span className="text-lg">🎲</span>{" "}
               <span className="font-bold text-white">
-                {message.diceRoll.type} = {message.diceRoll.result}
-                {message.diceRoll.modifier
-                  ? ` + ${message.diceRoll.modifier}`
-                  : ""}{" "}
-                = {message.diceRoll.total}
+                {message.diceRoll.results ? (
+                  <>
+                    [{message.diceRoll.results.join("] [")}]
+                    {message.diceRoll.modifier
+                      ? ` + ${message.diceRoll.modifier}`
+                      : ""}
+                    {" = "}{message.diceRoll.total}
+                  </>
+                ) : (
+                  <>
+                    {message.diceRoll.type} = {message.diceRoll.result}
+                    {message.diceRoll.modifier
+                      ? ` + ${message.diceRoll.modifier}`
+                      : ""}{" "}
+                    = {message.diceRoll.total}
+                  </>
+                )}
               </span>
               {message.diceRoll.dc && (
                 <span
@@ -35,6 +49,51 @@ export default function ChatBubble({ message, isStreaming, theme }: Props) {
                 >
                   vs DC {message.diceRoll.dc}{" "}
                   {message.diceRoll.success ? t("diceSuccess") : t("diceFail")}
+                </span>
+              )}
+              {message.diceRoll.target && !message.diceRoll.dc && (
+                <span
+                  className={`ml-1 font-medium ${
+                    message.diceRoll.success
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
+                  vs {t("targetValue")} {message.diceRoll.target}{" "}
+                  {message.diceRoll.success ? t("diceSuccess") : t("diceFail")}
+                </span>
+              )}
+              {message.diceRoll.skillValue && !message.diceRoll.dc && !message.diceRoll.target && (
+                <span
+                  className={`ml-1 font-medium ${
+                    message.diceRoll.success
+                      ? "text-green-400"
+                      : "text-red-400"
+                  }`}
+                >
+                  vs {t("skillValue")} {message.diceRoll.skillValue}{" "}
+                  {message.diceRoll.total <= 5 && systemId === "coc"
+                    ? t("diceCritical")
+                    : message.diceRoll.total >= 96 && systemId === "coc"
+                    ? t("diceFumble")
+                    : message.diceRoll.success ? t("diceSuccess") : t("diceFail")}
+                </span>
+              )}
+              {message.diceRoll.tier && !message.diceRoll.dc && !message.diceRoll.target && !message.diceRoll.skillValue && (
+                <span
+                  className={`ml-1 font-medium ${
+                    message.diceRoll.tier === "success"
+                      ? "text-green-400"
+                      : message.diceRoll.tier === "partial"
+                      ? "text-amber-400"
+                      : "text-red-400"
+                  }`}
+                >
+                  {message.diceRoll.tier === "success"
+                    ? t("diceSuccess")
+                    : message.diceRoll.tier === "partial"
+                    ? t("dicePartial")
+                    : t("diceFail")}
                 </span>
               )}
             </div>
