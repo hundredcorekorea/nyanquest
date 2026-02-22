@@ -1,7 +1,7 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { createClient } from "@/lib/supabase/client";
+import { createAuthClient } from "@/lib/supabase/client";
 
 interface Props {
   open: boolean;
@@ -33,7 +33,7 @@ export default function LoginModal({ open, onClose, redirectAfterLogin }: Props)
     }
 
     const next = redirectAfterLogin ?? window.location.pathname;
-    const supabase = createClient();
+    const supabase = createAuthClient();
     await supabase.auth.signInWithOAuth({
       provider,
       options: {

@@ -1,6 +1,6 @@
 "use client";
 
-import { createClient } from "@/lib/supabase/client";
+import { createClient, createAuthClient } from "@/lib/supabase/client";
 import { useEffect, useState, useRef } from "react";
 import { useTranslations } from "next-intl";
 import { useRouter } from "@/i18n/navigation";
@@ -76,7 +76,7 @@ export default function AuthButton() {
       return;
     }
 
-    await supabase.auth.signInWithOAuth({
+    await createAuthClient().auth.signInWithOAuth({
       provider,
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
