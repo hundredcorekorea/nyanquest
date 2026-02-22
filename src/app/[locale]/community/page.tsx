@@ -3,6 +3,7 @@ import { Link } from "@/i18n/navigation";
 import { Suspense } from "react";
 import type { Post, PostCategory } from "@/types/database";
 import CommunityFilters from "./CommunityFilters";
+import PromoCard from "@/components/PromoCard";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 interface SearchParams {
@@ -89,63 +90,69 @@ export default async function CommunityPage({
       {/* Post list */}
       <div className="space-y-2">
         {typedPosts.length > 0 ? (
-          typedPosts.map((post) => {
+          typedPosts.map((post, idx) => {
             const cat = categoryConfig[post.category];
             return (
-              <Link key={post.id} href={`/community/${post.id}`}>
-                <div className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-all">
-                  {/* Category + System tag */}
-                  <div className="flex items-center gap-2 mb-2">
-                    <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
-                      {cat.emoji} {cat.label}
-                    </span>
-                    {post.system && (
-                      <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
-                        🎲 {post.system.name}
+              <div key={post.id}>
+                {/* Insert promo after every 3rd post */}
+                {idx > 0 && idx % 3 === 0 && (
+                  <PromoCard placement="community" className="my-2" />
+                )}
+                <Link href={`/community/${post.id}`}>
+                  <div className="bg-white rounded-xl border border-gray-100 p-4 hover:shadow-md transition-all">
+                    {/* Category + System tag */}
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xs bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">
+                        {cat.emoji} {cat.label}
                       </span>
-                    )}
-                  </div>
+                      {post.system && (
+                        <span className="text-xs bg-blue-50 text-blue-600 px-2 py-0.5 rounded-full">
+                          🎲 {post.system.name}
+                        </span>
+                      )}
+                    </div>
 
-                  {/* Title */}
-                  <h3 className="font-medium text-gray-900 text-sm line-clamp-2 mb-2">
-                    {post.title}
-                  </h3>
+                    {/* Title */}
+                    <h3 className="font-medium text-gray-900 text-sm line-clamp-2 mb-2">
+                      {post.title}
+                    </h3>
 
-                  {/* Content preview */}
-                  <p className="text-xs text-gray-400 line-clamp-1 mb-3">
-                    {post.content}
-                  </p>
+                    {/* Content preview */}
+                    <p className="text-xs text-gray-400 line-clamp-1 mb-3">
+                      {post.content}
+                    </p>
 
-                  {/* Footer */}
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center text-xs">
-                        {post.author?.avatar_url ? (
-                          <img
-                            src={post.author.avatar_url}
-                            alt=""
-                            className="w-5 h-5 rounded-full"
-                          />
-                        ) : (
-                          "🐱"
-                        )}
+                    {/* Footer */}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <div className="w-5 h-5 rounded-full bg-amber-100 flex items-center justify-center text-xs">
+                          {post.author?.avatar_url ? (
+                            <img
+                              src={post.author.avatar_url}
+                              alt=""
+                              className="w-5 h-5 rounded-full"
+                            />
+                          ) : (
+                            "🐱"
+                          )}
+                        </div>
+                        <span className="text-xs text-gray-500">
+                          {post.author?.nickname ?? tCommon("anonymous")}
+                        </span>
+                        <span className="text-xs text-gray-300">·</span>
+                        <span className="text-xs text-gray-400">
+                          {timeAgo(post.created_at)}
+                        </span>
                       </div>
-                      <span className="text-xs text-gray-500">
-                        {post.author?.nickname ?? tCommon("anonymous")}
-                      </span>
-                      <span className="text-xs text-gray-300">·</span>
-                      <span className="text-xs text-gray-400">
-                        {timeAgo(post.created_at)}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-3 text-xs text-gray-400">
-                      <span>🐾 {post.likes_count}</span>
-                      <span>💬 {post.comments_count}</span>
-                      <span>👁 {post.view_count}</span>
+                      <div className="flex items-center gap-3 text-xs text-gray-400">
+                        <span>🐾 {post.likes_count}</span>
+                        <span>💬 {post.comments_count}</span>
+                        <span>👁 {post.view_count}</span>
+                      </div>
                     </div>
                   </div>
-                </div>
-              </Link>
+                </Link>
+              </div>
             );
           })
         ) : (
