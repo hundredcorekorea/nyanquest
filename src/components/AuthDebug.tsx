@@ -1,6 +1,14 @@
 "use client";
 
+import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
+
+function withTimeout<T>(promise: Promise<T>, ms: number): Promise<T | "TIMEOUT"> {
+  return Promise.race([
+    promise,
+    new Promise<"TIMEOUT">((resolve) => setTimeout(() => resolve("TIMEOUT"), ms)),
+  ]);
+}
 
 export default function AuthDebug() {
   const [info, setInfo] = useState<string>("starting...");
@@ -10,71 +18,56 @@ export default function AuthDebug() {
       try {
         const lines: string[] = [];
 
-        // Step 1: Read auth cookies
+        // Step 1: Cookie check
         const cookies = document.cookie;
-        const authCookies: Record<string, string> = {};
+        const authCookies = cookies.split(";").filter(c => c.trim().startsWith("sb-"));
+        lines.push(`cookies: ${authCookies.length}`);
+
+        // Step 2: Direct API test (bypasses Supabase client)
+        const prefix = "sb-gkqodrrlfifachndgfdt-auth-token";
+        const chunks: Record<string, string> = {};
         cookies.split(";").forEach(c => {
-          const trimmed = c.trim();
-          if (trimmed.startsWith("sb-")) {
-            const [key, ...rest] = trimmed.split("=");
-            authCookies[key] = rest.join("=");
+          const t = c.trim();
+          if (t.startsWith(prefix)) {
+            const [k, ...v] = t.split("=");
+            chunks[k] = v.join("=");
           }
         });
-        const cookieNames = Object.keys(authCookies);
-        lines.push(`cookies: ${cookieNames.length}`);
-
-        // Step 2: Parse base64-encoded chunked token
-        const prefix = "sb-gkqodrrlfifachndgfdt-auth-token";
-        const chunk0 = authCookies[`${prefix}.0`] ?? "";
-        const chunk1 = authCookies[`${prefix}.1`] ?? "";
-        const raw = decodeURIComponent(chunk0 + chunk1);
-
-        let accessToken = "";
-        let tokenInfo = "";
-
+        const raw = decodeURIComponent((chunks[`${prefix}.0`] ?? "") + (chunks[`${prefix}.1`] ?? ""));
         if (raw.startsWith("base64-")) {
-          const decoded = atob(raw.slice(7)); // strip "base64-" prefix
-          const parsed = JSON.parse(decoded);
-          accessToken = parsed.access_token ?? "";
-          const expiresAt = parsed.expires_at;
-          const now = Math.floor(Date.now() / 1000);
-          tokenInfo = `expires: ${expiresAt} (now: ${now}, ${expiresAt > now ? "VALID" : "EXPIRED"})`;
-          lines.push(`email: ${parsed.user?.email ?? "none"}`);
-          lines.push(`provider: ${parsed.user?.app_metadata?.provider ?? "none"}`);
-          lines.push(tokenInfo);
-          lines.push(`token: ${accessToken.slice(0, 30)}...`);
-        } else {
-          lines.push(`raw cookie format: ${raw.slice(0, 30)}...`);
+          const parsed = JSON.parse(atob(raw.slice(7)));
+          lines.push(`direct: ${parsed.user?.email} (${parsed.user?.app_metadata?.provider})`);
         }
 
-        // Step 3: Direct API call
-        if (accessToken) {
-          setInfo(lines.join("\n") + "\ncalling API...");
-          const resp = await fetch(
-            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,
-            {
-              headers: {
-                Authorization: `Bearer ${accessToken}`,
-                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-              },
-            }
-          );
-          if (resp.ok) {
-            const user = await resp.json();
-            lines.push(`API: OK - ${user.email}`);
-          } else {
-            const body = await resp.text();
-            lines.push(`API: ${resp.status} - ${body.slice(0, 80)}`);
-          }
-        }
+        // Step 3: Test createClient() with timeout
+        setInfo(lines.join("\n") + "\ntesting createClient()...");
+        const supabase = createClient();
 
-        // Step 4: Navigator locks
-        if (navigator.locks) {
-          const locks = await navigator.locks.query();
-          const sbHeld = locks.held?.filter(l => l.name?.includes("supabase")) ?? [];
-          const sbPending = locks.pending?.filter(l => l.name?.includes("supabase")) ?? [];
-          lines.push(`locks: held=${sbHeld.length} pending=${sbPending.length}`);
+        // Test getSession with 3s timeout
+        const sessResult = await withTimeout(
+          supabase.auth.getSession(),
+          3000
+        );
+        if (sessResult === "TIMEOUT") {
+          lines.push("getSession: TIMEOUT (3s) - STILL BROKEN");
+          setInfo(lines.join("\n"));
+          return;
         }
+        const { data: { session }, error: sessErr } = sessResult;
+        lines.push(`getSession: ${session ? "OK (" + session.user.email + ")" : "null"} err: ${sessErr?.message ?? "none"}`);
+
+        // Test getUser with 3s timeout
+        const userResult = await withTimeout(
+          supabase.auth.getUser(),
+          3000
+        );
+        if (userResult === "TIMEOUT") {
+          lines.push("getUser: TIMEOUT (3s)");
+          setInfo(lines.join("\n"));
+          return;
+        }
+        const { data: { user }, error: userErr } = userResult;
+        lines.push(`getUser: ${user ? "OK (" + user.email + ")" : "null"} err: ${userErr?.message ?? "none"}`);
 
         setInfo(lines.join("\n"));
       } catch (e) {
