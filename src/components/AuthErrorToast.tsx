@@ -15,7 +15,8 @@ export default function AuthErrorToast() {
     if (error) {
       const desc = searchParams.get("error_description");
       const detail = searchParams.get("detail");
-      setMessage(desc ?? detail ?? t("loginFailed"));
+      // DEBUG: show raw detail for diagnosis
+      setMessage(detail ?? desc ?? t("loginFailed"));
       setShow(true);
 
       // Remove error params from URL without reload
@@ -25,7 +26,7 @@ export default function AuthErrorToast() {
       url.searchParams.delete("detail");
       window.history.replaceState({}, "", url.pathname);
 
-      const timer = setTimeout(() => setShow(false), 5000);
+      const timer = setTimeout(() => setShow(false), 15000);
       return () => clearTimeout(timer);
     }
   }, [searchParams, t]);
