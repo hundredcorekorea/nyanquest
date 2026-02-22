@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
-import { useTranslations } from "next-intl";
+import { useState, useEffect, useCallback, useRef, useMemo } from "react";
+import { useTranslations, useLocale } from "next-intl";
 import { Link } from "@/i18n/navigation";
+import { getRandomPromo } from "@/lib/self-promo";
 
 interface Props {
   onComplete: () => void;
@@ -18,10 +19,14 @@ declare global {
 
 export default function AdGate({ onComplete, onCancel, open }: Props) {
   const t = useTranslations("AdGate");
+  const locale = useLocale();
   const [countdown, setCountdown] = useState(5);
   const [adLoaded, setAdLoaded] = useState(false);
   const adRef = useRef<HTMLModElement>(null);
   const adPushed = useRef(false);
+
+  // Pick a random promo app each time the modal opens
+  const promo = useMemo(() => (open ? getRandomPromo() : null), [open]);
 
   useEffect(() => {
     if (!open) {
@@ -38,14 +43,12 @@ export default function AdGate({ onComplete, onCancel, open }: Props) {
           adPushed.current = true;
           setAdLoaded(true);
         } else {
-          // Ad SDK not available - skip countdown
+          // Ad SDK not available — show self-promo instead
           setAdLoaded(false);
-          setCountdown(0);
         }
       } catch {
-        // Ad failed to load - skip countdown
+        // Ad failed to load — show self-promo instead
         setAdLoaded(false);
-        setCountdown(0);
       }
     }, 300);
 
@@ -74,6 +77,8 @@ export default function AdGate({ onComplete, onCancel, open }: Props) {
 
   if (!open) return null;
 
+  const isKo = locale === "ko";
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
       <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full mx-4 overflow-hidden">
@@ -82,7 +87,7 @@ export default function AdGate({ onComplete, onCancel, open }: Props) {
             <div className="flex items-center gap-2">
               <span className="text-xl">🐱</span>
               <span className="text-sm font-bold text-amber-700">
-                {t("preparing")}
+                {t("title")}
               </span>
             </div>
             <button onClick={onCancel} className="text-gray-400 hover:text-gray-600 text-lg">
@@ -103,11 +108,33 @@ export default function AdGate({ onComplete, onCancel, open }: Props) {
                 data-ad-format="auto"
                 data-full-width-responsive="true"
               />
+            ) : promo ? (
+              <a
+                href={promo.link}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex flex-col items-center gap-3 px-6 py-5 w-full h-full hover:bg-gray-100/50 transition-colors rounded-xl"
+              >
+                <div className="flex items-center gap-1.5 self-end">
+                  <span className="text-[10px] text-gray-300 uppercase tracking-wider">ad</span>
+                </div>
+                <span className="text-5xl">{promo.emoji}</span>
+                <div className="text-center">
+                  <p className="font-bold text-gray-800 text-base">
+                    {isKo ? promo.nameKo : promo.nameEn}
+                  </p>
+                  <p className="text-sm text-gray-500 mt-1">
+                    {isKo ? promo.descKo : promo.descEn}
+                  </p>
+                </div>
+                <div className="mt-2 px-4 py-1.5 bg-amber-100 text-amber-700 rounded-full text-xs font-medium">
+                  {t("selfPromoInstall")}
+                </div>
+              </a>
             ) : (
               <div className="text-center text-gray-400 text-sm px-4">
                 <p className="text-4xl mb-3">🐱</p>
                 <p className="font-medium text-gray-500">{t("adPlaceholder")}</p>
-                <p className="text-xs mt-1 text-gray-300">{t("adPlaceholderSub")}</p>
               </div>
             )}
           </div>

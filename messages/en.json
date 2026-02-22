@@ -641,7 +641,8 @@
     "adPlaceholderSub": "Ads coming soon to this spot~",
     "countdown": "seconds until you can start, nya!",
     "startAdventure": "Start Adventure!",
-    "premiumUpsell": "Go premium to skip ads and start right away!"
+    "premiumUpsell": "Go premium to skip ads and start right away!",
+    "selfPromoInstall": "Get it now →"
   },
   "DatePicker": {
     "placeholder": "Select a date and time",
