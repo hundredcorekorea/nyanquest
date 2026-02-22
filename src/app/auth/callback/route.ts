@@ -27,6 +27,8 @@ export async function GET(request: Request) {
     return NextResponse.redirect(`${origin}/?${params.toString()}`);
   }
 
+  let exchangeError: string | null = null;
+
   if (code) {
     const cookieStore = await cookies();
     const existingCookies = cookieStore.getAll();
@@ -51,29 +53,37 @@ export async function GET(request: Request) {
       }
     );
 
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    try {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      console.log("[auth/callback] Exchange result:", {
+        success: !error,
+        error: error?.message,
+        cookiesCollected: cookiesToSet.length,
+        cookieNames: cookiesToSet.map(c => c.name),
+      });
 
-    console.log("[auth/callback] Exchange result:", {
-      success: !error,
-      error: error?.message,
-      cookiesCollected: cookiesToSet.length,
-      cookieNames: cookiesToSet.map(c => c.name),
-    });
-
-    if (!error) {
-      const redirectUrl = `${origin}${next}`;
-      console.log("[auth/callback] Redirecting to:", redirectUrl);
-      const redirectResponse = NextResponse.redirect(redirectUrl);
-      for (const { name, value, options } of cookiesToSet) {
-        redirectResponse.cookies.set(name, value, options as Parameters<typeof redirectResponse.cookies.set>[2]);
+      if (!error) {
+        const redirectUrl = `${origin}${next}`;
+        console.log("[auth/callback] Redirecting to:", redirectUrl);
+        const redirectResponse = NextResponse.redirect(redirectUrl);
+        for (const { name, value, options } of cookiesToSet) {
+          redirectResponse.cookies.set(name, value, options as Parameters<typeof redirectResponse.cookies.set>[2]);
+        }
+        console.log("[auth/callback] Set cookies on response:", cookiesToSet.map(c => c.name));
+        return redirectResponse;
       }
-      console.log("[auth/callback] Set cookies on response:", cookiesToSet.map(c => c.name));
-      return redirectResponse;
-    }
 
-    console.error("[auth/callback] Code exchange failed:", error.message);
+      exchangeError = error.message;
+      console.error("[auth/callback] Code exchange failed:", error.message);
+    } catch (e) {
+      exchangeError = e instanceof Error ? e.message : String(e);
+      console.error("[auth/callback] EXCEPTION during exchangeCodeForSession:", exchangeError);
+      console.error("[auth/callback] Stack:", e instanceof Error ? e.stack : "no stack");
+    }
   }
 
-  console.error("[auth/callback] Falling through to error redirect");
-  return NextResponse.redirect(`${origin}/?error=auth_callback_failed`);
+  console.error("[auth/callback] Falling through to error redirect, exchangeError:", exchangeError ?? "no code");
+  const errorParams = new URLSearchParams({ error: "auth_callback_failed" });
+  if (exchangeError) errorParams.set("detail", exchangeError);
+  return NextResponse.redirect(`${origin}/?${errorParams.toString()}`);
 }

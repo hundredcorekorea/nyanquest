@@ -14,13 +14,15 @@ export default function AuthErrorToast() {
     const error = searchParams.get("error");
     if (error) {
       const desc = searchParams.get("error_description");
-      setMessage(desc ?? t("loginFailed"));
+      const detail = searchParams.get("detail");
+      setMessage(desc ?? detail ?? t("loginFailed"));
       setShow(true);
 
       // Remove error params from URL without reload
       const url = new URL(window.location.href);
       url.searchParams.delete("error");
       url.searchParams.delete("error_description");
+      url.searchParams.delete("detail");
       window.history.replaceState({}, "", url.pathname);
 
       const timer = setTimeout(() => setShow(false), 5000);
