@@ -1,6 +1,6 @@
 import type { DiceType } from "@/types/solo-quest";
 
-export type TrpgSystemId = "dnd5e" | "insane" | "coc" | "dungeon-world";
+export type TrpgSystemId = "dnd5e" | "insane" | "coc" | "dungeon-world" | "vtm";
 
 export interface TrpgSystemPreset {
   id: TrpgSystemId;
@@ -11,7 +11,7 @@ export interface TrpgSystemPreset {
   defaultDice: DiceType;
   diceCount: number;
   hasModifier: boolean;
-  judgmentType: "dc" | "tier" | "target";
+  judgmentType: "dc" | "tier" | "target" | "pool-count";
   promptRules: string;
   parsePattern: RegExp;
 }
@@ -100,6 +100,30 @@ export const SYSTEMS: Record<TrpgSystemId, TrpgSystemPreset> = {
 - 플레이어의 행동에 "무브가 발동되었다"는 느낌으로 판정을 요청해.`,
     parsePattern:
       /\[판정 필요:\s*2d6(?:\+(\d+))?(?:\s*\(([^)]+)\))?\]/,
+  },
+  vtm: {
+    id: "vtm",
+    name: "뱀파이어 더 마스커레이드",
+    nameEn: "Vampire: The Masquerade",
+    emoji: "🧛",
+    diceNotation: "Nd10",
+    defaultDice: "d10",
+    diceCount: 5, // default pool size, actual varies per check
+    hasModifier: false,
+    judgmentType: "pool-count",
+    promptRules: `- 이 시나리오는 뱀파이어 더 마스커레이드(Vampire: The Masquerade V5) 시스템이다.
+- 판정은 다이스 풀 방식이다: Nd10을 굴려서, 6 이상이 나온 주사위 수가 "성공 수".
+- 필요한 성공 수(난이도)를 충족하면 성공, 미달이면 실패.
+- 판정 요청 형식: [판정 필요: Nd10, 난이도 M (능력명)]
+  예: [판정 필요: 5d10, 난이도 3 (위협)]
+- N은 보통 3~8 범위 (능력치+기술 합산), 난이도 M은 보통 1~5 범위.
+- 10이 나오면 크리티컬 다이스. 10이 2개 이상이면 "메스 크리티컬" (대성공, +2 추가 성공).
+- 뱀파이어의 "야수(Beast)"를 묘사해. 분노나 공포 상황에서 야수가 깨어나는 느낌.
+- "가면무도회(Masquerade)" 규칙을 강조해. 인간들 앞에서 뱀파이어 능력을 드러내면 안 됨.
+- "배고픔 주사위(Hunger Dice)"는 간소화해서, 실패 시 가끔 "배고픔이 고개를 든다" 정도로 묘사.
+- 분위기는 어둡고 정치적인 고딕 호러. 물리적 전투보다 사회적 조종과 내면의 갈등 위주.`,
+    parsePattern:
+      /\[판정 필요:\s*(\d+)d10,\s*난이도\s*(\d+)(?:\s*\(([^)]+)\))?\]/,
   },
 };
 

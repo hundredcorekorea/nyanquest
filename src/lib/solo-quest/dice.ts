@@ -59,7 +59,28 @@ export function judgeRoll(
       if (total >= 7) return { success: true, tier: "partial" };
       return { success: false, tier: "fail" };
     }
+    case "pool-count":
+      // total = successes count, targetValue = difficulty
+      return { success: total >= targetValue };
   }
+}
+
+/**
+ * Roll a dice pool (VtM style): roll N d10s, count dice >= threshold as successes.
+ * 2+ tens = messy critical (+2 bonus successes).
+ */
+export function rollDicePool(
+  poolSize: number,
+  threshold: number = 6
+): { results: number[]; successes: number; tens: number } {
+  const results: number[] = [];
+  for (let i = 0; i < poolSize; i++) {
+    results.push(Math.floor(Math.random() * 10) + 1);
+  }
+  const successes = results.filter((r) => r >= threshold).length;
+  const tens = results.filter((r) => r === 10).length;
+  const bonusSuccesses = tens >= 2 ? 2 : 0;
+  return { results, successes: successes + bonusSuccesses, tens };
 }
 
 export interface ParsedDiceRequest {
@@ -69,6 +90,8 @@ export interface ParsedDiceRequest {
   dc: number;
   target: number;
   skillValue: number;
+  /** Pool-count systems: required successes */
+  difficulty: number;
   label: string;
   systemId: string;
 }
@@ -90,6 +113,7 @@ export function parseDiceRequest(text: string): ParsedDiceRequest | null {
     dc: parseInt(match[3]),
     target: 0,
     skillValue: 0,
+    difficulty: 0,
     label: match[4] ?? "판정",
     systemId: "dnd5e",
   };
@@ -111,6 +135,7 @@ export function parseSystemDiceRequest(
         dc: parseInt(match[3]),
         target: 0,
         skillValue: 0,
+        difficulty: 0,
         label: match[4] ?? "판정",
         systemId: "dnd5e",
       };
@@ -123,6 +148,7 @@ export function parseSystemDiceRequest(
         dc: 0,
         target: parseInt(match[1]),
         skillValue: 0,
+        difficulty: 0,
         label: match[2] ?? "판정",
         systemId: "insane",
       };
@@ -135,6 +161,7 @@ export function parseSystemDiceRequest(
         dc: 0,
         target: 0,
         skillValue: parseInt(match[1]),
+        difficulty: 0,
         label: match[2] ?? "판정",
         systemId: "coc",
       };
@@ -147,8 +174,22 @@ export function parseSystemDiceRequest(
         dc: 0,
         target: 0,
         skillValue: 0,
+        difficulty: 0,
         label: match[2] ?? "판정",
         systemId: "dungeon-world",
+      };
+
+    case "vtm":
+      return {
+        diceType: "d10",
+        diceCount: parseInt(match[1]),
+        modifier: 0,
+        dc: 0,
+        target: 0,
+        skillValue: 0,
+        difficulty: parseInt(match[2]),
+        label: match[3] ?? "판정",
+        systemId: "vtm",
       };
 
     default:
@@ -160,6 +201,24 @@ export function rollSystemDice(
   request: ParsedDiceRequest,
   system: TrpgSystemPreset
 ): DiceRoll {
+  // Pool-count systems (VtM): roll Nd10, count successes >= 6
+  if (system.judgmentType === "pool-count") {
+    const { results, successes, tens } = rollDicePool(request.diceCount);
+    const messyCritical = tens >= 2;
+    const judgment = judgeRoll(system, successes, request.difficulty);
+
+    return {
+      type: request.diceType,
+      result: results.reduce((a, b) => a + b, 0),
+      results,
+      total: successes, // for pool-count, "total" = success count
+      difficulty: request.difficulty || undefined,
+      successes,
+      messyCritical,
+      success: judgment.success,
+    };
+  }
+
   if (system.diceCount > 1) {
     const { results, total } = rollMultiDice(
       request.diceType,

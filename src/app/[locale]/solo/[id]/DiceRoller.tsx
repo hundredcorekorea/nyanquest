@@ -65,6 +65,8 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
   }
 
   function getResultLabel(r: DiceRoll) {
+    // VtM messy critical
+    if (system.id === "vtm" && r.messyCritical) return t("diceMessyCriticalNyan");
     // CoC critical/fumble
     if (system.id === "coc") {
       if (r.total <= 5) return t("diceCriticalNyan");
@@ -84,15 +86,79 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
     if (r.dc) return `vs DC ${r.dc}`;
     if (r.target) return `vs ${t("targetValue")} ${r.target}`;
     if (r.skillValue) return `vs ${t("skillValue")} ${r.skillValue}`;
+    if (r.difficulty) return `vs ${t("difficulty")} ${r.difficulty}`;
     return "";
   }
 
-  // Dice notation display (e.g., "2d6", "d20", "d100")
-  const diceNotation = system.diceCount > 1
+  // Dice notation display
+  const isPool = system.judgmentType === "pool-count";
+  const diceNotation = isPool
+    ? `${request.diceCount}${request.diceType}`
+    : system.diceCount > 1
     ? `${system.diceCount}${request.diceType}`
     : request.diceType;
 
+  // Pool dice emoji display (multiple d10 icons)
+  function renderPoolEmoji(count: number, animate?: boolean) {
+    const emoji = DICE_EMOJI[request.diceType] ?? "🎲";
+    return (
+      <div className={`flex flex-wrap justify-center gap-1 ${animate ? "animate-dice-bounce" : ""}`}>
+        {Array.from({ length: Math.min(count, 8) }).map((_, i) => (
+          <span key={i} className="text-2xl">{emoji}</span>
+        ))}
+        {count > 8 && <span className="text-lg self-center text-white/60">+{count - 8}</span>}
+      </div>
+    );
+  }
+
+  // Pool result display: each die colored by success/fail
+  function renderPoolResult(r: DiceRoll) {
+    if (!r.results) return null;
+    return (
+      <div className="flex flex-wrap justify-center gap-1 mb-1">
+        {r.results.map((val, i) => (
+          <span
+            key={i}
+            className={`inline-flex items-center justify-center w-8 h-8 rounded-lg text-sm font-bold ${
+              val === 10
+                ? "bg-yellow-400/30 text-yellow-300 ring-1 ring-yellow-400/50"
+                : val >= 6
+                ? "bg-green-400/20 text-green-300"
+                : "bg-white/10 text-gray-400"
+            }`}
+          >
+            {val}
+          </span>
+        ))}
+      </div>
+    );
+  }
+
   if (result) {
+    // Pool-count result display (VtM)
+    if (isPool) {
+      return (
+        <div className="flex justify-center animate-bubble-in">
+          <div className={`rounded-2xl px-6 py-4 text-center max-w-xs ${getResultStyle(result)}`}>
+            {renderPoolResult(result)}
+            <div className="text-xl font-bold text-white">
+              {t("poolSuccesses", { count: result.successes ?? 0 })}
+            </div>
+            {result.messyCritical && (
+              <div className="text-xs text-yellow-400 font-medium mt-0.5">
+                ⚡ {t("messyCritical")}
+              </div>
+            )}
+            {(result.difficulty !== undefined) && (
+              <div className={`text-sm font-medium mt-1 ${getResultColor(result)}`}>
+                {getTargetLabel(result)}{getTargetLabel(result) ? " — " : ""}{getResultLabel(result)}
+              </div>
+            )}
+          </div>
+        </div>
+      );
+    }
+
     return (
       <div className="flex justify-center animate-bubble-in">
         <div className={`rounded-2xl px-6 py-4 text-center ${getResultStyle(result)}`}>
@@ -132,6 +198,7 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
     if (request.dc) return t("diceCheck", { label: request.label, dc: request.dc });
     if (request.target) return t("diceCheckTarget", { label: request.label, target: request.target });
     if (request.skillValue) return t("diceCheckSkill", { label: request.label, value: request.skillValue });
+    if (request.difficulty) return t("diceCheckPool", { label: request.label, pool: request.diceCount, difficulty: request.difficulty });
     return request.label;
   }
 
@@ -144,24 +211,32 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
       >
         {rolling ? (
           <div className="space-y-1">
-            <div className="text-3xl animate-dice-bounce">
-              {system.diceCount > 1 ? (
-                <span>{DICE_EMOJI[request.diceType] ?? "🎲"}{DICE_EMOJI[request.diceType] ?? "🎲"}</span>
-              ) : (
-                DICE_EMOJI[request.diceType] ?? "🎲"
-              )}
-            </div>
+            {isPool ? (
+              renderPoolEmoji(request.diceCount, true)
+            ) : (
+              <div className="text-3xl animate-dice-bounce">
+                {system.diceCount > 1 ? (
+                  <span>{DICE_EMOJI[request.diceType] ?? "🎲"}{DICE_EMOJI[request.diceType] ?? "🎲"}</span>
+                ) : (
+                  DICE_EMOJI[request.diceType] ?? "🎲"
+                )}
+              </div>
+            )}
             <div className="text-xs font-medium">{t("diceRolling")}</div>
           </div>
         ) : (
           <div className="space-y-1">
-            <div className="text-3xl">
-              {system.diceCount > 1 ? (
-                <span>{DICE_EMOJI[request.diceType] ?? "🎲"}{DICE_EMOJI[request.diceType] ?? "🎲"}</span>
-              ) : (
-                DICE_EMOJI[request.diceType] ?? "🎲"
-              )}
-            </div>
+            {isPool ? (
+              renderPoolEmoji(request.diceCount)
+            ) : (
+              <div className="text-3xl">
+                {system.diceCount > 1 ? (
+                  <span>{DICE_EMOJI[request.diceType] ?? "🎲"}{DICE_EMOJI[request.diceType] ?? "🎲"}</span>
+                ) : (
+                  DICE_EMOJI[request.diceType] ?? "🎲"
+                )}
+              </div>
+            )}
             <div className="text-sm font-bold">
               {diceNotation}
               {request.modifier > 0 ? `+${request.modifier}` : ""} {t("diceRoll")}

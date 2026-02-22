@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     questId: string;
     scenarioId: string;
     playerMessage: string;
-    diceRoll?: { type: string; result: number; results?: number[]; modifier?: number; total: number; dc?: number; target?: number; skillValue?: number; success?: boolean; tier?: string };
+    diceRoll?: { type: string; result: number; results?: number[]; modifier?: number; total: number; dc?: number; target?: number; skillValue?: number; success?: boolean; tier?: string; successes?: number; difficulty?: number; messyCritical?: boolean };
     messages: QuestMessage[];
     turnCount: number;
   };
@@ -120,6 +120,11 @@ export async function POST(request: NextRequest) {
     if (system.id === "dungeon-world") {
       const tierLabel = roll.tier === "success" ? "완전 성공" : roll.tier === "partial" ? "부분 성공" : "실패";
       return `\n[주사위 결과: 2d6 = ${resultsStr}${modStr} = ${roll.total} (${tierLabel})]`;
+    }
+    if (system.id === "vtm") {
+      const resultsDisplay = roll.results ? roll.results.map((r: number) => r >= 6 ? `[${r}✓]` : `[${r}]`).join("") : "";
+      const messy = roll.messyCritical ? " 메시 크리티컬!" : "";
+      return `\n[주사위 결과: ${roll.results?.length ?? 0}d10 = ${resultsDisplay} → 성공 수 ${roll.successes ?? 0} vs 난이도 ${roll.difficulty ?? 0} (${roll.success ? "성공" : "실패"})${messy}]`;
     }
     // D&D 5e default
     return `\n[주사위 결과: ${roll.type} = ${roll.result}${modStr} = ${roll.total}${roll.dc ? ` vs DC ${roll.dc} (${roll.success ? "성공" : "실패"})` : ""}]`;

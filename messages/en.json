@@ -350,7 +350,14 @@
     "diceCheckSkill": "{label} Check (Skill {value})",
     "diceRollResultTarget": "Rolled the dice! Total {total} (Target {target} {result})",
     "diceRollResultSkill": "Rolled the dice! Result {total} (Skill {skillValue} {result})",
-    "diceRollResultTier": "Rolled the dice! Total {total} ({result})"
+    "diceRollResultTier": "Rolled the dice! Total {total} ({result})",
+    "diceCheckPool": "{label} Check ({pool}d10, Difficulty {difficulty})",
+    "diceRollResultPool": "Rolled the dice! {pool}d10 → {successes} successes (Difficulty {difficulty} {result})",
+    "poolSuccesses": "{count} successes, nya!",
+    "poolSuccessesShort": "{count} successes",
+    "messyCritical": "Messy Critical",
+    "diceMessyCriticalNyan": "Messy Critical, nya!! The Beast awakens!",
+    "difficulty": "Difficulty"
   },
   "Tutorial": {
     "skip": "Skip",

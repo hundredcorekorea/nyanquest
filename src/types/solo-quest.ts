@@ -13,6 +13,12 @@ export interface DiceRoll {
   skillValue?: number;
   success?: boolean;
   tier?: "success" | "partial" | "fail";
+  /** Pool-count systems (VtM): number of dice meeting threshold */
+  successes?: number;
+  /** Pool-count systems: required successes (difficulty) */
+  difficulty?: number;
+  /** VtM: messy critical (2+ tens rolled) */
+  messyCritical?: boolean;
 }
 
 export interface QuestMessage {

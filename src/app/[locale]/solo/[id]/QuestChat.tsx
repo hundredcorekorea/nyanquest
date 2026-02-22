@@ -212,6 +212,14 @@ export default function QuestChat({
         skillValue: result.skillValue ?? 0,
         result: result.success ? tQuest("diceResultSuccess") : tQuest("diceResultFail"),
       }) + extra;
+    } else if (system.id === "vtm") {
+      const messy = result.messyCritical ? ` (${tQuest("messyCritical")})` : "";
+      resultText = tQuest("diceRollResultPool", {
+        pool: result.results?.length ?? 0,
+        successes: result.successes ?? 0,
+        difficulty: result.difficulty ?? 0,
+        result: result.success ? tQuest("diceResultSuccess") : tQuest("diceResultFail"),
+      }) + messy;
     } else {
       resultText = tQuest("diceRollResult", {
         type: result.type,

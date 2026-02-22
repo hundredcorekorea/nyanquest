@@ -350,7 +350,14 @@
     "diceCheckSkill": "{label} 판정 (기능치 {value})",
     "diceRollResultTarget": "주사위를 굴렸다! 합계 {total} (목표치 {target} {result})",
     "diceRollResultSkill": "주사위를 굴렸다! 결과 {total} (기능치 {skillValue} {result})",
-    "diceRollResultTier": "주사위를 굴렸다! 합계 {total} ({result})"
+    "diceRollResultTier": "주사위를 굴렸다! 합계 {total} ({result})",
+    "diceCheckPool": "{label} 판정 ({pool}d10, 난이도 {difficulty})",
+    "diceRollResultPool": "주사위를 굴렸다! {pool}d10 → 성공 수 {successes} (난이도 {difficulty} {result})",
+    "poolSuccesses": "성공 수 {count}개다냥!",
+    "poolSuccessesShort": "성공 {count}",
+    "messyCritical": "메시 크리티컬",
+    "diceMessyCriticalNyan": "메시 크리티컬이다냥!! 야수가 깨어난다냥!",
+    "difficulty": "난이도"
   },
   "Tutorial": {
     "skip": "건너뛰기",
