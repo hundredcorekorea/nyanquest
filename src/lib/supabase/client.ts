@@ -1,6 +1,29 @@
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 import { createClient as createSupabaseClient, type SupabaseClient } from "@supabase/supabase-js";
 
+/**
+ * Cookie-based storage adapter for supabase-js auth.
+ * Required for PKCE flow: stores code_verifier in a cookie so the
+ * server-side callback can read it during code exchange.
+ */
+const cookieStorage = {
+  getItem: (key: string): string | null => {
+    if (typeof document === "undefined") return null;
+    const match = document.cookie
+      .split("; ")
+      .find((c) => c.startsWith(`${key}=`));
+    return match ? decodeURIComponent(match.split("=").slice(1).join("=")) : null;
+  },
+  setItem: (key: string, value: string): void => {
+    if (typeof document === "undefined") return;
+    document.cookie = `${key}=${encodeURIComponent(value)}; path=/; max-age=3600; SameSite=Lax; Secure`;
+  },
+  removeItem: (key: string): void => {
+    if (typeof document === "undefined") return;
+    document.cookie = `${key}=; path=/; max-age=0; SameSite=Lax; Secure`;
+  },
+};
+
 function getSessionFromCookies(): {
   access_token: string;
   refresh_token: string;
@@ -50,6 +73,7 @@ export function createClient() {
     process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
     {
       auth: {
+        storage: cookieStorage,
         persistSession: false,
         autoRefreshToken: false,
         detectSessionInUrl: false,
