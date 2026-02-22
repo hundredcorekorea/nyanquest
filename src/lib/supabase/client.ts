@@ -74,6 +74,7 @@ export function createClient() {
     {
       auth: {
         storage: cookieStorage,
+        flowType: "pkce",
         persistSession: false,
         autoRefreshToken: false,
         detectSessionInUrl: false,
