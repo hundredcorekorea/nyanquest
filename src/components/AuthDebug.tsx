@@ -3,80 +3,77 @@
 import { useEffect, useState } from "react";
 
 export default function AuthDebug() {
-  const [info, setInfo] = useState<string>("1. starting...");
+  const [info, setInfo] = useState<string>("starting...");
 
   useEffect(() => {
     const check = async () => {
       try {
-        // Step 1: Read auth cookies directly
+        const lines: string[] = [];
+
+        // Step 1: Read auth cookies
         const cookies = document.cookie;
-        const authCookies = cookies.split(";")
-          .filter(c => c.trim().startsWith("sb-"))
-          .reduce((acc, c) => {
-            const [key, ...rest] = c.trim().split("=");
-            acc[key] = rest.join("=");
-            return acc;
-          }, {} as Record<string, string>);
-
-        const cookieNames = Object.keys(authCookies);
-        const lines: string[] = [`cookies: ${cookieNames.length} [${cookieNames.join(", ")}]`];
-
-        // Step 2: Try to parse the chunked auth token
-        const prefix = "sb-gkqodrrlfifachndgfdt-auth-token";
-        const chunk0 = authCookies[`${prefix}.0`];
-        const chunk1 = authCookies[`${prefix}.1`];
-
-        if (chunk0) {
-          try {
-            const raw = decodeURIComponent(chunk0 + (chunk1 ?? ""));
-            const parsed = JSON.parse(raw);
-            const accessToken = parsed.access_token;
-            const expiresAt = parsed.expires_at;
-            const now = Math.floor(Date.now() / 1000);
-            const expired = expiresAt ? expiresAt < now : "unknown";
-
-            lines.push(`token: ${accessToken ? "exists (" + accessToken.slice(0, 20) + "...)" : "null"}`);
-            lines.push(`expires_at: ${expiresAt} (now: ${now}, expired: ${expired})`);
-            lines.push(`user_email: ${parsed.user?.email ?? "none"}`);
-            lines.push(`provider: ${parsed.user?.app_metadata?.provider ?? "none"}`);
-
-            // Step 3: Try direct API call with the token
-            if (accessToken) {
-              setInfo(lines.join("\n") + "\nfetching /auth/v1/user...");
-
-              const resp = await fetch(
-                `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${accessToken}`,
-                    apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-                  },
-                }
-              );
-              const body = await resp.text();
-              lines.push(`API status: ${resp.status}`);
-              if (resp.ok) {
-                const user = JSON.parse(body);
-                lines.push(`API user: ${user.email} (${user.id?.slice(0, 8)})`);
-              } else {
-                lines.push(`API error: ${body.slice(0, 100)}`);
-              }
-            }
-          } catch (e) {
-            lines.push(`parse error: ${e instanceof Error ? e.message : String(e)}`);
+        const authCookies: Record<string, string> = {};
+        cookies.split(";").forEach(c => {
+          const trimmed = c.trim();
+          if (trimmed.startsWith("sb-")) {
+            const [key, ...rest] = trimmed.split("=");
+            authCookies[key] = rest.join("=");
           }
+        });
+        const cookieNames = Object.keys(authCookies);
+        lines.push(`cookies: ${cookieNames.length}`);
+
+        // Step 2: Parse base64-encoded chunked token
+        const prefix = "sb-gkqodrrlfifachndgfdt-auth-token";
+        const chunk0 = authCookies[`${prefix}.0`] ?? "";
+        const chunk1 = authCookies[`${prefix}.1`] ?? "";
+        const raw = decodeURIComponent(chunk0 + chunk1);
+
+        let accessToken = "";
+        let tokenInfo = "";
+
+        if (raw.startsWith("base64-")) {
+          const decoded = atob(raw.slice(7)); // strip "base64-" prefix
+          const parsed = JSON.parse(decoded);
+          accessToken = parsed.access_token ?? "";
+          const expiresAt = parsed.expires_at;
+          const now = Math.floor(Date.now() / 1000);
+          tokenInfo = `expires: ${expiresAt} (now: ${now}, ${expiresAt > now ? "VALID" : "EXPIRED"})`;
+          lines.push(`email: ${parsed.user?.email ?? "none"}`);
+          lines.push(`provider: ${parsed.user?.app_metadata?.provider ?? "none"}`);
+          lines.push(tokenInfo);
+          lines.push(`token: ${accessToken.slice(0, 30)}...`);
         } else {
-          lines.push("no auth token cookies found");
+          lines.push(`raw cookie format: ${raw.slice(0, 30)}...`);
         }
 
-        // Step 4: Check navigator.locks
+        // Step 3: Direct API call
+        if (accessToken) {
+          setInfo(lines.join("\n") + "\ncalling API...");
+          const resp = await fetch(
+            `${process.env.NEXT_PUBLIC_SUPABASE_URL}/auth/v1/user`,
+            {
+              headers: {
+                Authorization: `Bearer ${accessToken}`,
+                apikey: process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+              },
+            }
+          );
+          if (resp.ok) {
+            const user = await resp.json();
+            lines.push(`API: OK - ${user.email}`);
+          } else {
+            const body = await resp.text();
+            lines.push(`API: ${resp.status} - ${body.slice(0, 80)}`);
+          }
+        }
+
+        // Step 4: Navigator locks
         if (navigator.locks) {
           const locks = await navigator.locks.query();
-          const sbLocks = locks.held?.filter(l => l.name?.includes("supabase")) ?? [];
-          const pending = locks.pending?.filter(l => l.name?.includes("supabase")) ?? [];
-          lines.push(`locks held: ${sbLocks.length}, pending: ${pending.length}`);
-          if (sbLocks.length > 0) lines.push(`held names: ${sbLocks.map(l => l.name ?? "?").join(", ")}`);
-          if (pending.length > 0) lines.push(`pending names: ${pending.map(l => l.name ?? "?").join(", ")}`);
+          const sbHeld = locks.held?.filter(l => l.name?.includes("supabase")) ?? [];
+          const sbPending = locks.pending?.filter(l => l.name?.includes("supabase")) ?? [];
+          lines.push(`locks: held=${sbHeld.length} pending=${sbPending.length}`);
         }
 
         setInfo(lines.join("\n"));
