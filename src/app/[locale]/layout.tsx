@@ -48,6 +48,13 @@ export async function generateMetadata({
       description: t("ogDescription"),
       images: ["/og-default.png"],
     },
+    icons: {
+      icon: [
+        { url: "/favicon-48.png", sizes: "48x48", type: "image/png" },
+        { url: "/favicon.png", sizes: "192x192", type: "image/png" },
+      ],
+      apple: [{ url: "/icons/icon-192.png" }],
+    },
     other: {
       "mobile-web-app-capable": "yes",
       "apple-mobile-web-app-capable": "yes",
