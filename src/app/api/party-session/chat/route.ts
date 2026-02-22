@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   const { sessionId, playerMessage, diceRoll } = body as {
     sessionId: string;
     playerMessage: string;
-    diceRoll?: { type: string; result: number; modifier?: number; total: number; dc?: number; success?: boolean };
+    diceRoll?: { type: string; result: number; results?: number[]; modifier?: number; total: number; dc?: number; target?: number; skillValue?: number; success?: boolean; tier?: string; successes?: number; difficulty?: number; messyCritical?: boolean };
   };
 
   if (!sessionId || !playerMessage) {
@@ -147,11 +147,37 @@ export async function POST(request: NextRequest) {
     if (m.role !== "player") return m.content;
     let text = `[${m.player_name}] ${m.content}`;
     if (m.dice_roll) {
-      text += `\n[주사위: ${m.dice_roll.type} = ${m.dice_roll.total}`;
-      if (m.dice_roll.dc) {
-        text += ` vs DC ${m.dice_roll.dc} (${m.dice_roll.success ? "성공" : "실패"})`;
+      const roll = m.dice_roll;
+      const resultsStr = roll.results ? `[${roll.results.join(",")}]` : String(roll.result);
+      const modStr = roll.modifier ? ` + ${roll.modifier}` : "";
+
+      if (roll.successes !== undefined) {
+        // Pool-count (VtM)
+        const resultsDisplay = roll.results ? roll.results.map((r: number) => r >= 6 ? `[${r}✓]` : `[${r}]`).join("") : "";
+        const messy = roll.messyCritical ? " 메시 크리티컬!" : "";
+        text += `\n[주사위: ${roll.results?.length ?? 0}d10 = ${resultsDisplay} → 성공 수 ${roll.successes} vs 난이도 ${roll.difficulty ?? 0} (${roll.success ? "성공" : "실패"})${messy}]`;
+      } else if (roll.tier) {
+        // Tier (Dungeon World / Blades)
+        const tierLabel = roll.tier === "success" ? "완전 성공" : roll.tier === "partial" ? "부분 성공" : "실패";
+        const critical = roll.messyCritical ? " 크리티컬!" : "";
+        text += `\n[주사위: ${resultsStr}${modStr} = ${roll.total} (${tierLabel})${critical}]`;
+      } else if (roll.skillValue) {
+        // CoC
+        let extra = "";
+        if (roll.total <= 5) extra = " 크리티컬!";
+        else if (roll.total >= 96) extra = " 펌블!";
+        text += `\n[주사위: d100 = ${roll.total} vs 기능치 ${roll.skillValue} (${roll.success ? "성공" : "실패"})${extra}]`;
+      } else if (roll.target) {
+        // Insane
+        text += `\n[주사위: ${resultsStr}${modStr} = ${roll.total} vs 목표치 ${roll.target} (${roll.success ? "성공" : "실패"})]`;
+      } else {
+        // D&D / generic
+        text += `\n[주사위: ${roll.type} = ${roll.result}${modStr} = ${roll.total}`;
+        if (roll.dc) {
+          text += ` vs DC ${roll.dc} (${roll.success ? "성공" : "실패"})`;
+        }
+        text += "]";
       }
-      text += "]";
     }
     return text;
   }

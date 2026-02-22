@@ -7,9 +7,11 @@ import type { PartySession, SessionMessage } from "@/types/party-session";
 import type { PartyMember } from "@/types/database";
 import PlayerList from "./PlayerList";
 import SessionControls from "./SessionControls";
+import DiceRollButton from "./DiceRollButton";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
+import type { DiceRoll } from "@/types/solo-quest";
 
 interface Props {
   session: PartySession;
@@ -209,6 +211,88 @@ export default function SessionChat({
     }
   }
 
+  async function handleDiceRoll(result: DiceRoll) {
+    const playerName =
+      members.find((m) => m.user_id === currentUserId)?.user?.nickname ??
+      tc("adventurer");
+
+    // Format dice result text
+    const resultsStr = result.results
+      ? `[${result.results.join("][")}]${result.modifier ? ` + ${result.modifier}` : ""} = ${result.total}`
+      : `${result.type} = ${result.result}${result.modifier ? ` + ${result.modifier} = ${result.total}` : ""}`;
+    const diceText = `${playerName}: ${resultsStr}`;
+
+    if (initialSession.use_ai_gm) {
+      // AI GM mode: send dice result as message for AI to process
+      setIsStreaming(true);
+      setStreamingText("");
+      try {
+        const response = await fetch("/api/party-session/chat", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            sessionId: initialSession.id,
+            playerMessage: `[주사위 굴림] ${diceText}`,
+            diceRoll: result,
+          }),
+        });
+
+        if (!response.ok) {
+          const err = await response.json().catch(() => ({}));
+          throw new Error(err.error || t("requestFailed"));
+        }
+
+        const reader = response.body!.getReader();
+        const decoder = new TextDecoder();
+        let fullText = "";
+
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const chunk = decoder.decode(value);
+          fullText += chunk;
+          setStreamingText(fullText);
+        }
+
+        setStreamingText("");
+        setTurnCount((prev) => prev + 1);
+
+        const { data } = await supabase
+          .from("session_messages")
+          .select("*")
+          .eq("session_id", initialSession.id)
+          .order("created_at", { ascending: true });
+        if (data) setMessages(data as unknown as SessionMessage[]);
+
+        if (fullText.includes("[퀘스트 완료]")) {
+          setSessionStatus("completed");
+          toast(t("sessionCompletedToast"), "success");
+        }
+      } catch (err) {
+        toast(
+          err instanceof Error ? err.message : t("requestFailed"),
+          "error"
+        );
+      } finally {
+        setIsStreaming(false);
+      }
+    } else {
+      // Human GM mode: insert system message with dice roll directly
+      const { error } = await supabase.from("session_messages").insert({
+        session_id: initialSession.id,
+        user_id: currentUserId,
+        role: "system",
+        player_name: playerName,
+        content: diceText,
+        dice_roll: result,
+      });
+
+      if (error) {
+        toast(t("messageSendFailed"), "error");
+      }
+    }
+  }
+
   // Find member info for a message
   function getMemberForMessage(msg: SessionMessage) {
     if (!msg.user_id) return null; // AI GM
@@ -292,19 +376,63 @@ export default function SessionChat({
           const isSystem = msg.role === "system";
 
           if (isSystem) {
+            const dr = msg.dice_roll;
             return (
               <div key={msg.id} className="flex justify-center animate-bubble-in">
-                <div className="bg-gray-100 rounded-xl px-4 py-2 text-xs text-gray-500 text-center max-w-xs">
-                  {msg.dice_roll && (
+                <div className="bg-gray-100 rounded-xl px-4 py-2.5 text-xs text-gray-500 text-center max-w-xs">
+                  {dr && (
                     <div className="mb-1">
                       <span className="text-lg">🎲</span>{" "}
+                      <span className="text-[10px] text-gray-400 block mb-0.5">{msg.player_name}</span>
+                      {/* Multi-dice individual results */}
+                      {dr.results && (
+                        <div className="flex flex-wrap justify-center gap-0.5 mb-1">
+                          {dr.results.map((val, i) => (
+                            <span
+                              key={i}
+                              className="inline-flex items-center justify-center w-6 h-6 rounded text-xs font-bold bg-white text-gray-700 border border-gray-200"
+                            >
+                              {val}
+                            </span>
+                          ))}
+                        </div>
+                      )}
                       <span className="font-bold text-gray-700">
-                        {msg.player_name}: {msg.dice_roll.type} ={" "}
-                        {msg.dice_roll.total}
+                        {dr.results
+                          ? `${dr.results.length > 1 ? `${dr.results.length}${dr.type}` : dr.type}${dr.modifier ? ` + ${dr.modifier}` : ""} = ${dr.total}`
+                          : `${dr.type} = ${dr.result}${dr.modifier ? ` + ${dr.modifier} = ${dr.total}` : ""}`}
                       </span>
+                      {/* Success/fail indicators */}
+                      {dr.dc !== undefined && dr.dc > 0 && (
+                        <span className={`ml-1 font-medium ${dr.success ? "text-green-600" : "text-red-500"}`}>
+                          vs DC {dr.dc} {dr.success ? "성공!" : "실패"}
+                        </span>
+                      )}
+                      {dr.target !== undefined && dr.target > 0 && (
+                        <span className={`ml-1 font-medium ${dr.success ? "text-green-600" : "text-red-500"}`}>
+                          vs 목표치 {dr.target} {dr.success ? "성공!" : "실패"}
+                        </span>
+                      )}
+                      {dr.skillValue !== undefined && dr.skillValue > 0 && (
+                        <span className={`ml-1 font-medium ${dr.success ? "text-green-600" : "text-red-500"}`}>
+                          vs 기능치 {dr.skillValue} {dr.success ? "성공!" : "실패"}
+                        </span>
+                      )}
+                      {dr.tier && !dr.dc && !dr.target && !dr.skillValue && (
+                        <span className={`ml-1 font-medium ${
+                          dr.tier === "success" ? "text-green-600" : dr.tier === "partial" ? "text-amber-600" : "text-red-500"
+                        }`}>
+                          {dr.tier === "success" ? "성공!" : dr.tier === "partial" ? "부분 성공" : "실패"}
+                        </span>
+                      )}
+                      {dr.successes !== undefined && (
+                        <span className={`ml-1 font-medium ${dr.success ? "text-green-600" : "text-red-500"}`}>
+                          성공 {dr.successes}개{dr.difficulty ? ` vs 난이도 ${dr.difficulty}` : ""} {dr.success ? "성공!" : "실패"}
+                        </span>
+                      )}
                     </div>
                   )}
-                  {msg.content}
+                  {!dr && msg.content}
                 </div>
               </div>
             );
@@ -500,6 +628,7 @@ export default function SessionChat({
               rows={1}
               className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 text-sm resize-none disabled:bg-gray-50 disabled:text-gray-400"
             />
+            <DiceRollButton onRoll={handleDiceRoll} disabled={isStreaming} />
             <button
               onClick={() => sendMessage(input)}
               disabled={isStreaming || !input.trim()}

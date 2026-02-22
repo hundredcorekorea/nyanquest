@@ -234,7 +234,11 @@
     "endSessionFailed": "Failed to end session: {error}",
     "statusChangeFailed": "Status change failed, nya",
     "sessionPausedToast": "The session has been paused, nya",
-    "sessionResumedToast": "The session has been resumed, nya!"
+    "sessionResumedToast": "The session has been resumed, nya!",
+    "diceRoll": "Roll Dice",
+    "diceQuickRoll": "Quick Roll",
+    "diceCount": "Count",
+    "diceModifier": "Modifier"
   },
   "CreateParty": {
     "steps": {

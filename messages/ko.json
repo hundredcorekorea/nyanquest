@@ -234,7 +234,11 @@
     "endSessionFailed": "세션 종료 실패: {error}",
     "statusChangeFailed": "상태 변경 실패다냥",
     "sessionPausedToast": "세션이 일시정지되었다냥",
-    "sessionResumedToast": "세션이 재개되었다냥!"
+    "sessionResumedToast": "세션이 재개되었다냥!",
+    "diceRoll": "주사위 굴리기",
+    "diceQuickRoll": "빠른 굴림",
+    "diceCount": "개수",
+    "diceModifier": "수정치"
   },
   "CreateParty": {
     "steps": {
