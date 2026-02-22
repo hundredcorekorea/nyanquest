@@ -7,14 +7,6 @@ export async function GET(request: Request) {
   const code = searchParams.get("code");
   const next = searchParams.get("next") ?? "/";
 
-  console.log("[auth/callback] params:", {
-    hasCode: !!code,
-    next,
-    error: searchParams.get("error"),
-    errorDesc: searchParams.get("error_description"),
-    allParams: Object.fromEntries(searchParams.entries()),
-  });
-
   // Supabase redirected with an error (provider-level failure)
   const errorParam = searchParams.get("error");
   const errorDescription = searchParams.get("error_description");
@@ -31,8 +23,6 @@ export async function GET(request: Request) {
 
   if (code) {
     const cookieStore = await cookies();
-    const existingCookies = cookieStore.getAll();
-    console.log("[auth/callback] Existing cookies:", existingCookies.map(c => c.name));
 
     // Collect cookies that Supabase wants to set
     const cookiesToSet: { name: string; value: string; options: Record<string, unknown> }[] = [];
@@ -47,7 +37,6 @@ export async function GET(request: Request) {
             return cookieStore.getAll();
           },
           setAll(cookies) {
-            console.log("[auth/callback] setAll called with cookies:", cookies.map(c => c.name));
             cookiesToSet.push(...cookies);
           },
         },
@@ -56,26 +45,15 @@ export async function GET(request: Request) {
 
     try {
       const { error } = await supabase.auth.exchangeCodeForSession(code);
-      console.log("[auth/callback] Exchange result:", {
-        success: !error,
-        error: error?.message,
-        cookiesCollected: cookiesToSet.length,
-        cookieNames: cookiesToSet.map(c => c.name),
-      });
 
       if (!error) {
-        const redirectUrl = `${origin}${next}`;
-        console.log("[auth/callback] Redirecting to:", redirectUrl);
-        const redirectResponse = NextResponse.redirect(redirectUrl);
+        const redirectResponse = NextResponse.redirect(`${origin}${next}`);
         for (const { name, value, options } of cookiesToSet) {
-          console.log("[auth/callback] Cookie options for", name, ":", JSON.stringify(options));
-          // Ensure cookies are browser-readable (not httpOnly)
           redirectResponse.cookies.set(name, value, {
             ...(options as Record<string, unknown>),
             httpOnly: false,
           } as Parameters<typeof redirectResponse.cookies.set>[2]);
         }
-        console.log("[auth/callback] Set cookies on response:", cookiesToSet.map(c => c.name));
         return redirectResponse;
       }
 
@@ -83,12 +61,10 @@ export async function GET(request: Request) {
       console.error("[auth/callback] Code exchange failed:", error.message);
     } catch (e) {
       exchangeError = e instanceof Error ? e.message : String(e);
-      console.error("[auth/callback] EXCEPTION during exchangeCodeForSession:", exchangeError);
-      console.error("[auth/callback] Stack:", e instanceof Error ? e.stack : "no stack");
+      console.error("[auth/callback] Exception:", exchangeError);
     }
   }
 
-  console.error("[auth/callback] Falling through to error redirect, exchangeError:", exchangeError ?? "no code");
   const errorParams = new URLSearchParams({ error: "auth_callback_failed" });
   if (exchangeError) errorParams.set("detail", exchangeError);
   return NextResponse.redirect(`${origin}/?${errorParams.toString()}`);

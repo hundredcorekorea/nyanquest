@@ -1,6 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
 import AuthErrorToast from "@/components/AuthErrorToast";
-import AuthDebug from "@/components/AuthDebug";
 import CatMascot from "@/components/CatMascot";
 import ProfileNudge from "@/components/ProfileNudge";
 import StatsHero from "@/components/StatsHero";
@@ -77,9 +76,6 @@ export default async function HomePage({
       <Suspense>
         <AuthErrorToast />
       </Suspense>
-
-      {/* Temporary auth debug */}
-      <AuthDebug />
 
       {/* Cat mascot greeting */}
       <CatMascot />
