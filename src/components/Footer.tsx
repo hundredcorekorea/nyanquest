@@ -23,7 +23,7 @@ export default function Footer() {
             {t("terms")}
           </Link>
         </div>
-        <p className="pt-1">&copy; 2026 HundredCore Korea. All rights reserved.</p>
+        <p className="pt-1">&copy; 2025 HundredCore Korea. All rights reserved.</p>
       </div>
     </footer>
   );
