@@ -3,7 +3,7 @@ export async function verifyPayment(paymentId: string) {
     `https://api.portone.io/payments/${encodeURIComponent(paymentId)}`,
     {
       headers: {
-        Authorization: `PortOne ${process.env.PORTONE_API_SECRET}`,
+        Authorization: `PortOne ${process.env.PORTONE_API_SECRET?.trim()}`,
       },
     }
   );

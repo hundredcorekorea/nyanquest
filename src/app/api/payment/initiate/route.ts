@@ -34,8 +34,8 @@ export async function POST(request: NextRequest) {
 
   return Response.json({
     paymentId,
-    storeId: process.env.NEXT_PUBLIC_PORTONE_STORE_ID,
-    channelKey: process.env.PORTONE_CHANNEL_KEY,
+    storeId: process.env.NEXT_PUBLIC_PORTONE_STORE_ID?.trim(),
+    channelKey: process.env.PORTONE_CHANNEL_KEY?.trim(),
     orderName: `nyanQuest ${planConfig.label}`,
     totalAmount: planConfig.price,
     currency: "KRW",

@@ -80,8 +80,8 @@ export async function POST(request: NextRequest) {
   // Save player message to session_messages
   // Use service role to bypass RLS for consistency
   const serviceSupabase = createServiceClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
+    process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
+    process.env.SUPABASE_SERVICE_ROLE_KEY!.trim()
   );
 
   await serviceSupabase.from("session_messages").insert({
