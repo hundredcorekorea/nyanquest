@@ -78,8 +78,31 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
   const messages = await getMessages();
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    name: "nyanQuest",
+    url: "https://nyanquest.vercel.app",
+    description:
+      locale === "ko"
+        ? "AI GM과 함께하는 온라인 TRPG 플랫폼. 솔로 퀘스트, 파티 모드, 커뮤니티 모집."
+        : "Online TRPG platform with AI Game Master. Solo quests, party mode, and community recruitment.",
+    applicationCategory: "GameApplication",
+    operatingSystem: "Any",
+    offers: {
+      "@type": "Offer",
+      price: "0",
+      priceCurrency: "KRW",
+    },
+    inLanguage: ["ko", "en"],
+  };
+
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Script
         async
         src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-1075071967728463"
