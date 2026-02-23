@@ -44,7 +44,7 @@ export default function PremiumPage() {
         orderName: initData.orderName,
         totalAmount: initData.totalAmount,
         currency: initData.currency,
-        payMethod: "CARD",
+        payMethod: "EASY_PAY",
         customData: initData.customData,
         redirectUrl: `${window.location.origin}/premium/complete`,
       });
