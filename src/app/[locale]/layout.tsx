@@ -6,6 +6,7 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import Header from "@/components/Header";
 import BottomNav from "@/components/BottomNav";
+import Footer from "@/components/Footer";
 import { ToastProvider } from "@/components/Toast";
 import PWARegister from "@/components/PWARegister";
 
@@ -114,6 +115,7 @@ export default async function LocaleLayout({
           <PWARegister />
           <Header />
           <main className="max-w-3xl mx-auto px-4 py-6">{children}</main>
+          <Footer />
           <BottomNav />
         </ToastProvider>
       </NextIntlClientProvider>

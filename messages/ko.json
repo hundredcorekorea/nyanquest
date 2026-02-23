@@ -46,6 +46,18 @@
     "personUnit": "명",
     "loadMore": "더 보기"
   },
+  "Footer": {
+    "companyName": "백코어코리아 (HundredCore Korea)",
+    "representative": "대표자",
+    "representativeName": "김호영",
+    "businessNumber": "사업자등록번호",
+    "address": "소재지",
+    "addressValue": "서울특별시 성북구",
+    "email": "이메일",
+    "phone": "연락처",
+    "privacy": "개인정보처리방침",
+    "terms": "이용약관"
+  },
   "Nav": {
     "quest": "퀘스트",
     "guildHall": "길드홀",

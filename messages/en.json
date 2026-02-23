@@ -46,6 +46,18 @@
     "personUnit": "",
     "loadMore": "Load More"
   },
+  "Footer": {
+    "companyName": "HundredCore Korea",
+    "representative": "Representative",
+    "representativeName": "Hoyoung Kim",
+    "businessNumber": "Business Reg. No.",
+    "address": "Location",
+    "addressValue": "Seongbuk-gu, Seoul, South Korea",
+    "email": "Email",
+    "phone": "Phone",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Service"
+  },
   "Nav": {
     "quest": "Quests",
     "guildHall": "Guild Hall",
