@@ -10,6 +10,7 @@ interface Notification {
   type: string;
   message: string;
   party_id: string | null;
+  link_path: string | null;
   is_read: boolean;
   created_at: string;
 }
@@ -21,6 +22,7 @@ const typeEmoji: Record<string, string> = {
   party_status: "📢",
   review_received: "⭐",
   exp_gained: "✨",
+  announcement: "📋",
 };
 
 export default function NotificationBell({ userId }: { userId: string }) {
@@ -107,34 +109,32 @@ export default function NotificationBell({ userId }: { userId: string }) {
               </div>
             ) : (
               <div>
-                {notifications.map((n) => (
-                  <div
-                    key={n.id}
-                    className={`block px-4 py-3 border-b border-gray-50 last:border-0 transition-colors ${
-                      !n.is_read ? "bg-amber-50/50" : "hover:bg-gray-50"
-                    }`}
-                  >
-                    {n.party_id ? (
-                      <Link href={`/party/${n.party_id}`} onClick={() => setOpen(false)} className="block">
-                        <div className="flex gap-2">
-                          <span className="text-sm flex-shrink-0">{typeEmoji[n.type] ?? "🐱"}</span>
-                          <div className="min-w-0">
-                            <p className="text-xs text-gray-700 leading-relaxed">{n.message}</p>
-                            <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
-                          </div>
-                        </div>
-                      </Link>
-                    ) : (
-                      <div className="flex gap-2">
-                        <span className="text-sm flex-shrink-0">{typeEmoji[n.type] ?? "🐱"}</span>
-                        <div className="min-w-0">
-                          <p className="text-xs text-gray-700 leading-relaxed">{n.message}</p>
-                          <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
-                        </div>
+                {notifications.map((n) => {
+                  const linkHref = n.link_path ?? (n.party_id ? `/party/${n.party_id}` : null);
+                  const inner = (
+                    <div className="flex gap-2">
+                      <span className="text-sm shrink-0">{typeEmoji[n.type] ?? "🐱"}</span>
+                      <div className="min-w-0">
+                        <p className="text-xs text-gray-700 leading-relaxed">{n.message}</p>
+                        <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                       </div>
-                    )}
-                  </div>
-                ))}
+                    </div>
+                  );
+                  return (
+                    <div
+                      key={n.id}
+                      className={`block px-4 py-3 border-b border-gray-50 last:border-0 transition-colors ${
+                        !n.is_read ? "bg-amber-50/50" : "hover:bg-gray-50"
+                      }`}
+                    >
+                      {linkHref ? (
+                        <Link href={linkHref} onClick={() => setOpen(false)} className="block">
+                          {inner}
+                        </Link>
+                      ) : inner}
+                    </div>
+                  );
+                })}
               </div>
             )}
           </div>
