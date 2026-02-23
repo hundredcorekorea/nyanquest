@@ -22,6 +22,9 @@ export default function Footer() {
           <Link href="/terms" className="hover:text-gray-600 underline">
             {t("terms")}
           </Link>
+          <Link href="/licenses" className="hover:text-gray-600 underline">
+            {t("licenses")}
+          </Link>
         </div>
         <p className="pt-1">&copy; 2025 HundredCore Korea. All rights reserved.</p>
       </div>

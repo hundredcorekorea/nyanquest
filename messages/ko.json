@@ -56,7 +56,8 @@
     "email": "이메일",
     "phone": "연락처",
     "privacy": "개인정보처리방침",
-    "terms": "이용약관"
+    "terms": "이용약관",
+    "licenses": "라이선스 안내"
   },
   "Nav": {
     "quest": "퀘스트",
@@ -885,6 +886,35 @@
     "daysAgo": "{count}일 전",
     "monthsAgo": "{count}개월 전",
     "today": "오늘"
+  },
+  "Licenses": {
+    "metaTitle": "라이센스 및 저작권 안내 - nyanQuest",
+    "title": "라이센스 및 저작권 안내",
+    "effectiveDate": "시행일: 2026년 2월 23일",
+    "section1Title": "1. 서비스 개요",
+    "section1Content": "nyanQuest는 AI를 활용한 온라인 TRPG 플랫폼입니다. 사용자는 AI Game Master(GM)와 함께 솔로 퀘스트를 진행하거나, 파티 모드에서 다른 사용자들과 함께 플레이할 수 있습니다.",
+    "section2Title": "2. TRPG 시스템 규칙의 사용 범위",
+    "section2Content": "nyanQuest는 각 TRPG 시스템의 룰북 원문, 스탯 테이블, 스펠/능력 목록 등 저작물을 코드에 저장하거나 사용자에게 전송하지 않습니다. 코드에 포함된 것은 다음과 같은 추상적 주사위 판정 메커니즘뿐입니다:",
+    "section2Items": {
+      "diceOnly": "주사위 유형 및 판정 방식 (예: d20+수정치 vs DC, d100 vs 스킬 값)",
+      "noRulebook": "룰북 원문, 캐릭터 시트 데이터, 몬스터 스탯 블록 등은 포함하지 않음",
+      "noExtraction": "AI의 TRPG 관련 응답은 범용 AI 모델(Google Gemini)의 기존 학습 지식을 활용하며, nyanQuest가 별도로 학습시킨 데이터가 아님"
+    },
+    "section3Title": "3. AI 모델과 저작권",
+    "section3Content": "nyanQuest의 AI GM은 Google Gemini를 기반으로 하며, TRPG 관련 지식은 해당 AI 모델이 공개 웹에서 사전 학습한 내용입니다. nyanQuest는 룰북이나 서플리먼트를 AI에 추가 학습(fine-tuning)시키지 않았으며, 룰북 데이터를 RAG(Retrieval-Augmented Generation) 방식으로 제공하지도 않습니다.",
+    "section4Title": "4. 상표 표시",
+    "section4Content": "다음 TRPG 시스템명은 각 권리자의 상표 또는 등록 상표입니다. nyanQuest는 호환성 표시 목적으로만 이를 사용하며, 해당 권리자의 후원이나 보증을 의미하지 않습니다:",
+    "section4Items": {
+      "dnd": "Dungeons & Dragons, D&D — Wizards of the Coast LLC의 상표",
+      "coc": "Call of Cthulhu — Chaosium Inc.의 상표",
+      "vtm": "Vampire: The Masquerade — Paradox Interactive AB의 상표",
+      "dw": "Dungeon World — Sage LaTorra, Adam Koebel의 저작물 (CC BY 3.0 라이센스)",
+      "bitd": "Blades in the Dark — John Harper의 저작물 (CC BY 3.0 라이센스)",
+      "insane": "インセイン(Insane) — 河嶋陶一朗 / 冒険企画局의 저작물"
+    },
+    "section4Disclaimer": "위 상표의 사용은 해당 게임 시스템과의 호환성을 나타내기 위한 것이며, 각 권리자가 nyanQuest를 후원, 승인 또는 보증하는 것은 아닙니다.",
+    "section5Title": "5. 문의",
+    "section5Content": "라이센스 관련 문의 사항은 osu355@gmail.com으로 연락해 주세요."
   },
   "Privacy": {
     "metaTitle": "개인정보처리방침 - nyanQuest",

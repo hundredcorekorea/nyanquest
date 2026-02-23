@@ -56,7 +56,8 @@
     "email": "Email",
     "phone": "Phone",
     "privacy": "Privacy Policy",
-    "terms": "Terms of Service"
+    "terms": "Terms of Service",
+    "licenses": "Licenses"
   },
   "Nav": {
     "quest": "Quests",
@@ -885,6 +886,35 @@
     "daysAgo": "{count}d ago",
     "monthsAgo": "{count}mo ago",
     "today": "Today"
+  },
+  "Licenses": {
+    "metaTitle": "Licenses & Copyright Notice - nyanQuest",
+    "title": "Licenses & Copyright Notice",
+    "effectiveDate": "Effective: February 23, 2026",
+    "section1Title": "1. Service Overview",
+    "section1Content": "nyanQuest is an online TRPG platform powered by AI. Users can play solo quests with an AI Game Master (GM) or join party mode sessions with other players.",
+    "section2Title": "2. Use of TRPG System Rules",
+    "section2Content": "nyanQuest does not store or transmit rulebook text, stat tables, spell lists, or other copyrighted content from any TRPG system. The only game-related data in our codebase consists of abstract dice mechanics:",
+    "section2Items": {
+      "diceOnly": "Dice types and resolution methods (e.g., d20+modifier vs DC, d100 vs skill value)",
+      "noRulebook": "No rulebook text, character sheet data, or monster stat blocks are included",
+      "noExtraction": "AI responses about TRPG rules come from the base AI model's (Google Gemini) pre-existing training data, not from data provided by nyanQuest"
+    },
+    "section3Title": "3. AI Model & Copyright",
+    "section3Content": "nyanQuest's AI GM is powered by Google Gemini. TRPG-related knowledge comes from the model's pre-training on publicly available web content. nyanQuest has not fine-tuned the AI on any rulebooks or supplements, nor does it use RAG (Retrieval-Augmented Generation) to provide rulebook data.",
+    "section4Title": "4. Trademark Notice",
+    "section4Content": "The following TRPG system names are trademarks or registered trademarks of their respective owners. nyanQuest uses these names solely to indicate compatibility and does not imply sponsorship or endorsement:",
+    "section4Items": {
+      "dnd": "Dungeons & Dragons, D&D — trademarks of Wizards of the Coast LLC",
+      "coc": "Call of Cthulhu — trademark of Chaosium Inc.",
+      "vtm": "Vampire: The Masquerade — trademark of Paradox Interactive AB",
+      "dw": "Dungeon World — by Sage LaTorra & Adam Koebel (CC BY 3.0 License)",
+      "bitd": "Blades in the Dark — by John Harper (CC BY 3.0 License)",
+      "insane": "Insane (インセイン) — by Toichiro Kawashima / Bouken Kikakukyoku"
+    },
+    "section4Disclaimer": "Use of these trademarks is for compatibility purposes only. The respective rights holders do not sponsor, authorize, or endorse nyanQuest.",
+    "section5Title": "5. Contact",
+    "section5Content": "For license-related inquiries, please contact osu355@gmail.com."
   },
   "Privacy": {
     "metaTitle": "Privacy Policy - nyanQuest",
