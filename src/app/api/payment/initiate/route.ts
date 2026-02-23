@@ -29,7 +29,7 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const paymentId = `nyanquest_${plan}_${randomUUID()}`;
+  const paymentId = `nq_${plan}_${randomUUID().replace(/-/g, "")}`;
   const planConfig = PLANS[plan];
 
   return Response.json({
