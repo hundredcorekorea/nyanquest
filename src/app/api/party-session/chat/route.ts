@@ -159,6 +159,21 @@ export async function POST(request: NextRequest) {
         .map((m) => (m.user as unknown as { nickname: string })?.nickname ?? "모험가");
 
       if (submitted < totalPLs) {
+        // Notify PL members who haven't submitted yet
+        const unsubmittedMembers = (plMembers ?? []).filter(
+          (m) => !submittedUserIds.has(m.user_id)
+        );
+        if (unsubmittedMembers.length > 0 && submitted >= 1) {
+          const notifications = unsubmittedMembers.map((m) => ({
+            user_id: m.user_id,
+            type: "round_your_turn",
+            message: `${playerName}님이 행동을 제출했다냥! (${submitted}/${totalPLs}) 당신의 차례다냥!`,
+            party_id: session.party_id,
+            link_path: `/party/${session.party_id}/play`,
+          }));
+          await serviceSupabase.from("notifications").insert(notifications);
+        }
+
         // Not all PL members submitted — return waiting status (JSON, not stream)
         return Response.json({
           waiting: true,

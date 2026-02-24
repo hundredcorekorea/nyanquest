@@ -203,7 +203,9 @@ export type NotificationType =
   | "announcement"
   | "referral_signup"
   | "referral_premium"
-  | "gift_received";
+  | "gift_received"
+  | "round_your_turn"
+  | "round_all_submitted";
 
 export interface Notification {
   id: string;
