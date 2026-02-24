@@ -1,4 +1,5 @@
 import { Geist } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -17,6 +18,7 @@ export default function RootLayout({
         className={`${geistSans.variable} font-sans antialiased bg-amber-50/30 text-gray-900 grid-bg`}
       >
         {children}
+        <Analytics />
       </body>
     </html>
   );
