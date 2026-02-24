@@ -55,7 +55,7 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
       .eq("status", "in_progress")
       .order("created_at", { ascending: false })
       .limit(1)
-      .single();
+      .maybeSingle();
 
     if (activeQuest) {
       inProgressQuest = activeQuest as unknown as SoloQuest;
