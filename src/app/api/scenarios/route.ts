@@ -77,7 +77,7 @@ export async function POST(request: NextRequest) {
       system_id: systemId || null,
       language: language || "ko",
       difficulty: difficulty || "normal",
-      estimated_turns: estimatedTurns || 20,
+      estimated_turns: Math.min(estimatedTurns || 20, 25),
       scenario_data: scenarioData,
       tags: tags || [],
       status: status || "published",

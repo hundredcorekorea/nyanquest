@@ -538,7 +538,7 @@ export default function CreateScenarioPage() {
           <input
             type="range"
             min={5}
-            max={50}
+            max={25}
             step={5}
             value={estimatedTurns}
             onChange={(e) => setEstimatedTurns(parseInt(e.target.value))}
