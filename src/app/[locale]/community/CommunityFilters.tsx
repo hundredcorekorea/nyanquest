@@ -1,9 +1,8 @@
 "use client";
 
-import { useSearchParams } from "next/navigation";
-import { useRouter } from "@/i18n/navigation";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import { useCallback } from "react";
+import { useCallback, useTransition } from "react";
 
 interface Props {
   currentLang: string;
@@ -12,9 +11,11 @@ interface Props {
 export default function CommunityFilters({ currentLang }: Props) {
   const t = useTranslations("Community");
   const router = useRouter();
+  const pathname = usePathname();
   const searchParams = useSearchParams();
   const locale = useLocale();
   const currentCategory = searchParams.get("category") ?? "";
+  const [isPending, startTransition] = useTransition();
 
   const categories = [
     { value: "", label: t("categories.all"), emoji: "📋" },
@@ -39,13 +40,17 @@ export default function CommunityFilters({ currentLang }: Props) {
         params.delete(key);
       }
       const qs = params.toString();
-      router.push(qs ? `/community?${qs}` : "/community");
+      const url = qs ? `${pathname}?${qs}` : pathname;
+
+      startTransition(() => {
+        router.replace(url, { scroll: false });
+      });
     },
-    [router, searchParams]
+    [router, pathname, searchParams]
   );
 
   return (
-    <div className="flex flex-wrap gap-2">
+    <div className={`flex flex-wrap gap-2 transition-opacity ${isPending ? "opacity-60" : ""}`}>
       <div className="flex gap-1 bg-gray-50 rounded-xl p-1 overflow-x-auto">
         {categories.map((cat) => (
           <button
