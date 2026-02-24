@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
-import type { CommunityScenario, ScenarioGenre } from "@/types/database";
+import type { CommunityScenario, ScenarioGenre, ScenarioContest } from "@/types/database";
 
 const GENRES: ScenarioGenre[] = ["fantasy", "horror", "comedy", "scifi", "mystery", "romance", "historical", "modern", "other"];
 const GENRE_EMOJI: Record<ScenarioGenre, string> = {
@@ -15,6 +15,7 @@ type SortMode = "popular" | "liked" | "recent";
 
 export default function ScenariosPage() {
   const t = useTranslations("Scenarios");
+  const tc = useTranslations("Contest");
   const locale = useLocale();
   const [scenarios, setScenarios] = useState<CommunityScenario[]>([]);
   const [loading, setLoading] = useState(true);
@@ -22,6 +23,20 @@ export default function ScenariosPage() {
   const [sort, setSort] = useState<SortMode>("popular");
   const [page, setPage] = useState(1);
   const [hasMore, setHasMore] = useState(false);
+  const [activeContest, setActiveContest] = useState<ScenarioContest | null>(null);
+
+  useEffect(() => {
+    // Fetch active contest
+    fetch("/api/contests")
+      .then((r) => r.json())
+      .then((data) => {
+        const active = (data.contests || []).find(
+          (c: ScenarioContest) => c.status === "active" || c.status === "upcoming"
+        );
+        if (active) setActiveContest(active);
+      })
+      .catch(() => {});
+  }, []);
 
   useEffect(() => {
     setPage(1);
@@ -31,7 +46,7 @@ export default function ScenariosPage() {
   async function fetchScenarios(p: number, replace = false) {
     setLoading(true);
     try {
-      const params = new URLSearchParams({ sort, page: p.toString(), lang: locale });
+      const params = new URLSearchParams({ sort, page: p.toString() });
       if (genre !== "all") params.set("genre", genre);
       const res = await fetch(`/api/scenarios?${params}`);
       const data = await res.json();
@@ -50,8 +65,35 @@ export default function ScenariosPage() {
     fetchScenarios(next);
   }
 
+  const contestTitle = locale === "en" && activeContest?.title_en ? activeContest.title_en : activeContest?.title;
+  const contestDesc = locale === "en" && activeContest?.description_en ? activeContest.description_en : activeContest?.description;
+
   return (
     <div className="pb-24 space-y-4">
+      {/* Contest Banner */}
+      {activeContest && (
+        <Link href={`/scenarios/contest/${activeContest.id}` as any} className="block">
+          <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-red-400 rounded-2xl p-4 text-white shadow-lg hover:shadow-xl transition-shadow">
+            <div className="flex items-center gap-3">
+              <span className="text-3xl">🏆</span>
+              <div className="flex-1 min-w-0">
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-bold bg-white/20 px-2 py-0.5 rounded-full">
+                    {activeContest.status === "active" ? tc("statusActive") : tc("statusUpcoming")}
+                  </span>
+                </div>
+                <h3 className="font-bold text-sm mt-1">{contestTitle}</h3>
+                <p className="text-xs text-white/80 mt-0.5 line-clamp-1">{contestDesc}</p>
+                <p className="text-xs text-white/70 mt-1">
+                  🎁 {tc("reward", { months: activeContest.reward_months })} · Top {activeContest.winner_count}
+                </p>
+              </div>
+              <span className="text-xl">→</span>
+            </div>
+          </div>
+        </Link>
+      )}
+
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>

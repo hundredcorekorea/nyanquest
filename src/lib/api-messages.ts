@@ -103,6 +103,30 @@ const messages: Record<string, Record<Locale, string>> = {
     ko: "턴 연장 횟수를 모두 사용했다냥!",
     en: "You've used all turn extensions, meow!",
   },
+  contestNotFound: {
+    ko: "콘테스트를 찾을 수 없다냥",
+    en: "Contest not found, meow",
+  },
+  contestNotActive: {
+    ko: "진행 중인 콘테스트가 아니다냥",
+    en: "This contest is not active, meow",
+  },
+  alreadyEntered: {
+    ko: "이미 참가한 콘테스트다냥",
+    en: "You already entered this contest, meow",
+  },
+  scenarioRequired: {
+    ko: "시나리오를 선택해달라냥",
+    en: "Please select a scenario, meow",
+  },
+  notScenarioOwner: {
+    ko: "본인이 만든 시나리오만 참가할 수 있다냥",
+    en: "You can only enter with your own scenario, meow",
+  },
+  contestNotEnded: {
+    ko: "콘테스트가 아직 종료되지 않았다냥",
+    en: "Contest has not ended yet, meow",
+  },
 };
 
 export function getLocaleFromRequest(request: NextRequest | Request): Locale {

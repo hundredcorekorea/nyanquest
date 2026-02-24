@@ -135,6 +135,20 @@ export default function ScenarioDetailPage() {
     }
   }
 
+  async function handleShare() {
+    if (!scenario) return;
+    const url = `${window.location.origin}/${locale}/scenarios/${id}`;
+    const title = locale === "en" && scenario.title_en ? scenario.title_en : scenario.title;
+    const desc = locale === "en" && scenario.description_en ? scenario.description_en : scenario.description;
+    const shareData = { title, text: desc, url };
+    if (navigator.share) {
+      try { await navigator.share(shareData); } catch { /* cancelled */ }
+    } else {
+      await navigator.clipboard.writeText(url);
+      toast(t("linkCopied"), "success");
+    }
+  }
+
   async function handleDelete() {
     if (!confirm(t("deleteConfirm"))) return;
     try {
@@ -156,9 +170,10 @@ export default function ScenarioDetailPage() {
     );
   }
 
-  const sd = scenario.scenario_data;
+  const sd = locale === "en" && scenario.scenario_data_en ? scenario.scenario_data_en : scenario.scenario_data;
   const displayTitle = locale === "en" && scenario.title_en ? scenario.title_en : scenario.title;
   const displayDesc = locale === "en" && scenario.description_en ? scenario.description_en : scenario.description;
+  const isTranslating = scenario.translation_status === "pending";
 
   // Edit mode UI
   if (editing) {
@@ -262,6 +277,14 @@ export default function ScenarioDetailPage() {
         </div>
         <p className="text-sm text-gray-600">{displayDesc}</p>
 
+        {/* Translation status */}
+        {isTranslating && (
+          <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 text-xs text-blue-700 flex items-center gap-2">
+            <span className="animate-spin">🔄</span>
+            {t("translating")}
+          </div>
+        )}
+
         {/* Meta */}
         <div className="flex flex-wrap gap-2">
           <span className={`text-xs px-2 py-0.5 rounded-full ${
@@ -291,6 +314,12 @@ export default function ScenarioDetailPage() {
             }`}
           >
             {liked ? "♥" : "♡"} {likeCount}
+          </button>
+          <button
+            onClick={handleShare}
+            className="text-xs px-3 py-1 rounded-full border border-gray-200 text-gray-500 hover:border-blue-300 hover:text-blue-600 transition-colors"
+          >
+            📤 {t("share")}
           </button>
           <div className="ml-auto">
             <ReportButton reportType="scenario" targetId={scenario.id} compact />

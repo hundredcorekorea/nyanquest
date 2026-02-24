@@ -205,7 +205,9 @@ export type NotificationType =
   | "referral_premium"
   | "gift_received"
   | "round_your_turn"
-  | "round_all_submitted";
+  | "round_all_submitted"
+  | "contest_winner"
+  | "contest_ended";
 
 export interface Notification {
   id: string;
@@ -257,6 +259,8 @@ export interface CommunityScenario {
   difficulty: "easy" | "normal" | "hard";
   estimated_turns: number;
   scenario_data: ScenarioData;
+  scenario_data_en: ScenarioData | null;
+  translation_status: "none" | "pending" | "completed" | "failed";
   tags: string[];
   is_premium: boolean;
   status: "draft" | "published" | "hidden";
@@ -294,4 +298,36 @@ export interface Announcement {
   language: "ko" | "en";
   is_pinned: boolean;
   created_at: string;
+}
+
+export type ContestStatus = "upcoming" | "active" | "ended" | "finalized";
+
+export interface ScenarioContest {
+  id: string;
+  title: string;
+  title_en: string | null;
+  description: string;
+  description_en: string | null;
+  genre_filter: string | null;
+  start_date: string;
+  end_date: string;
+  status: ContestStatus;
+  reward_months: number;
+  winner_count: number;
+  like_weight: number;
+  play_weight: number;
+  created_at: string;
+}
+
+export interface ContestEntry {
+  id: string;
+  contest_id: string;
+  scenario_id: string;
+  user_id: string;
+  submitted_at: string;
+  rank: number | null;
+  score: number | null;
+  // Joined
+  scenario?: CommunityScenario;
+  user?: Profile;
 }

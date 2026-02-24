@@ -9,7 +9,6 @@ export async function GET(request: NextRequest) {
   const { searchParams } = request.nextUrl;
 
   const genre = searchParams.get("genre");
-  const language = searchParams.get("lang") || "all";
   const sort = searchParams.get("sort") || "popular";
   const page = parseInt(searchParams.get("page") || "1");
   const limit = 20;
@@ -22,9 +21,6 @@ export async function GET(request: NextRequest) {
 
   if (genre && genre !== "all") {
     query = query.eq("genre", genre);
-  }
-  if (language !== "all") {
-    query = query.eq("language", language);
   }
 
   if (sort === "popular") {
@@ -90,5 +86,19 @@ export async function POST(request: NextRequest) {
     return Response.json({ error: "Failed to create scenario" }, { status: 500 });
   }
 
+  // Fire-and-forget translation
+  triggerTranslation(data.id);
+
   return Response.json({ id: data.id });
+}
+
+function triggerTranslation(scenarioId: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || `https://${process.env.VERCEL_URL}` || "http://localhost:3000";
+  fetch(`${baseUrl}/api/scenarios/${scenarioId}/translate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-translate-secret": process.env.TRANSLATE_SECRET || "",
+    },
+  }).catch((err) => console.error("[scenarios] Translation trigger failed:", err));
 }

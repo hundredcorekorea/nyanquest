@@ -63,7 +63,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   const body = await request.json();
   const updates: Record<string, unknown> = { updated_at: new Date().toISOString() };
-  const allowedFields = ["title", "title_en", "description", "description_en", "genre", "system_id", "difficulty", "estimated_turns", "scenario_data", "tags", "status"];
+  const allowedFields = ["title", "title_en", "description", "description_en", "genre", "system_id", "difficulty", "estimated_turns", "scenario_data", "scenario_data_en", "tags", "status"];
 
   for (const field of allowedFields) {
     if (body[field] !== undefined) {
@@ -82,7 +82,24 @@ export async function PATCH(request: NextRequest, { params }: Params) {
     return Response.json({ error: "Failed to update" }, { status: 500 });
   }
 
+  // Re-translate if content fields changed
+  const contentFields = ["title", "description", "scenario_data"];
+  if (contentFields.some((f) => updates[f] !== undefined)) {
+    triggerTranslation(id);
+  }
+
   return Response.json({ ok: true });
+}
+
+function triggerTranslation(scenarioId: string) {
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || `https://${process.env.VERCEL_URL}` || "http://localhost:3000";
+  fetch(`${baseUrl}/api/scenarios/${scenarioId}/translate`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-translate-secret": process.env.TRANSLATE_SECRET || "",
+    },
+  }).catch((err) => console.error("[scenarios] Translation trigger failed:", err));
 }
 
 // DELETE /api/scenarios/[id] — delete scenario (creator only)

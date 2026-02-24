@@ -27,6 +27,8 @@ const typeEmoji: Record<string, string> = {
   referral_premium: "👑",
   round_your_turn: "🎲",
   round_all_submitted: "⚔️",
+  contest_winner: "🏆",
+  contest_ended: "🏁",
 };
 
 export default function NotificationBell({ userId }: { userId: string }) {
