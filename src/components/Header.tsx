@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import AuthButton from "./AuthButton";
 import NotificationBell from "./NotificationBell";
-import { getUserFromCookies } from "@/lib/supabase/client";
+import { createClient, getUserFromCookies } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import { useReferralProcess } from "@/hooks/useReferralProcess";
 
@@ -13,6 +13,13 @@ export default function Header() {
   useEffect(() => {
     const user = getUserFromCookies();
     setUserId(user?.id ?? null);
+    if (user?.id) {
+      createClient()
+        .from("profiles")
+        .update({ last_active_at: new Date().toISOString() })
+        .eq("id", user.id)
+        .then();
+    }
   }, []);
 
   // Process referral code for newly signed-up users
