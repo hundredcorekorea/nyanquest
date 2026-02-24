@@ -1201,7 +1201,16 @@
     "detailOpening": "Opening",
     "detailNpcs": "Characters",
     "detailEvents": "Key Events",
-    "detailEndings": "Possible Endings"
+    "detailEndings": "Possible Endings",
+    "editButton": "Edit",
+    "deleteButton": "Delete",
+    "editTitle": "Edit Scenario",
+    "editCancel": "Cancel",
+    "editSave": "Save",
+    "editSaving": "Saving...",
+    "editSuccess": "Scenario updated, nya!",
+    "editFailed": "Failed to update, nya",
+    "deleteSuccess": "Scenario deleted, nya!"
   },
   "Announcements": {
     "title": "Guild Board",

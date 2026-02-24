@@ -1201,7 +1201,16 @@
     "detailOpening": "오프닝",
     "detailNpcs": "등장인물",
     "detailEvents": "주요 이벤트",
-    "detailEndings": "가능한 엔딩"
+    "detailEndings": "가능한 엔딩",
+    "editButton": "수정하기",
+    "deleteButton": "삭제하기",
+    "editTitle": "시나리오 수정",
+    "editCancel": "취소",
+    "editSave": "저장하기",
+    "editSaving": "저장 중...",
+    "editSuccess": "수정이 완료되었다냥!",
+    "editFailed": "수정에 실패했다냥",
+    "deleteSuccess": "시나리오가 삭제되었다냥!"
   },
   "Announcements": {
     "title": "길드 게시판",

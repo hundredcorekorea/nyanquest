@@ -35,7 +35,8 @@ export async function GET(request: NextRequest, { params }: Params) {
     liked = !!likeData;
   }
 
-  return Response.json({ scenario: data, liked });
+  const isOwner = !!user && data.creator_id === user.id;
+  return Response.json({ scenario: data, liked, isOwner });
 }
 
 // PATCH /api/scenarios/[id] — update scenario (creator only)
@@ -66,7 +67,7 @@ export async function PATCH(request: NextRequest, { params }: Params) {
 
   for (const field of allowedFields) {
     if (body[field] !== undefined) {
-      updates[field] = body[field];
+      updates[field] = field === "estimated_turns" ? Math.min(body[field], 25) : body[field];
     }
   }
 

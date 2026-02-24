@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "next/navigation";
 import { useRouter, Link } from "@/i18n/navigation";
 import { useToast } from "@/components/Toast";
@@ -13,6 +13,8 @@ const GENRE_EMOJI: Record<ScenarioGenre, string> = {
   mystery: "🔍", romance: "💕", historical: "🏛️", modern: "🏙️", other: "🎲",
 };
 
+const GENRES: ScenarioGenre[] = ["fantasy", "horror", "comedy", "scifi", "mystery", "romance", "historical", "modern", "other"];
+
 export default function ScenarioDetailPage() {
   const { id } = useParams<{ id: string }>();
   const router = useRouter();
@@ -24,6 +26,20 @@ export default function ScenarioDetailPage() {
   const [liked, setLiked] = useState(false);
   const [likeCount, setLikeCount] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
+
+  // Edit mode
+  const [editing, setEditing] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [editTitle, setEditTitle] = useState("");
+  const [editDescription, setEditDescription] = useState("");
+  const [editGenre, setEditGenre] = useState<ScenarioGenre>("fantasy");
+  const [editDifficulty, setEditDifficulty] = useState<"easy" | "normal" | "hard">("normal");
+  const [editTurns, setEditTurns] = useState(20);
+  const [editBackground, setEditBackground] = useState("");
+  const [editOpening, setEditOpening] = useState("");
+  const [editGmInstructions, setEditGmInstructions] = useState("");
+  const [editTags, setEditTags] = useState("");
 
   useEffect(() => {
     async function load() {
@@ -37,6 +53,7 @@ export default function ScenarioDetailPage() {
         setScenario(data.scenario);
         setLiked(data.liked);
         setLikeCount(data.scenario.like_count);
+        setIsOwner(data.isOwner);
       } catch {
         router.push("/scenarios");
       } finally {
@@ -45,6 +62,66 @@ export default function ScenarioDetailPage() {
     }
     load();
   }, [id]);
+
+  const startEditing = useCallback(() => {
+    if (!scenario) return;
+    setEditTitle(scenario.title);
+    setEditDescription(scenario.description);
+    setEditGenre(scenario.genre);
+    setEditDifficulty(scenario.difficulty as "easy" | "normal" | "hard");
+    setEditTurns(scenario.estimated_turns);
+    setEditBackground(scenario.scenario_data.background);
+    setEditOpening(scenario.scenario_data.opening);
+    setEditGmInstructions(scenario.scenario_data.gmInstructions);
+    setEditTags(scenario.tags.join(", "));
+    setEditing(true);
+  }, [scenario]);
+
+  async function handleSave() {
+    if (!editTitle.trim() || !editDescription.trim() || !editBackground.trim() || !editOpening.trim() || !editGmInstructions.trim()) {
+      toast(t("fillRequired"), "error");
+      return;
+    }
+    setSaving(true);
+    try {
+      const res = await fetch(`/api/scenarios/${id}`, {
+        method: "PATCH",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title: editTitle.trim(),
+          description: editDescription.trim(),
+          genre: editGenre,
+          difficulty: editDifficulty,
+          estimated_turns: editTurns,
+          scenario_data: {
+            background: editBackground.trim(),
+            opening: editOpening.trim(),
+            gmInstructions: editGmInstructions.trim(),
+            npcs: scenario?.scenario_data.npcs,
+            keyEvents: scenario?.scenario_data.keyEvents,
+            possibleEndings: scenario?.scenario_data.possibleEndings,
+          },
+          tags: editTags.split(",").map((t) => t.trim()).filter(Boolean),
+        }),
+      });
+      if (!res.ok) {
+        toast(t("editFailed"), "error");
+        return;
+      }
+      toast(t("editSuccess"), "success");
+      setEditing(false);
+      // Reload data
+      const reload = await fetch(`/api/scenarios/${id}`);
+      if (reload.ok) {
+        const data = await reload.json();
+        setScenario(data.scenario);
+      }
+    } catch {
+      toast(t("editFailed"), "error");
+    } finally {
+      setSaving(false);
+    }
+  }
 
   async function handleLike() {
     try {
@@ -63,6 +140,7 @@ export default function ScenarioDetailPage() {
     try {
       const res = await fetch(`/api/scenarios/${id}`, { method: "DELETE" });
       if (res.ok) {
+        toast(t("deleteSuccess"), "success");
         router.push("/scenarios");
       }
     } catch {
@@ -82,13 +160,100 @@ export default function ScenarioDetailPage() {
   const displayTitle = locale === "en" && scenario.title_en ? scenario.title_en : scenario.title;
   const displayDesc = locale === "en" && scenario.description_en ? scenario.description_en : scenario.description;
 
+  // Edit mode UI
+  if (editing) {
+    return (
+      <div className="pb-24 max-w-lg mx-auto space-y-5">
+        <div className="flex items-center justify-between">
+          <h1 className="text-lg font-bold text-gray-900">{t("editTitle")}</h1>
+          <button
+            onClick={() => setEditing(false)}
+            className="text-xs text-gray-400 hover:text-gray-600"
+          >
+            {t("editCancel")}
+          </button>
+        </div>
+
+        <div className="space-y-4">
+          <Field label={t("fieldTitle")} value={editTitle} onChange={setEditTitle} />
+          <Field label={t("fieldDescription")} value={editDescription} onChange={setEditDescription} multiline rows={3} />
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("fieldGenre")}</label>
+              <select
+                value={editGenre}
+                onChange={(e) => setEditGenre(e.target.value as ScenarioGenre)}
+                className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 bg-white"
+              >
+                {GENRES.map((g) => (
+                  <option key={g} value={g}>
+                    {t(`genre${g.charAt(0).toUpperCase() + g.slice(1)}` as any)}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t("fieldDifficulty")}</label>
+              <select
+                value={editDifficulty}
+                onChange={(e) => setEditDifficulty(e.target.value as "easy" | "normal" | "hard")}
+                className="w-full px-3 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400 bg-white"
+              >
+                <option value="easy">{t("difficultyEasy")}</option>
+                <option value="normal">{t("difficultyNormal")}</option>
+                <option value="hard">{t("difficultyHard")}</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              {t("fieldEstimatedTurns")}: {editTurns}
+            </label>
+            <input
+              type="range"
+              min={5}
+              max={25}
+              step={5}
+              value={editTurns}
+              onChange={(e) => setEditTurns(parseInt(e.target.value))}
+              className="w-full accent-amber-500"
+            />
+          </div>
+
+          <Field label={t("fieldBackground")} value={editBackground} onChange={setEditBackground} multiline rows={5} />
+          <Field label={t("fieldOpening")} value={editOpening} onChange={setEditOpening} multiline rows={5} />
+          <Field label={t("fieldGmInstructions")} value={editGmInstructions} onChange={setEditGmInstructions} multiline rows={5} />
+          <Field label={t("fieldTags")} value={editTags} onChange={setEditTags} placeholder={t("fieldTagsPlaceholder")} />
+        </div>
+
+        <div className="flex gap-3">
+          <button
+            onClick={() => setEditing(false)}
+            className="flex-1 py-3 border border-gray-200 text-gray-700 text-sm rounded-xl font-medium hover:bg-gray-50 transition-colors"
+          >
+            {t("editCancel")}
+          </button>
+          <button
+            onClick={handleSave}
+            disabled={saving}
+            className="flex-1 py-3 bg-amber-500 text-white text-sm rounded-xl font-medium hover:bg-amber-600 transition-colors disabled:opacity-50"
+          >
+            {saving ? t("editSaving") : t("editSave")}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="pb-24 max-w-lg mx-auto space-y-5">
       {/* Header */}
       <div className="space-y-2">
         <div className="flex items-center gap-2">
           <span className="text-2xl">{GENRE_EMOJI[scenario.genre]}</span>
-          <div>
+          <div className="flex-1">
             <h1 className="text-lg font-bold text-gray-900">{displayTitle}</h1>
             <p className="text-xs text-gray-500">
               {t("by", { name: scenario.creator?.nickname || "???" })}
@@ -131,6 +296,24 @@ export default function ScenarioDetailPage() {
             <ReportButton reportType="scenario" targetId={scenario.id} compact />
           </div>
         </div>
+
+        {/* Owner actions */}
+        {isOwner && (
+          <div className="flex gap-2">
+            <button
+              onClick={startEditing}
+              className="px-3 py-1.5 text-xs font-medium text-amber-700 bg-amber-50 border border-amber-200 rounded-xl hover:bg-amber-100 transition-colors"
+            >
+              {t("editButton")}
+            </button>
+            <button
+              onClick={handleDelete}
+              className="px-3 py-1.5 text-xs font-medium text-red-600 bg-red-50 border border-red-200 rounded-xl hover:bg-red-100 transition-colors"
+            >
+              {t("deleteButton")}
+            </button>
+          </div>
+        )}
 
         {/* Tags */}
         {scenario.tags.length > 0 && (
@@ -193,6 +376,46 @@ export default function ScenarioDetailPage() {
       >
         ⚔️ {t("play")}
       </Link>
+    </div>
+  );
+}
+
+function Field({
+  label,
+  value,
+  onChange,
+  multiline,
+  rows,
+  placeholder,
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  multiline?: boolean;
+  rows?: number;
+  placeholder?: string;
+}) {
+  const cls = "w-full px-4 py-3 border border-gray-200 rounded-xl text-sm focus:outline-none focus:border-amber-400";
+  return (
+    <div>
+      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+      {multiline ? (
+        <textarea
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          rows={rows || 3}
+          placeholder={placeholder}
+          className={`${cls} resize-none`}
+        />
+      ) : (
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder={placeholder}
+          className={cls}
+        />
+      )}
     </div>
   );
 }
