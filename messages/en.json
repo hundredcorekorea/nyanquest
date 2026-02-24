@@ -1252,5 +1252,17 @@
       "maintenance": "Maintenance",
       "tip": "Tip"
     }
+  },
+  "Push": {
+    "title": "Turn on notifications, nya?",
+    "description": "Get real-time alerts for party turns, gifts, and more!",
+    "allow": "Allow",
+    "later": "Later"
+  },
+  "Install": {
+    "title": "Add to Home Screen, nya!",
+    "description": "Access nyanQuest instantly like a native app!",
+    "install": "Install",
+    "later": "Later"
   }
 }

@@ -6,6 +6,7 @@ import { PREMIUM_CONFIG } from "@/lib/premium";
 import { NextRequest } from "next/server";
 import type { SessionMessage } from "@/types/party-session";
 import { apiMsg } from "@/lib/api-messages";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -172,6 +173,14 @@ export async function POST(request: NextRequest) {
             link_path: `/party/${session.party_id}/play`,
           }));
           await serviceSupabase.from("notifications").insert(notifications);
+          // Send push to each unsubmitted member
+          for (const m of unsubmittedMembers) {
+            sendPushToUser(m.user_id, {
+              title: "nyanQuest ⚔️",
+              body: `${playerName}님이 행동을 제출했다냥! 당신의 차례다냥!`,
+              url: `/party/${session.party_id}/play`,
+            });
+          }
         }
 
         // Not all PL members submitted — return waiting status (JSON, not stream)

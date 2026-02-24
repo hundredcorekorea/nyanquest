@@ -39,6 +39,44 @@ self.addEventListener("activate", (event) => {
   );
 });
 
+// Push notification received
+self.addEventListener("push", (event) => {
+  const defaultData = { title: "nyanQuest", body: "새 알림이다냥!", url: "/" };
+  let data = defaultData;
+  try {
+    data = event.data ? { ...defaultData, ...event.data.json() } : defaultData;
+  } catch {
+    data = defaultData;
+  }
+
+  event.waitUntil(
+    self.registration.showNotification(data.title, {
+      body: data.body,
+      icon: "/icons/icon-192.png",
+      badge: "/favicon-48.png",
+      data: { url: data.url },
+      vibrate: [200, 100, 200],
+    })
+  );
+});
+
+// Notification click — navigate to relevant page
+self.addEventListener("notificationclick", (event) => {
+  event.notification.close();
+  const url = event.notification.data?.url || "/";
+
+  event.waitUntil(
+    self.clients.matchAll({ type: "window" }).then((clients) => {
+      for (const client of clients) {
+        if (client.url.includes(url) && "focus" in client) {
+          return client.focus();
+        }
+      }
+      return self.clients.openWindow(url);
+    })
+  );
+});
+
 self.addEventListener("fetch", (event) => {
   const { request } = event;
 

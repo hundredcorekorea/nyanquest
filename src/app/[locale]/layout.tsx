@@ -10,6 +10,8 @@ import Footer from "@/components/Footer";
 import { ToastProvider } from "@/components/Toast";
 import PWARegister from "@/components/PWARegister";
 import ReferralCapture from "@/components/ReferralCapture";
+import PushPermissionPrompt from "@/components/PushPermissionPrompt";
+import InstallPrompt from "@/components/InstallPrompt";
 import { Suspense } from "react";
 
 export function generateStaticParams() {
@@ -122,6 +124,8 @@ export default async function LocaleLayout({
           <main className="max-w-3xl mx-auto px-4 py-6">{children}</main>
           <Footer />
           <BottomNav />
+          <PushPermissionPrompt />
+          <InstallPrompt />
         </ToastProvider>
       </NextIntlClientProvider>
     </>

@@ -1,5 +1,6 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { NextRequest } from "next/server";
+import { sendPushToUser } from "@/lib/push";
 
 interface Params {
   params: Promise<{ id: string }>;
@@ -99,6 +100,11 @@ export async function POST(
       user_id: winner.user_id,
       type: "contest_winner",
       message: `contest:${contest.title}:rank${winner.rank || (winners.indexOf(winner) + 1)}`,
+    });
+    sendPushToUser(winner.user_id, {
+      title: "nyanQuest 🏆",
+      body: `콘테스트 ${contest.title}에서 ${winner.rank || (winners.indexOf(winner) + 1)}위를 차지했다냥!`,
+      url: `/scenarios/contest/${contestId}`,
     });
   }
 

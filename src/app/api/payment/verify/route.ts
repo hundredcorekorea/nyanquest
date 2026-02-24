@@ -4,6 +4,7 @@ import { verifyPayment } from "@/lib/portone";
 import { PLANS } from "@/lib/premium";
 import { NextRequest } from "next/server";
 import { apiMsg } from "@/lib/api-messages";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(request: NextRequest) {
   const supabase = await createClient();
@@ -116,6 +117,7 @@ export async function POST(request: NextRequest) {
       type: "gift_received",
       message: `${senderName}님이 프리미엄 구독을 선물했다냥! 👑`,
     });
+    sendPushToUser(giftTo, { title: "nyanQuest 👑", body: `${senderName}님이 프리미엄을 선물했다냥!` });
   }
 
   // Reward referrer if this user was referred (only for self-purchase)

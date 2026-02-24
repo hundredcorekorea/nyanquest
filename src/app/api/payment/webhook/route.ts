@@ -1,6 +1,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyPayment } from "@/lib/portone";
 import { PLANS } from "@/lib/premium";
+import { sendPushToUser } from "@/lib/push";
 
 export async function POST(request: Request) {
   const body = await request.text();
@@ -111,6 +112,7 @@ export async function POST(request: Request) {
         type: "gift_received",
         message: `${senderName}님이 프리미엄 구독을 선물했다냥! 👑`,
       });
+      sendPushToUser(giftTo, { title: "nyanQuest 👑", body: `${senderName}님이 프리미엄을 선물했다냥!` });
     } else {
       // Notify user (self purchase)
       await supabase.from("notifications").insert({
@@ -118,6 +120,7 @@ export async function POST(request: Request) {
         type: "subscription_started",
         message: `프리미엄 구독이 시작되었다냥! ${planConfig.label} 활성화 완료!`,
       });
+      sendPushToUser(userId, { title: "nyanQuest 👑", body: "프리미엄 구독이 활성화되었다냥!" });
       // Reward referrer if this user was referred
       await supabase.rpc("reward_referrer_premium", { p_referred_id: userId });
     }

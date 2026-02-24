@@ -1252,5 +1252,17 @@
       "maintenance": "점검",
       "tip": "팁"
     }
+  },
+  "Push": {
+    "title": "알림을 켜볼까냥?",
+    "description": "파티 턴 알림, 선물 알림 등을 실시간으로 받을 수 있다냥!",
+    "allow": "알림 허용",
+    "later": "나중에"
+  },
+  "Install": {
+    "title": "홈화면에 추가하라냥!",
+    "description": "앱처럼 빠르게 접속할 수 있다냥!",
+    "install": "설치하기",
+    "later": "나중에"
   }
 }
