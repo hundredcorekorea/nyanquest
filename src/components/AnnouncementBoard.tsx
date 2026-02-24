@@ -15,13 +15,14 @@ function formatDate(dateStr: string): string {
   return `${d.getMonth() + 1}/${d.getDate()}`;
 }
 
-export default async function AnnouncementBoard() {
+export default async function AnnouncementBoard({ locale }: { locale: string }) {
   const t = await getTranslations("Announcements");
   const supabase = await createClient();
 
   const { data } = await supabase
     .from("announcements")
     .select("*")
+    .eq("language", locale)
     .order("is_pinned", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(5);

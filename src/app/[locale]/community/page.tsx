@@ -85,7 +85,7 @@ export default async function CommunityPage({
 
       {/* Announcement board */}
       <Suspense>
-        <AnnouncementBoard />
+        <AnnouncementBoard locale={locale} />
       </Suspense>
 
       {/* Category tabs */}

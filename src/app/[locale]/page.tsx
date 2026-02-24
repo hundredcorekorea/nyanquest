@@ -88,7 +88,7 @@ export default async function HomePage({
 
       {/* Latest announcement banner */}
       <Suspense>
-        <AnnouncementBanner />
+        <AnnouncementBanner locale={locale} />
       </Suspense>
 
       {/* Platform stats + play buttons — visible without scrolling */}

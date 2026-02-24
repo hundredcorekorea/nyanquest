@@ -12,11 +12,11 @@ const categoryStyle: Record<AnnouncementCategory, { emoji: string; label: string
 };
 
 interface Props {
-  params: Promise<{ id: string }>;
+  params: Promise<{ id: string; locale: string }>;
 }
 
 export default async function NoticeDetailPage({ params }: Props) {
-  const { id } = await params;
+  const { id, locale } = await params;
   const t = await getTranslations("Announcements");
   const supabase = await createClient();
 
@@ -31,7 +31,8 @@ export default async function NoticeDetailPage({ params }: Props) {
   const announcement = data as Announcement;
   const cat = categoryStyle[announcement.category];
 
-  const dateStr = new Date(announcement.created_at).toLocaleDateString("ko-KR", {
+  const dateLocale = locale === "ko" ? "ko-KR" : "en-US";
+  const dateStr = new Date(announcement.created_at).toLocaleDateString(dateLocale, {
     year: "numeric",
     month: "long",
     day: "numeric",

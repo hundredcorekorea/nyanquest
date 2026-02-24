@@ -2,13 +2,14 @@ import { createClient } from "@/lib/supabase/server";
 import { Link } from "@/i18n/navigation";
 import type { Announcement } from "@/types/database";
 
-export default async function AnnouncementBanner() {
+export default async function AnnouncementBanner({ locale }: { locale: string }) {
   const supabase = await createClient();
 
   // Get latest pinned or most recent announcement
   const { data } = await supabase
     .from("announcements")
     .select("id, title, category, is_pinned")
+    .eq("language", locale)
     .order("is_pinned", { ascending: false })
     .order("created_at", { ascending: false })
     .limit(1)

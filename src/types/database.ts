@@ -291,6 +291,7 @@ export interface Announcement {
   title: string;
   content: string;
   category: AnnouncementCategory;
+  language: "ko" | "en";
   is_pinned: boolean;
   created_at: string;
 }
