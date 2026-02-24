@@ -341,7 +341,11 @@
     "abandon": "포기하기",
     "abandonConfirm": "수련을 포기할까냥? 진행 상황이 사라진다냥!",
     "abandonSuccess": "수련을 포기했다냥.",
-    "abandonFailed": "포기 실패: {error}"
+    "abandonFailed": "포기 실패: {error}",
+    "scenarioMarketTitle": "시나리오 마켓",
+    "scenarioMarketDesc": "모험자들이 만든 시나리오로 새로운 모험을 시작하라냥!",
+    "scenarioMarketBrowse": "둘러보기",
+    "scenarioMarketCreate": "시나리오 만들기"
   },
   "SoloQuest": {
     "turnProgress": "{current}/{total} 턴",

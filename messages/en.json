@@ -341,7 +341,11 @@
     "abandon": "Abandon",
     "abandonConfirm": "Abandon this training, nya? Your progress will be lost, nya!",
     "abandonSuccess": "Training abandoned, nya.",
-    "abandonFailed": "Abandon failed: {error}"
+    "abandonFailed": "Abandon failed: {error}",
+    "scenarioMarketTitle": "Scenario Market",
+    "scenarioMarketDesc": "Try adventures made by fellow adventurers, nya!",
+    "scenarioMarketBrowse": "Browse",
+    "scenarioMarketCreate": "Create Scenario"
   },
   "SoloQuest": {
     "turnProgress": "{current}/{total} turns",

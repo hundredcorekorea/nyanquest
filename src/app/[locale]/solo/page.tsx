@@ -120,6 +120,23 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
         </div>
       )}
 
+      {/* Scenario Market entry */}
+      <Link
+        href="/scenarios"
+        className="block bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-200 p-4 hover:shadow-md transition-all"
+      >
+        <div className="flex items-center gap-3">
+          <span className="text-3xl">📚</span>
+          <div className="flex-1 min-w-0">
+            <h3 className="text-sm font-bold text-purple-800">{t("scenarioMarketTitle")}</h3>
+            <p className="text-xs text-gray-500 mt-0.5">{t("scenarioMarketDesc")}</p>
+          </div>
+          <svg className="w-5 h-5 text-purple-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+          </svg>
+        </div>
+      </Link>
+
       {/* Scenario list */}
       <div className="space-y-4">
         <h2 className="text-sm font-bold text-gray-700">{t("selectScenario")}</h2>
