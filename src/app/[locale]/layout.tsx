@@ -38,7 +38,7 @@ export async function generateMetadata({
       type: "website",
       images: [
         {
-          url: "/og-default.png",
+          url: locale === "ko" ? "/og-default.png" : "/og-en.png",
           width: 1200,
           height: 630,
           alt: t("siteTitle"),
@@ -49,7 +49,7 @@ export async function generateMetadata({
       card: "summary_large_image",
       title: t("ogTitle"),
       description: t("ogDescription"),
-      images: ["/og-default.png"],
+      images: [locale === "ko" ? "/og-default.png" : "/og-en.png"],
     },
     icons: {
       icon: [
