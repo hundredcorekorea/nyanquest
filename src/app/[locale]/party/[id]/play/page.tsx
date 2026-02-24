@@ -57,7 +57,7 @@ export default async function PlayPage({ params }: Props) {
   // Get party members
   const { data: members } = await supabase
     .from("party_members")
-    .select("*, user:profiles(id, nickname, avatar_url, cat_type)")
+    .select("*, user:profiles(id, nickname, avatar_url, cat_type, style_tags, preferred_elements, avoided_elements)")
     .eq("party_id", id)
     .eq("status", "accepted");
 

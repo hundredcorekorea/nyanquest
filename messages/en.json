@@ -263,7 +263,9 @@
     "goPremium": "Upgrade to Premium",
     "premiumNoTurnLimit": "50 turns + unlimited perks",
     "turnsExtended": "+10 turns added, nya!",
-    "extendFailed": "Failed to extend turns, nya..."
+    "extendFailed": "Failed to extend turns, nya...",
+    "profileNudge": "Set your play style & preferences so the AI GM can tailor the adventure for you, nya!",
+    "profileNudgeAction": "Set up"
   },
   "CreateParty": {
     "steps": {

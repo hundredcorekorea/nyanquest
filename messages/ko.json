@@ -263,7 +263,9 @@
     "goPremium": "프리미엄으로 업그레이드",
     "premiumNoTurnLimit": "턴 50개 + 무제한 혜택",
     "turnsExtended": "+10턴이 추가되었다냥!",
-    "extendFailed": "턴 연장에 실패했다냥..."
+    "extendFailed": "턴 연장에 실패했다냥...",
+    "profileNudge": "플레이 스타일과 선호/기피 요소를 설정하면 AI GM이 맞춤형 모험을 만들어준다냥!",
+    "profileNudgeAction": "설정하기"
   },
   "CreateParty": {
     "steps": {

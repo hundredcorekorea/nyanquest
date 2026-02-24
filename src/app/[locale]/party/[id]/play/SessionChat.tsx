@@ -63,6 +63,14 @@ export default function SessionChat({
   const [bgmPickerOpen, setBgmPickerOpen] = useState(false);
   const [bgmPickerCategory, setBgmPickerCategory] = useState<BgmCategory | null>(null);
   const locale = typeof window !== "undefined" ? (document.documentElement.lang || "ko") : "ko";
+  const [profileNudgeDismissed, setProfileNudgeDismissed] = useState(false);
+
+  // Check if current user has empty preferences
+  const currentMember = members.find((m) => m.user_id === currentUserId);
+  const hasEmptyPreferences =
+    !currentMember?.user?.style_tags?.length &&
+    !currentMember?.user?.preferred_elements?.length &&
+    !currentMember?.user?.avoided_elements?.length;
 
   const openingTriggered = useRef(false);
 
@@ -496,6 +504,28 @@ export default function SessionChat({
           useAiGm={initialSession.use_ai_gm}
         />
       </div>
+
+      {/* Profile preference nudge */}
+      {initialSession.use_ai_gm && hasEmptyPreferences && !profileNudgeDismissed && (
+        <div className="flex items-center gap-2 bg-blue-50 rounded-xl px-3 py-2 mb-3 text-xs">
+          <span>💡</span>
+          <p className="flex-1 text-blue-700">
+            {t("profileNudge")}
+          </p>
+          <Link
+            href="/profile/edit"
+            className="px-2.5 py-1 bg-blue-500 text-white rounded-lg font-medium whitespace-nowrap hover:bg-blue-600 transition-colors"
+          >
+            {t("profileNudgeAction")}
+          </Link>
+          <button
+            onClick={() => setProfileNudgeDismissed(true)}
+            className="text-blue-300 hover:text-blue-500 ml-1"
+          >
+            ✕
+          </button>
+        </div>
+      )}
 
       {/* Chat area */}
       <div className="flex-1 space-y-3 mb-4">
