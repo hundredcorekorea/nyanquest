@@ -3,6 +3,9 @@ import type { Scenario } from "@/types/solo-quest";
 interface PartyPlayer {
   nickname: string;
   role: "GM" | "PL";
+  styleTags?: string[];
+  preferredElements?: string[];
+  avoidedElements?: string[];
 }
 
 export function buildMultiplayerSystemPrompt(
@@ -10,16 +13,37 @@ export function buildMultiplayerSystemPrompt(
   players: PartyPlayer[],
   currentTurn: number,
   totalTurns: number,
-  maxChars: number = 600
+  maxChars: number = 600,
+  partyDescription: string | null = null
 ): string {
-  const playerList = players
-    .filter((p) => p.role === "PL")
-    .map((p) => `- ${p.nickname}`)
+  const plPlayers = players.filter((p) => p.role === "PL");
+
+  // Build detailed player list with preferences
+  const playerList = plPlayers
+    .map((p) => {
+      let line = `- ${p.nickname}`;
+      if (p.styleTags?.length) line += ` (스타일: ${p.styleTags.join(", ")})`;
+      if (p.preferredElements?.length) line += `\n  좋아하는 요소: ${p.preferredElements.join(", ")}`;
+      if (p.avoidedElements?.length) line += `\n  싫어하는 요소: ${p.avoidedElements.join(", ")}`;
+      return line;
+    })
     .join("\n");
+
+  // Collect all avoided elements across party
+  const allAvoided = plPlayers
+    .flatMap((p) => p.avoidedElements ?? [])
+    .filter((v, i, a) => a.indexOf(v) === i);
+  const avoidedBlock = allAvoided.length
+    ? `\n## 파티 전체 기피 요소 (절대 포함하지 마!)\n${allAvoided.map((e) => `- ${e}`).join("\n")}`
+    : "";
 
   const scenarioBlock = scenario
     ? `## 시나리오 설정\n${scenario.systemPromptAddition}`
     : `## 자유 모험\n파티원들과 함께 자유로운 모험을 진행해. 판타지 세계관 기본 설정.`;
+
+  const descriptionBlock = partyDescription
+    ? `\n## 파티 설명 (모집글에서 제공된 정보 — 세션 분위기와 방향성 참고)\n${partyDescription}`
+    : "";
 
   return `너는 nyanQuest의 마법사 고양이 GM이다냥! 🧙‍♂️🐱
 
@@ -29,7 +53,7 @@ export function buildMultiplayerSystemPrompt(
 - 성격: 장난기 많지만 진지한 순간에는 진중함.
 
 ## 멀티플레이어 GM 규칙
-- 이것은 **${players.filter((p) => p.role === "PL").length}명의 파티** 세션이다.
+- 이것은 **${plPlayers.length}명의 파티** 세션이다.
 - 각 플레이어를 닉네임으로 불러. "집사"라는 호칭은 전체 파티를 부를 때만 사용.
 - 짧고 임팩트 있는 묘사 (3-6문장). 절대 장문 금지.
 - 매 턴마다 각 플레이어에게 개별적인 선택지를 제시하거나, 파티 전체에 공통 선택지를 줘.
@@ -38,9 +62,12 @@ export function buildMultiplayerSystemPrompt(
 - 플레이어가 주사위 결과를 보내면 결과에 맞춰 진행.
 - 성공과 실패 모두 재미있게 묘사. 실패해도 이야기는 계속 진행.
 - 선택지 끝에 "또는 원하는 행동을 자유롭게 입력해도 된다냥!" 추가.
+- 파티원들의 선호/기피 요소를 반영해서 이야기를 구성해. 기피 요소는 절대 등장시키지 마.
 
 ## 파티원
 ${playerList}
+${avoidedBlock}
+${descriptionBlock}
 
 ## 진행 상황
 - 현재: ${currentTurn}/${totalTurns} 턴

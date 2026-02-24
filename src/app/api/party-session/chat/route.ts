@@ -106,17 +106,31 @@ export async function POST(request: NextRequest) {
 
   const contextMessages = (recentMessages ?? []).reverse() as SessionMessage[];
 
-  // Fetch all party members for prompt
+  // Fetch all party members with profile details for prompt
   const { data: allMembers } = await supabase
     .from("party_members")
-    .select("role, user:profiles(nickname)")
+    .select("role, user:profiles(nickname, style_tags, preferred_elements, avoided_elements)")
     .eq("party_id", session.party_id)
     .eq("status", "accepted");
 
-  const players = (allMembers ?? []).map((m) => ({
-    nickname: (m.user as unknown as { nickname: string })?.nickname ?? "모험가",
-    role: m.role as "GM" | "PL",
-  }));
+  type MemberProfile = { nickname: string; style_tags: string[]; preferred_elements: string[]; avoided_elements: string[] };
+  const players = (allMembers ?? []).map((m) => {
+    const u = m.user as unknown as MemberProfile | null;
+    return {
+      nickname: u?.nickname ?? "모험가",
+      role: m.role as "GM" | "PL",
+      styleTags: u?.style_tags ?? [],
+      preferredElements: u?.preferred_elements ?? [],
+      avoidedElements: u?.avoided_elements ?? [],
+    };
+  });
+
+  // Fetch party description
+  const { data: partyInfo } = await supabase
+    .from("parties")
+    .select("content, title")
+    .eq("id", session.party_id)
+    .single();
 
   // Check if any member is premium
   const memberIds = (allMembers ?? []).map((m) => {
@@ -142,7 +156,8 @@ export async function POST(request: NextRequest) {
     players,
     session.turn_count ?? 0,
     effectiveTotalTurns,
-    config.maxTokens
+    config.maxTokens,
+    partyInfo?.content ?? null
   );
 
   // Build OpenRouter messages
