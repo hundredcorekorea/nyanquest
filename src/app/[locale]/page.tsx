@@ -85,13 +85,13 @@ export default async function HomePage({
       {/* Cat mascot greeting */}
       <CatMascot />
 
-      {/* Profile nudge for empty profiles */}
-      <ProfileNudge />
-
-      {/* Platform stats */}
+      {/* Platform stats + play buttons — visible without scrolling */}
       <Suspense>
         <StatsHero />
       </Suspense>
+
+      {/* Profile nudge for empty profiles */}
+      <ProfileNudge />
 
       {/* Filters */}
       <Suspense>
