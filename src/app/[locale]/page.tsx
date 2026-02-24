@@ -8,6 +8,7 @@ import PartyFilters from "@/components/PartyFilters";
 import LoadMoreParties from "@/components/LoadMoreParties";
 import TutorialWrapper from "@/components/TutorialWrapper";
 import PromoCard from "@/components/PromoCard";
+import AnnouncementBanner from "@/components/AnnouncementBanner";
 import { Suspense } from "react";
 import type { Party, TrpgSystem } from "@/types/database";
 import { getTranslations, setRequestLocale } from "next-intl/server";
@@ -84,6 +85,11 @@ export default async function HomePage({
 
       {/* Cat mascot greeting */}
       <CatMascot />
+
+      {/* Latest announcement banner */}
+      <Suspense>
+        <AnnouncementBanner />
+      </Suspense>
 
       {/* Platform stats + play buttons — visible without scrolling */}
       <Suspense>

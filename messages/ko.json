@@ -1198,5 +1198,17 @@
     "detailNpcs": "등장인물",
     "detailEvents": "주요 이벤트",
     "detailEndings": "가능한 엔딩"
+  },
+  "Announcements": {
+    "title": "길드 게시판",
+    "subtitle": "나양의 공지사항이다냥",
+    "backToGuildHall": "길드홀로 돌아가기",
+    "postedBy": "나양 GM",
+    "categories": {
+      "update": "업데이트",
+      "event": "이벤트",
+      "maintenance": "점검",
+      "tip": "팁"
+    }
   }
 }

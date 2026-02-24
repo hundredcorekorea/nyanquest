@@ -4,6 +4,7 @@ import { Suspense } from "react";
 import type { Post, PostCategory } from "@/types/database";
 import CommunityFilters from "./CommunityFilters";
 import PromoCard from "@/components/PromoCard";
+import AnnouncementBoard from "@/components/AnnouncementBoard";
 import { getTranslations, setRequestLocale } from "next-intl/server";
 
 interface SearchParams {
@@ -81,6 +82,11 @@ export default async function CommunityPage({
           {t("writePost")}
         </Link>
       </div>
+
+      {/* Announcement board */}
+      <Suspense>
+        <AnnouncementBoard />
+      </Suspense>
 
       {/* Category tabs */}
       <Suspense>

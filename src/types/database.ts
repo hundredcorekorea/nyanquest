@@ -283,3 +283,14 @@ export interface ScenarioLike {
   scenario_id: string;
   created_at: string;
 }
+
+export type AnnouncementCategory = "update" | "event" | "maintenance" | "tip";
+
+export interface Announcement {
+  id: string;
+  title: string;
+  content: string;
+  category: AnnouncementCategory;
+  is_pinned: boolean;
+  created_at: string;
+}

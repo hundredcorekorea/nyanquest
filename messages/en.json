@@ -1198,5 +1198,17 @@
     "detailNpcs": "Characters",
     "detailEvents": "Key Events",
     "detailEndings": "Possible Endings"
+  },
+  "Announcements": {
+    "title": "Guild Board",
+    "subtitle": "Notices from NaYang GM",
+    "backToGuildHall": "Back to Guild Hall",
+    "postedBy": "NaYang GM",
+    "categories": {
+      "update": "Update",
+      "event": "Event",
+      "maintenance": "Maintenance",
+      "tip": "Tip"
+    }
   }
 }
