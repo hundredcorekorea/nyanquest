@@ -127,6 +127,18 @@ const messages: Record<string, Record<Locale, string>> = {
     ko: "콘테스트가 아직 종료되지 않았다냥",
     en: "Contest has not ended yet, meow",
   },
+  noRefundablePayment: {
+    ko: "환불 가능한 결제가 없다냥",
+    en: "No refundable payment found, meow",
+  },
+  refundWindowExpired: {
+    ko: "환불 가능 기간(7일)이 지났다냥",
+    en: "Refund window (7 days) has expired, meow",
+  },
+  refundFailed: {
+    ko: "환불 처리에 실패했다냥. 다시 시도해달라냥!",
+    en: "Refund failed, meow. Please try again!",
+  },
 };
 
 export function getLocaleFromRequest(request: NextRequest | Request): Locale {

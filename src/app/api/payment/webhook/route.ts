@@ -1,10 +1,27 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { verifyPayment } from "@/lib/portone";
 import { PLANS } from "@/lib/premium";
-import { sendPushToUser } from "@/lib/push";
+import * as PortOne from "@portone/server-sdk";
 
 export async function POST(request: Request) {
   const body = await request.text();
+
+  // 1. Verify webhook signature (Standard Webhooks via Portone SDK)
+  const webhookSecret = process.env.PORTONE_WEBHOOK_SECRET;
+  if (webhookSecret) {
+    try {
+      await PortOne.Webhook.verify(
+        webhookSecret,
+        body,
+        Object.fromEntries(request.headers),
+      );
+    } catch (err) {
+      console.error("[webhook] Signature verification failed:", err);
+      return Response.json({ error: "Invalid signature" }, { status: 401 });
+    }
+  } else {
+    console.warn("[webhook] PORTONE_WEBHOOK_SECRET not set — skipping signature verification");
+  }
 
   let payload;
   try {
@@ -26,7 +43,7 @@ export async function POST(request: Request) {
   }
 
   try {
-    // Verify with Portone API
+    // 2. Verify with Portone API
     const verified = await verifyPayment(paymentId);
     if (verified.status !== "PAID") {
       return Response.json(
@@ -48,22 +65,18 @@ export async function POST(request: Request) {
     }
 
     const planConfig = PLANS[plan];
-    const subscriptionUserId = giftTo || userId;
 
     // Amount verification
     if (verified.amount?.total !== planConfig.price) {
       console.error(
-        `[payment] Amount mismatch: expected ${planConfig.price}, got ${verified.amount?.total}`
+        `[webhook] Amount mismatch: expected ${planConfig.price}, got ${verified.amount?.total}`
       );
       return Response.json({ error: "Amount mismatch" }, { status: 400 });
     }
 
     const supabase = createAdminClient();
 
-    const expiresAt = new Date();
-    expiresAt.setDate(expiresAt.getDate() + planConfig.durationDays);
-
-    // Insert payment record (idempotent via UNIQUE constraint)
+    // 3. Record payment only (subscription creation is handled by /api/payment/verify)
     const { error: payErr } = await supabase.from("payments").upsert(
       {
         user_id: userId,
@@ -78,56 +91,11 @@ export async function POST(request: Request) {
       },
       { onConflict: "portone_payment_id" }
     );
-    if (payErr) console.error("[payment] Insert payment error:", payErr);
-
-    // Expire existing active subscriptions for the recipient
-    await supabase
-      .from("subscriptions")
-      .update({ status: "expired", updated_at: new Date().toISOString() })
-      .eq("user_id", subscriptionUserId)
-      .eq("status", "active");
-
-    // Create new subscription
-    await supabase.from("subscriptions").insert({
-      user_id: subscriptionUserId,
-      plan,
-      status: "active",
-      portone_payment_id: paymentId,
-      amount: verified.amount.total,
-      started_at: new Date().toISOString(),
-      expires_at: expiresAt.toISOString(),
-      gifted_by: giftTo ? userId : null,
-    });
-
-    if (giftTo) {
-      // Notify gift recipient
-      const { data: sender } = await supabase
-        .from("profiles")
-        .select("nickname")
-        .eq("id", userId)
-        .single();
-      const senderName = sender?.nickname || "누군가";
-      await supabase.from("notifications").insert({
-        user_id: giftTo,
-        type: "gift_received",
-        message: `${senderName}님이 프리미엄 구독을 선물했다냥! 👑`,
-      });
-      sendPushToUser(giftTo, { title: "nyanQuest 👑", body: `${senderName}님이 프리미엄을 선물했다냥!` });
-    } else {
-      // Notify user (self purchase)
-      await supabase.from("notifications").insert({
-        user_id: userId,
-        type: "subscription_started",
-        message: `프리미엄 구독이 시작되었다냥! ${planConfig.label} 활성화 완료!`,
-      });
-      sendPushToUser(userId, { title: "nyanQuest 👑", body: "프리미엄 구독이 활성화되었다냥!" });
-      // Reward referrer if this user was referred
-      await supabase.rpc("reward_referrer_premium", { p_referred_id: userId });
-    }
+    if (payErr) console.error("[webhook] Insert payment error:", payErr);
 
     return Response.json({ ok: true });
   } catch (err) {
-    console.error("[payment] Webhook error:", err);
+    console.error("[webhook] Error:", err);
     return Response.json({ error: "Internal error" }, { status: 500 });
   }
 }

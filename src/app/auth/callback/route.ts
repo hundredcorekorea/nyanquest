@@ -24,6 +24,11 @@ export async function GET(request: Request) {
       return NextResponse.redirect(`${origin}${next}`);
     }
     console.error("Code exchange failed:", error.message);
+
+    // OAuth state expired — redirect to home so user can retry
+    if (error.message?.includes("state")) {
+      return NextResponse.redirect(`${origin}/?error=auth_expired`);
+    }
   }
 
   return NextResponse.redirect(`${origin}/?error=auth_callback_failed`);

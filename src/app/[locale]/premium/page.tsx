@@ -204,6 +204,10 @@ export default function PremiumPage() {
           {!isCancelled && (
             <CancelButton />
           )}
+
+          {subscription.plan !== "trial" && (
+            <RefundButton startedAt={subscription.started_at} />
+          )}
         </div>
 
         {/* Gift section — premium users can still gift */}
@@ -596,5 +600,49 @@ function CancelButton() {
     >
       {cancelling ? t("cancelling") : t("cancelSubscription")}
     </button>
+  );
+}
+
+function RefundButton({ startedAt }: { startedAt: string }) {
+  const { toast } = useToast();
+  const [refunding, setRefunding] = useState(false);
+  const router = useRouter();
+  const t = useTranslations("Premium");
+
+  const daysSince = (Date.now() - new Date(startedAt).getTime()) / (1000 * 60 * 60 * 24);
+  if (daysSince > 7) return null;
+
+  const daysLeft = Math.ceil(7 - daysSince);
+
+  async function handleRefund() {
+    if (!confirm(t("refundConfirm")))
+      return;
+    setRefunding(true);
+    try {
+      const res = await fetch("/api/payment/refund", { method: "POST" });
+      const data = await res.json();
+      if (!res.ok) {
+        toast(data.error || t("refundFailed"), "error");
+        return;
+      }
+      toast(t("refundSuccess"), "success");
+      router.refresh();
+    } catch {
+      toast(t("refundFailed"), "error");
+    } finally {
+      setRefunding(false);
+    }
+  }
+
+  return (
+    <div className="pt-2 border-t border-gray-100">
+      <button
+        onClick={handleRefund}
+        disabled={refunding}
+        className="w-full py-2 text-xs text-gray-400 hover:text-red-500 transition-colors disabled:opacity-50"
+      >
+        {refunding ? t("refunding") : t("refundRequest", { days: daysLeft })}
+      </button>
+    </div>
   );
 }

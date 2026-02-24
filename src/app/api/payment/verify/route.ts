@@ -48,28 +48,24 @@ export async function POST(request: NextRequest) {
     );
   }
 
-  const admin = createAdminClient();
-
-  // Check if already processed by webhook (idempotent)
-  const { data: existingPayment } = await admin
-    .from("payments")
-    .select("id")
-    .eq("portone_payment_id", paymentId)
-    .single();
-
-  if (existingPayment) {
-    return Response.json({ ok: true, alreadyProcessed: true });
-  }
-
-  // Extract gift info from customData
+  // Validate customData.userId matches authenticated user
   const customData = JSON.parse(verified.customData || "{}");
   const giftTo: string | null = customData.giftTo || null;
+
+  if (customData.userId !== user.id) {
+    console.error(
+      `[payment/verify] userId mismatch: customData=${customData.userId}, auth=${user.id}`
+    );
+    return Response.json(
+      { error: apiMsg("paymentVerificationFailed", request) },
+      { status: 403 }
+    );
+  }
+
+  const admin = createAdminClient();
   const subscriptionUserId = giftTo || user.id;
 
-  // Process payment
-  const expiresAt = new Date();
-  expiresAt.setDate(expiresAt.getDate() + planConfig.durationDays);
-
+  // Record payment (idempotent — webhook may have already inserted)
   await admin.from("payments").upsert(
     {
       user_id: user.id,
@@ -85,14 +81,28 @@ export async function POST(request: NextRequest) {
     { onConflict: "portone_payment_id" }
   );
 
-  // Expire existing subscriptions for the recipient
+  // Check if subscription already exists for this payment (prevent duplicates)
+  const { data: existingSub } = await admin
+    .from("subscriptions")
+    .select("id")
+    .eq("portone_payment_id", paymentId)
+    .single();
+
+  if (existingSub) {
+    return Response.json({ ok: true, alreadyProcessed: true });
+  }
+
+  // Create subscription
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + planConfig.durationDays);
+
+  // Expire existing active subscriptions for the recipient
   await admin
     .from("subscriptions")
     .update({ status: "expired", updated_at: new Date().toISOString() })
     .eq("user_id", subscriptionUserId)
     .eq("status", "active");
 
-  // Create new subscription
   await admin.from("subscriptions").insert({
     user_id: subscriptionUserId,
     plan,
