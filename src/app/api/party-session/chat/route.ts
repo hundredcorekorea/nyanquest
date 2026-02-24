@@ -18,14 +18,15 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { sessionId, playerMessage, diceRoll, isOpening } = body as {
+  const { sessionId, playerMessage, diceRoll, isOpening, forceRound } = body as {
     sessionId: string;
     playerMessage?: string;
     diceRoll?: { type: string; result: number; results?: number[]; modifier?: number; total: number; dc?: number; target?: number; skillValue?: number; success?: boolean; tier?: string; successes?: number; difficulty?: number; messyCritical?: boolean };
     isOpening?: boolean;
+    forceRound?: boolean;
   };
 
-  if (!sessionId || (!playerMessage && !isOpening)) {
+  if (!sessionId || (!playerMessage && !isOpening && !forceRound)) {
     return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
@@ -78,6 +79,18 @@ export async function POST(request: NextRequest) {
 
   const playerName = (membership.user as unknown as { nickname: string })?.nickname ?? "모험가";
 
+  // Validate forceRound: only the party creator can force a round
+  if (forceRound) {
+    const { data: party } = await supabase
+      .from("parties")
+      .select("creator_id")
+      .eq("id", session.party_id)
+      .single();
+    if (party?.creator_id !== user.id) {
+      return Response.json({ error: apiMsg("notPartyMember", request) }, { status: 403 });
+    }
+  }
+
   // Use service role to bypass RLS for consistency
   const serviceSupabase = createServiceClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
@@ -94,6 +107,68 @@ export async function POST(request: NextRequest) {
       content: playerMessage,
       dice_roll: diceRoll ?? null,
     });
+  }
+
+  // --- Round-based logic for async AI GM sessions ---
+  // In async mode, wait for ALL PL members to submit before triggering AI.
+  // The "round" is defined as all player messages since the last GM message.
+  const isAsyncAiGm = session.play_mode === "async" && session.use_ai_gm && !isOpening;
+
+  if (isAsyncAiGm && !forceRound) {
+    // Get all PL members (exclude GM role)
+    const { data: plMembers } = await supabase
+      .from("party_members")
+      .select("user_id, user:profiles(nickname)")
+      .eq("party_id", session.party_id)
+      .eq("status", "accepted")
+      .eq("role", "PL");
+
+    const totalPLs = plMembers?.length ?? 0;
+
+    if (totalPLs > 1) {
+      // Find the last GM message timestamp to define the current round
+      const { data: lastGmMsg } = await serviceSupabase
+        .from("session_messages")
+        .select("created_at")
+        .eq("session_id", sessionId)
+        .eq("role", "gm")
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .single();
+
+      // Count unique PL submissions since last GM message
+      let roundQuery = serviceSupabase
+        .from("session_messages")
+        .select("user_id")
+        .eq("session_id", sessionId)
+        .eq("role", "player");
+
+      if (lastGmMsg) {
+        roundQuery = roundQuery.gt("created_at", lastGmMsg.created_at);
+      }
+
+      const { data: roundMessages } = await roundQuery;
+      const submittedUserIds = new Set(
+        (roundMessages ?? []).map((m) => m.user_id).filter(Boolean)
+      );
+      const submitted = submittedUserIds.size;
+
+      // Build submitted names for display
+      const submittedNames = (plMembers ?? [])
+        .filter((m) => submittedUserIds.has(m.user_id))
+        .map((m) => (m.user as unknown as { nickname: string })?.nickname ?? "모험가");
+
+      if (submitted < totalPLs) {
+        // Not all PL members submitted — return waiting status (JSON, not stream)
+        return Response.json({
+          waiting: true,
+          submitted,
+          total: totalPLs,
+          submittedNames,
+        });
+      }
+      // All submitted — fall through to AI call
+    }
   }
 
   // Fetch recent messages for context

@@ -265,7 +265,12 @@
     "turnsExtended": "+10 turns added, nya!",
     "extendFailed": "Failed to extend turns, nya...",
     "profileNudge": "Set your play style & preferences so the AI GM can tailor the adventure for you, nya!",
-    "profileNudgeAction": "Set up"
+    "profileNudgeAction": "Set up",
+    "roundWaiting": "Waiting for other party members...",
+    "roundYourTurn": "Enter your action for this round!",
+    "roundProgress": "{submitted}/{total} actions submitted",
+    "roundWaitingPlaceholder": "Waiting for other adventurers...",
+    "forceRound": "Force proceed"
   },
   "CreateParty": {
     "steps": {

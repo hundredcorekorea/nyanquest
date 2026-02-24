@@ -265,7 +265,12 @@
     "turnsExtended": "+10턴이 추가되었다냥!",
     "extendFailed": "턴 연장에 실패했다냥...",
     "profileNudge": "플레이 스타일과 선호/기피 요소를 설정하면 AI GM이 맞춤형 모험을 만들어준다냥!",
-    "profileNudgeAction": "설정하기"
+    "profileNudgeAction": "설정하기",
+    "roundWaiting": "다른 파티원의 행동을 기다리는 중...",
+    "roundYourTurn": "이번 라운드 행동을 입력해주세요!",
+    "roundProgress": "{submitted}/{total}명 행동 완료",
+    "roundWaitingPlaceholder": "다른 모험가들의 행동을 기다리는 중...",
+    "forceRound": "강제 진행"
   },
   "CreateParty": {
     "steps": {

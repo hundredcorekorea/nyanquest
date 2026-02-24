@@ -56,6 +56,14 @@ export default function SessionChat({
   const [extendCount, setExtendCount] = useState(0);
   const [showAdGate, setShowAdGate] = useState(false);
   const [isExtending, setIsExtending] = useState(false);
+  // Round-based state (async AI GM)
+  const [roundSubmitted, setRoundSubmitted] = useState(0);
+  const [roundTotal, setRoundTotal] = useState(0);
+  const [roundSubmittedNames, setRoundSubmittedNames] = useState<string[]>([]);
+  const [currentUserSubmitted, setCurrentUserSubmitted] = useState(false);
+  const [isRoundBased, setIsRoundBased] = useState(
+    initialSession.play_mode === "async" && initialSession.use_ai_gm
+  );
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isCreator = currentUserId === creatorId;
@@ -73,6 +81,24 @@ export default function SessionChat({
     !currentMember?.user?.avoided_elements?.length;
 
   const openingTriggered = useRef(false);
+
+  // Fetch round status for async AI GM sessions
+  const fetchRoundStatus = useCallback(async () => {
+    if (!isRoundBased) return;
+    try {
+      const res = await fetch(`/api/party-session/round-status?sessionId=${initialSession.id}`);
+      if (!res.ok) return;
+      const data = await res.json();
+      if (data.roundBased) {
+        setRoundSubmitted(data.submitted);
+        setRoundTotal(data.total);
+        setRoundSubmittedNames(data.submittedNames ?? []);
+        setCurrentUserSubmitted(data.currentUserSubmitted);
+      }
+    } catch {
+      // ignore
+    }
+  }, [isRoundBased, initialSession.id]);
 
   // AI GM opening: auto-start the adventure
   const triggerOpening = useCallback(async () => {
@@ -139,9 +165,12 @@ export default function SessionChat({
         openingTriggered.current = true;
         triggerOpening();
       }
+
+      // Fetch initial round status
+      fetchRoundStatus();
     };
     loadMessages();
-  }, [initialSession.id, initialSession.use_ai_gm, triggerOpening]);
+  }, [initialSession.id, initialSession.use_ai_gm, triggerOpening, fetchRoundStatus]);
 
   // Subscribe to realtime messages
   useEffect(() => {
@@ -164,6 +193,16 @@ export default function SessionChat({
           // Analyze mood from GM messages (human or AI)
           if (newMsg.role === "gm") {
             bgmMood.analyzeMessage(newMsg.content);
+            // GM responded — reset round state
+            if (isRoundBased) {
+              setCurrentUserSubmitted(false);
+              setRoundSubmitted(0);
+              setRoundSubmittedNames([]);
+            }
+          }
+          // Player submitted — refresh round status
+          if (newMsg.role === "player" && isRoundBased) {
+            fetchRoundStatus();
           }
         }
       )
@@ -215,6 +254,30 @@ export default function SessionChat({
             throw new Error(err.error || t("requestFailed"));
           }
 
+          // Check if response is JSON (round waiting) or stream (AI response)
+          const contentType = response.headers.get("content-type") ?? "";
+
+          if (contentType.includes("application/json")) {
+            // Round-based: waiting for other players
+            const data = await response.json();
+            if (data.waiting) {
+              setCurrentUserSubmitted(true);
+              setRoundSubmitted(data.submitted);
+              setRoundTotal(data.total);
+              setRoundSubmittedNames(data.submittedNames ?? []);
+              // Reload messages to show our own submitted message
+              const { data: msgs } = await supabase
+                .from("session_messages")
+                .select("*")
+                .eq("session_id", initialSession.id)
+                .order("created_at", { ascending: true });
+              if (msgs) setMessages(msgs as unknown as SessionMessage[]);
+              setIsStreaming(false);
+              return;
+            }
+          }
+
+          // Stream response (AI GM is responding — either all submitted or non-round mode)
           const reader = response.body!.getReader();
           const decoder = new TextDecoder();
           let fullText = "";
@@ -230,6 +293,13 @@ export default function SessionChat({
           setStreamingText("");
           setTurnCount((prev) => prev + 1);
           bgmMood.analyzeMessage(fullText);
+
+          // Reset round state after AI responds
+          if (isRoundBased) {
+            setCurrentUserSubmitted(false);
+            setRoundSubmitted(0);
+            setRoundSubmittedNames([]);
+          }
 
           // The messages will arrive via Realtime subscription
           // But we should reload to make sure we have everything
@@ -326,6 +396,27 @@ export default function SessionChat({
           throw new Error(err.error || t("requestFailed"));
         }
 
+        // Check if response is JSON (round waiting) or stream (AI response)
+        const contentType = response.headers.get("content-type") ?? "";
+
+        if (contentType.includes("application/json")) {
+          const data = await response.json();
+          if (data.waiting) {
+            setCurrentUserSubmitted(true);
+            setRoundSubmitted(data.submitted);
+            setRoundTotal(data.total);
+            setRoundSubmittedNames(data.submittedNames ?? []);
+            const { data: msgs } = await supabase
+              .from("session_messages")
+              .select("*")
+              .eq("session_id", initialSession.id)
+              .order("created_at", { ascending: true });
+            if (msgs) setMessages(msgs as unknown as SessionMessage[]);
+            setIsStreaming(false);
+            return;
+          }
+        }
+
         const reader = response.body!.getReader();
         const decoder = new TextDecoder();
         let fullText = "";
@@ -341,6 +432,12 @@ export default function SessionChat({
         setStreamingText("");
         setTurnCount((prev) => prev + 1);
         bgmMood.analyzeMessage(fullText);
+
+        if (isRoundBased) {
+          setCurrentUserSubmitted(false);
+          setRoundSubmitted(0);
+          setRoundSubmittedNames([]);
+        }
 
         const { data } = await supabase
           .from("session_messages")
@@ -399,6 +496,68 @@ export default function SessionChat({
       setIsExtending(false);
     }
   }, [initialSession.id, toast, t]);
+
+  // Force round: party leader triggers AI without all submissions
+  const handleForceRound = useCallback(async () => {
+    if (!isCreator || isStreaming) return;
+    setIsStreaming(true);
+    setStreamingText("");
+    try {
+      const response = await fetch("/api/party-session/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: initialSession.id,
+          forceRound: true,
+          playerMessage: "[라운드 강제 진행]",
+        }),
+      });
+
+      if (!response.ok) {
+        const err = await response.json().catch(() => ({}));
+        throw new Error(err.error || t("requestFailed"));
+      }
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        fullText += chunk;
+        setStreamingText(fullText);
+      }
+
+      setStreamingText("");
+      setTurnCount((prev) => prev + 1);
+      bgmMood.analyzeMessage(fullText);
+
+      setCurrentUserSubmitted(false);
+      setRoundSubmitted(0);
+      setRoundSubmittedNames([]);
+
+      const { data } = await supabase
+        .from("session_messages")
+        .select("*")
+        .eq("session_id", initialSession.id)
+        .order("created_at", { ascending: true });
+      if (data) setMessages(data as unknown as SessionMessage[]);
+
+      if (fullText.includes("[퀘스트 완료]")) {
+        setSessionStatus("completed");
+        toast(t("sessionCompletedToast"), "success");
+      }
+    } catch (err) {
+      toast(
+        err instanceof Error ? err.message : t("requestFailed"),
+        "error"
+      );
+    } finally {
+      setIsStreaming(false);
+    }
+  }, [isCreator, isStreaming, initialSession.id, supabase, toast, t]);
 
   const turnsRemaining = totalTurns - turnCount;
   const showExtendBanner =
@@ -524,6 +683,57 @@ export default function SessionChat({
           >
             ✕
           </button>
+        </div>
+      )}
+
+      {/* Round status banner (async AI GM) */}
+      {isRoundBased && roundTotal > 1 && sessionStatus === "active" && (
+        <div className={`rounded-xl px-3 py-2.5 mb-3 text-xs ${
+          currentUserSubmitted
+            ? "bg-amber-50 border border-amber-200"
+            : "bg-blue-50 border border-blue-200"
+        }`}>
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <span className="text-lg">{currentUserSubmitted ? "⏳" : "✏️"}</span>
+              <div>
+                <p className="font-medium text-gray-800">
+                  {currentUserSubmitted
+                    ? t("roundWaiting")
+                    : t("roundYourTurn")}
+                </p>
+                <p className="text-gray-500">
+                  {t("roundProgress", { submitted: roundSubmitted, total: roundTotal })}
+                  {roundSubmittedNames.length > 0 && (
+                    <span className="ml-1">
+                      ({roundSubmittedNames.join(", ")})
+                    </span>
+                  )}
+                </p>
+              </div>
+            </div>
+            {/* Force round button — creator only, at least 1 submitted */}
+            {isCreator && currentUserSubmitted && roundSubmitted > 0 && roundSubmitted < roundTotal && (
+              <button
+                onClick={handleForceRound}
+                disabled={isStreaming}
+                className="px-3 py-1.5 bg-amber-500 text-white rounded-lg font-medium text-xs hover:bg-amber-600 transition-colors disabled:opacity-50 whitespace-nowrap"
+              >
+                {t("forceRound")}
+              </button>
+            )}
+          </div>
+          {/* Progress dots */}
+          <div className="flex gap-1 mt-2">
+            {Array.from({ length: roundTotal }).map((_, i) => (
+              <div
+                key={i}
+                className={`h-1.5 flex-1 rounded-full transition-colors ${
+                  i < roundSubmitted ? "bg-amber-400" : "bg-gray-200"
+                }`}
+              />
+            ))}
+          </div>
         </div>
       )}
 
@@ -893,19 +1103,21 @@ export default function SessionChat({
               value={input}
               onChange={(e) => setInput(e.target.value.slice(0, 500))}
               onKeyDown={handleKeyDown}
-              disabled={isStreaming}
+              disabled={isStreaming || (isRoundBased && currentUserSubmitted)}
               placeholder={
                 isStreaming
                   ? t("aiGmResponding")
-                  : t("inputPlaceholder")
+                  : isRoundBased && currentUserSubmitted
+                    ? t("roundWaitingPlaceholder")
+                    : t("inputPlaceholder")
               }
               rows={1}
               className="flex-1 px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-amber-300 text-sm resize-none disabled:bg-gray-50 disabled:text-gray-400"
             />
-            <DiceRollButton onRoll={handleDiceRoll} disabled={isStreaming} />
+            <DiceRollButton onRoll={handleDiceRoll} disabled={isStreaming || (isRoundBased && currentUserSubmitted)} />
             <button
               onClick={() => sendMessage(input)}
-              disabled={isStreaming || !input.trim()}
+              disabled={isStreaming || !input.trim() || (isRoundBased && currentUserSubmitted)}
               className="px-4 py-2.5 bg-amber-500 text-white rounded-xl font-medium text-sm hover:bg-amber-600 transition-colors disabled:bg-gray-200 disabled:text-gray-400 flex-shrink-0"
             >
               {tc("send")}
