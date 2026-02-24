@@ -12,6 +12,13 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
 import type { DiceRoll } from "@/types/solo-quest";
+import {
+  useBgmPlayer,
+  BGM_CATALOG,
+  BGM_CATEGORY_LABELS,
+  type BgmCategory,
+} from "@/hooks/useBgmPlayer";
+import { useBgmMood } from "@/hooks/useBgmMood";
 
 interface Props {
   session: PartySession;
@@ -36,6 +43,8 @@ export default function SessionChat({
   const tc = useTranslations("Common");
   const { toast } = useToast();
   const supabase = createClient();
+  const bgm = useBgmPlayer();
+  const bgmMood = useBgmMood(bgm.playCategory);
   const [messages, setMessages] = useState<SessionMessage[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
@@ -45,6 +54,10 @@ export default function SessionChat({
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isCreator = currentUserId === creatorId;
+  const isHumanGm = isCreator && !initialSession.use_ai_gm;
+  const [bgmPickerOpen, setBgmPickerOpen] = useState(false);
+  const [bgmPickerCategory, setBgmPickerCategory] = useState<BgmCategory | null>(null);
+  const locale = typeof window !== "undefined" ? (document.documentElement.lang || "ko") : "ko";
 
   // Load initial messages
   useEffect(() => {
@@ -74,14 +87,14 @@ export default function SessionChat({
         },
         (payload) => {
           const newMsg = payload.new as unknown as SessionMessage;
-          // Don't add if it's from the AI GM streaming (we handle that separately)
-          // Or if we already have this message
           setMessages((prev) => {
             if (prev.some((m) => m.id === newMsg.id)) return prev;
-            // If we're currently streaming AI GM response, skip AI GM messages
-            // (they'll be added when streaming completes)
             return [...prev, newMsg];
           });
+          // Analyze mood from GM messages (human or AI)
+          if (newMsg.role === "gm") {
+            bgmMood.analyzeMessage(newMsg.content);
+          }
         }
       )
       .subscribe();
@@ -146,6 +159,7 @@ export default function SessionChat({
 
           setStreamingText("");
           setTurnCount((prev) => prev + 1);
+          bgmMood.analyzeMessage(fullText);
 
           // The messages will arrive via Realtime subscription
           // But we should reload to make sure we have everything
@@ -256,6 +270,7 @@ export default function SessionChat({
 
         setStreamingText("");
         setTurnCount((prev) => prev + 1);
+        bgmMood.analyzeMessage(fullText);
 
         const { data } = await supabase
           .from("session_messages")
@@ -333,13 +348,37 @@ export default function SessionChat({
             </p>
           </div>
         </div>
-        <SessionControls
-          sessionId={initialSession.id}
-          partyId={partyId}
-          isCreator={isCreator}
-          sessionStatus={sessionStatus}
-          onStatusChange={setSessionStatus}
-        />
+        <div className="flex items-center gap-1">
+          <button
+            onClick={bgm.toggle}
+            className={`w-8 h-8 flex items-center justify-center rounded-full transition-colors text-sm ${
+              bgm.enabled
+                ? "bg-purple-100 text-purple-600"
+                : "bg-gray-100 text-gray-400"
+            }`}
+            title={bgm.enabled ? "BGM Off" : "BGM On"}
+          >
+            {bgm.enabled ? "♫" : "♪"}
+          </button>
+          {bgm.enabled && (
+            <input
+              type="range"
+              min={0}
+              max={1}
+              step={0.05}
+              value={bgm.volume}
+              onChange={(e) => bgm.setVolume(parseFloat(e.target.value))}
+              className="w-16 h-1 accent-purple-500"
+            />
+          )}
+          <SessionControls
+            sessionId={initialSession.id}
+            partyId={partyId}
+            isCreator={isCreator}
+            sessionStatus={sessionStatus}
+            onStatusChange={setSessionStatus}
+          />
+        </div>
       </div>
 
       {/* Turn progress bar */}
@@ -610,10 +649,77 @@ export default function SessionChat({
         <div ref={chatEndRef} />
       </div>
 
+      {/* GM BGM Picker */}
+      {isHumanGm && bgmPickerOpen && (
+        <div className="sticky bottom-36 bg-white rounded-2xl border border-gray-200 shadow-lg p-3 z-10 max-h-60 overflow-y-auto">
+          {!bgmPickerCategory ? (
+            <div className="grid grid-cols-2 gap-1.5">
+              {(Object.keys(BGM_CATALOG) as BgmCategory[]).map((cat) => (
+                <button
+                  key={cat}
+                  onClick={() => {
+                    setBgmPickerCategory(cat);
+                    bgm.playCategory(cat);
+                  }}
+                  className={`text-left px-3 py-2 rounded-lg text-xs transition-colors ${
+                    bgm.currentCategory === cat
+                      ? "bg-purple-100 text-purple-700 font-bold"
+                      : "bg-gray-50 hover:bg-gray-100 text-gray-700"
+                  }`}
+                >
+                  {locale === "ko" ? BGM_CATEGORY_LABELS[cat].ko : BGM_CATEGORY_LABELS[cat].en}
+                  <span className="text-gray-400 ml-1">({BGM_CATALOG[cat].length})</span>
+                </button>
+              ))}
+            </div>
+          ) : (
+            <div>
+              <button
+                onClick={() => setBgmPickerCategory(null)}
+                className="text-xs text-gray-400 hover:text-gray-600 mb-2"
+              >
+                ← {locale === "ko" ? "카테고리 목록" : "Categories"}
+              </button>
+              <div className="space-y-1">
+                {BGM_CATALOG[bgmPickerCategory].map((track) => (
+                  <button
+                    key={track.id}
+                    onClick={() => {
+                      bgm.playTrack(bgmPickerCategory, track.id);
+                      setBgmPickerOpen(false);
+                      setBgmPickerCategory(null);
+                    }}
+                    className="w-full text-left px-3 py-2 rounded-lg text-xs bg-gray-50 hover:bg-purple-50 hover:text-purple-700 transition-colors"
+                  >
+                    {locale === "ko" ? track.ko : track.en}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Input area */}
       {sessionStatus === "active" && (
         <div className="sticky bottom-16 bg-white/90 backdrop-blur-sm pt-2 pb-2 -mx-4 px-4 border-t border-gray-50">
           <div className="flex gap-2 items-end">
+            {isHumanGm && (
+              <button
+                onClick={() => {
+                  setBgmPickerOpen((p) => !p);
+                  setBgmPickerCategory(null);
+                }}
+                className={`w-10 h-10 flex items-center justify-center rounded-xl transition-colors shrink-0 ${
+                  bgmPickerOpen
+                    ? "bg-purple-500 text-white"
+                    : "bg-gray-100 hover:bg-gray-200 text-gray-500"
+                }`}
+                title="BGM"
+              >
+                🎵
+              </button>
+            )}
             <textarea
               ref={textareaRef}
               value={input}
