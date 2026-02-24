@@ -9,6 +9,8 @@ import BottomNav from "@/components/BottomNav";
 import Footer from "@/components/Footer";
 import { ToastProvider } from "@/components/Toast";
 import PWARegister from "@/components/PWARegister";
+import ReferralCapture from "@/components/ReferralCapture";
+import { Suspense } from "react";
 
 export function generateStaticParams() {
   return routing.locales.map((locale) => ({ locale }));
@@ -113,6 +115,9 @@ export default async function LocaleLayout({
       <NextIntlClientProvider messages={messages}>
         <ToastProvider>
           <PWARegister />
+          <Suspense>
+            <ReferralCapture />
+          </Suspense>
           <Header />
           <main className="max-w-3xl mx-auto px-4 py-6">{children}</main>
           <Footer />

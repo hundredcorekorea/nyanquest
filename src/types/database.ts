@@ -16,8 +16,18 @@ export interface Profile {
   favorite_works: FavoriteWork[];
   preferred_elements: string[];
   avoided_elements: string[];
+  referral_code: string;
   created_at: string;
   updated_at: string;
+}
+
+export interface Referral {
+  id: string;
+  referrer_id: string;
+  referred_id: string;
+  signup_rewarded: boolean;
+  premium_rewarded: boolean;
+  created_at: string;
 }
 
 export interface UserTitle {
@@ -187,7 +197,10 @@ export type NotificationType =
   | "quest_complete"
   | "gm_assigned"
   | "subscription_started"
-  | "subscription_expiring";
+  | "subscription_expiring"
+  | "announcement"
+  | "referral_signup"
+  | "referral_premium";
 
 export interface Notification {
   id: string;

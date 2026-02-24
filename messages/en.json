@@ -27,6 +27,7 @@
     "send": "Send",
     "register": "Register",
     "close": "Close",
+    "copy": "Copy",
     "back": "Back",
     "more": "See More",
     "unknown": "Unknown",
@@ -518,7 +519,18 @@
     "catLevel3Name": "Veteran Cat",
     "catLevel3Title": "Veteran Dice Roller",
     "catLevel4Name": "Archmage Cat",
-    "catLevel4Title": "Legendary Adventurer"
+    "catLevel4Title": "Legendary Adventurer",
+    "referralTitle": "Invite Companions",
+    "referralCopied": "Invite code copied, nya!",
+    "referralLinkCopied": "Invite link copied, nya!",
+    "referralShare": "Share Invite Link",
+    "referralShareText": "Adventure together on nyanQuest! Sign up and get 7 days of free premium!",
+    "referralCount": "Invited",
+    "referralExpEarned": "EXP Earned",
+    "referralPremiumCount": "Premium Rewards",
+    "referralBenefitReferrer": "Friend signs up: +100 EXP",
+    "referralBenefitPremium": "Friend subscribes: +7 days premium",
+    "referralBenefitReferred": "Invited friend: 7-day free premium trial"
   },
   "PlayProfile": {
     "title": "Play Profile",

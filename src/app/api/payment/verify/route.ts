@@ -96,5 +96,8 @@ export async function POST(request: NextRequest) {
     expires_at: expiresAt.toISOString(),
   });
 
+  // Reward referrer if this user was referred
+  await admin.rpc("reward_referrer_premium", { p_referred_id: user.id });
+
   return Response.json({ ok: true });
 }

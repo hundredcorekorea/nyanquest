@@ -67,6 +67,12 @@ export default function MyPage() {
   const [earnedTitles, setEarnedTitles] = useState<UserTitle[]>([]);
   const [showTitleModal, setShowTitleModal] = useState(false);
   const [editingPlayProfile, setEditingPlayProfile] = useState(false);
+  const [referralStats, setReferralStats] = useState<{
+    referral_code: string;
+    total_referrals: number;
+    signup_rewards: number;
+    premium_rewards: number;
+  } | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const CAT_LEVELS = [
@@ -119,6 +125,14 @@ export default function MyPage() {
         setProfile(prof);
         setEditNickname(prof.nickname);
         setEditTags(prof.style_tags ?? []);
+      }
+
+      // Load referral stats
+      const { data: refStats } = await supabase.rpc("get_my_referral_stats", {
+        p_user_id: user.id,
+      });
+      if (refStats && refStats.length > 0) {
+        setReferralStats(refStats[0]);
       }
 
       // Load earned titles
@@ -590,6 +604,75 @@ export default function MyPage() {
             </div>
           </div>
         </Link>
+      )}
+
+      {/* Referral invite card */}
+      {referralStats && (
+        <div className="bg-gradient-to-r from-amber-50 to-orange-50 rounded-2xl border border-amber-200 p-4 space-y-3">
+          <div className="flex items-center gap-2">
+            <span className="text-xl">🐱</span>
+            <p className="text-sm font-bold text-amber-800">{t("referralTitle")}</p>
+          </div>
+
+          {/* Referral code + copy */}
+          <div className="flex items-center gap-2">
+            <div className="flex-1 bg-white rounded-lg border border-amber-200 px-3 py-2 font-mono text-sm text-gray-700 tracking-wider text-center">
+              {referralStats.referral_code}
+            </div>
+            <button
+              onClick={() => {
+                navigator.clipboard.writeText(referralStats.referral_code);
+                toast(t("referralCopied"), "success");
+              }}
+              className="px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-700 rounded-lg text-xs font-medium transition-colors"
+            >
+              {tCommon("copy")}
+            </button>
+          </div>
+
+          {/* Share button */}
+          <button
+            onClick={() => {
+              const url = `https://nyanquest.vercel.app/?ref=${referralStats.referral_code}`;
+              if (navigator.share) {
+                navigator.share({
+                  title: "nyanQuest",
+                  text: t("referralShareText"),
+                  url,
+                });
+              } else {
+                navigator.clipboard.writeText(url);
+                toast(t("referralLinkCopied"), "success");
+              }
+            }}
+            className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-sm font-bold transition-colors"
+          >
+            {t("referralShare")}
+          </button>
+
+          {/* Stats */}
+          <div className="grid grid-cols-3 gap-2 text-center">
+            <div className="bg-white/60 rounded-lg py-2">
+              <p className="text-lg font-bold text-amber-700">{referralStats.total_referrals}</p>
+              <p className="text-[10px] text-gray-500">{t("referralCount")}</p>
+            </div>
+            <div className="bg-white/60 rounded-lg py-2">
+              <p className="text-lg font-bold text-amber-700">{referralStats.signup_rewards * 100}</p>
+              <p className="text-[10px] text-gray-500">{t("referralExpEarned")}</p>
+            </div>
+            <div className="bg-white/60 rounded-lg py-2">
+              <p className="text-lg font-bold text-amber-700">{referralStats.premium_rewards}</p>
+              <p className="text-[10px] text-gray-500">{t("referralPremiumCount")}</p>
+            </div>
+          </div>
+
+          {/* Benefit info */}
+          <div className="text-[11px] text-gray-500 space-y-0.5 border-t border-amber-100 pt-2">
+            <p>{t("referralBenefitReferrer")}</p>
+            <p>{t("referralBenefitPremium")}</p>
+            <p>{t("referralBenefitReferred")}</p>
+          </div>
+        </div>
       )}
 
       {/* Tabs */}

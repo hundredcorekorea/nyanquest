@@ -101,6 +101,9 @@ export async function POST(request: Request) {
       message: `프리미엄 구독이 시작되었다냥! ${planConfig.label} 활성화 완료!`,
     });
 
+    // Reward referrer if this user was referred
+    await supabase.rpc("reward_referrer_premium", { p_referred_id: userId });
+
     return Response.json({ ok: true });
   } catch (err) {
     console.error("[payment] Webhook error:", err);

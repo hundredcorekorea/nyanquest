@@ -23,6 +23,8 @@ const typeEmoji: Record<string, string> = {
   review_received: "⭐",
   exp_gained: "✨",
   announcement: "📋",
+  referral_signup: "🎉",
+  referral_premium: "👑",
 };
 
 export default function NotificationBell({ userId }: { userId: string }) {

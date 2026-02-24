@@ -5,6 +5,7 @@ import AuthButton from "./AuthButton";
 import NotificationBell from "./NotificationBell";
 import { getUserFromCookies } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
+import { useReferralProcess } from "@/hooks/useReferralProcess";
 
 export default function Header() {
   const [userId, setUserId] = useState<string | null>(null);
@@ -13,6 +14,9 @@ export default function Header() {
     const user = getUserFromCookies();
     setUserId(user?.id ?? null);
   }, []);
+
+  // Process referral code for newly signed-up users
+  useReferralProcess();
 
   return (
     <header className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-amber-100">

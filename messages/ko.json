@@ -27,6 +27,7 @@
     "send": "전송",
     "register": "등록",
     "close": "닫기",
+    "copy": "복사",
     "back": "뒤로",
     "more": "더 보기",
     "unknown": "알 수 없음",
@@ -518,7 +519,18 @@
     "catLevel3Name": "베테랑 냥이",
     "catLevel3Title": "역전의 주사위꾼",
     "catLevel4Name": "대마법사 냥이",
-    "catLevel4Title": "전설의 집사님"
+    "catLevel4Title": "전설의 집사님",
+    "referralTitle": "모험 동료 초대",
+    "referralCopied": "초대 코드가 복사되었다냥!",
+    "referralLinkCopied": "초대 링크가 복사되었다냥!",
+    "referralShare": "초대 링크 공유하기",
+    "referralShareText": "nyanQuest에서 함께 모험하자냥! 가입하면 7일 프리미엄 무료 체험!",
+    "referralCount": "초대한 동료",
+    "referralExpEarned": "획득 EXP",
+    "referralPremiumCount": "프리미엄 보상",
+    "referralBenefitReferrer": "친구가 가입하면 +100 EXP",
+    "referralBenefitPremium": "친구가 프리미엄 구독 시 +7일 프리미엄",
+    "referralBenefitReferred": "초대받은 친구: 7일 프리미엄 무료 체험"
   },
   "PlayProfile": {
     "title": "플레이 프로필",
