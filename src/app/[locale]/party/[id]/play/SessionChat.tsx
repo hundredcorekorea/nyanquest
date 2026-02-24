@@ -8,6 +8,7 @@ import type { PartyMember } from "@/types/database";
 import PlayerList from "./PlayerList";
 import SessionControls from "./SessionControls";
 import DiceRollButton from "./DiceRollButton";
+import AdGate from "@/components/AdGate";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -51,6 +52,10 @@ export default function SessionChat({
   const [streamingText, setStreamingText] = useState("");
   const [sessionStatus, setSessionStatus] = useState(initialSession.status);
   const [turnCount, setTurnCount] = useState(initialSession.turn_count);
+  const [totalTurns, setTotalTurns] = useState(initialSession.total_turns);
+  const [extendCount, setExtendCount] = useState(0);
+  const [showAdGate, setShowAdGate] = useState(false);
+  const [isExtending, setIsExtending] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isCreator = currentUserId === creatorId;
@@ -59,7 +64,54 @@ export default function SessionChat({
   const [bgmPickerCategory, setBgmPickerCategory] = useState<BgmCategory | null>(null);
   const locale = typeof window !== "undefined" ? (document.documentElement.lang || "ko") : "ko";
 
-  // Load initial messages
+  const openingTriggered = useRef(false);
+
+  // AI GM opening: auto-start the adventure
+  const triggerOpening = useCallback(async () => {
+    setIsStreaming(true);
+    setStreamingText("");
+    try {
+      const response = await fetch("/api/party-session/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          sessionId: initialSession.id,
+          isOpening: true,
+        }),
+      });
+
+      if (!response.ok) throw new Error(t("requestFailed"));
+
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let fullText = "";
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+        const chunk = decoder.decode(value);
+        fullText += chunk;
+        setStreamingText(fullText);
+      }
+
+      setStreamingText("");
+      setTurnCount((prev) => prev + 1);
+      bgmMood.analyzeMessage(fullText);
+
+      const { data } = await supabase
+        .from("session_messages")
+        .select("*")
+        .eq("session_id", initialSession.id)
+        .order("created_at", { ascending: true });
+      if (data) setMessages(data as unknown as SessionMessage[]);
+    } catch {
+      // opening failed silently — user can still type manually
+    } finally {
+      setIsStreaming(false);
+    }
+  }, [initialSession.id, supabase, t]);
+
+  // Load initial messages + auto-start AI GM opening
   useEffect(() => {
     const loadMessages = async () => {
       const { data } = await supabase
@@ -69,9 +121,19 @@ export default function SessionChat({
         .order("created_at", { ascending: true });
 
       if (data) setMessages(data as unknown as SessionMessage[]);
+
+      // Auto-trigger AI GM opening if no messages yet
+      if (
+        initialSession.use_ai_gm &&
+        (!data || data.length === 0) &&
+        !openingTriggered.current
+      ) {
+        openingTriggered.current = true;
+        triggerOpening();
+      }
     };
     loadMessages();
-  }, [initialSession.id]);
+  }, [initialSession.id, initialSession.use_ai_gm, triggerOpening]);
 
   // Subscribe to realtime messages
   useEffect(() => {
@@ -308,6 +370,35 @@ export default function SessionChat({
     }
   }
 
+  // Handle turn extension after ad completion
+  const handleExtendTurns = useCallback(async () => {
+    setShowAdGate(false);
+    setIsExtending(true);
+    try {
+      const res = await fetch("/api/party-session/extend-turns", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ sessionId: initialSession.id }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error);
+      setTotalTurns(data.totalTurns);
+      setExtendCount(data.extendCount);
+      toast(t("turnsExtended"), "success");
+    } catch {
+      toast(t("extendFailed"), "error");
+    } finally {
+      setIsExtending(false);
+    }
+  }, [initialSession.id, toast, t]);
+
+  const turnsRemaining = totalTurns - turnCount;
+  const showExtendBanner =
+    sessionStatus === "active" &&
+    turnsRemaining <= 3 &&
+    extendCount < 3 &&
+    !isPremium;
+
   // Find member info for a message
   function getMemberForMessage(msg: SessionMessage) {
     if (!msg.user_id) return null; // AI GM
@@ -342,7 +433,7 @@ export default function SessionChat({
               {partyTitle}
             </h1>
             <p className="text-xs text-gray-400">
-              {t("turnProgress", { current: turnCount, total: initialSession.total_turns })}
+              {t("turnProgress", { current: turnCount, total: totalTurns })}
               {initialSession.use_ai_gm && " · AI GM"}
               {initialSession.play_mode === "async" && " · Async"}
             </p>
@@ -387,7 +478,7 @@ export default function SessionChat({
           className="h-full bg-gradient-to-r from-amber-400 to-orange-400 rounded-full transition-all duration-500"
           style={{
             width: `${Math.min(
-              (turnCount / initialSession.total_turns) * 100,
+              (turnCount / totalTurns) * 100,
               100
             )}%`,
           }}
@@ -646,8 +737,55 @@ export default function SessionChat({
           </div>
         )}
 
+        {/* Turn extension banner */}
+        {showExtendBanner && (
+          <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-2xl border border-amber-200 p-4 space-y-3 animate-bubble-in">
+            <div className="flex items-center gap-2">
+              <span className="text-2xl">⚡</span>
+              <div>
+                <p className="text-sm font-bold text-gray-900">
+                  {t("turnsRunningLow")}
+                </p>
+                <p className="text-xs text-gray-500">
+                  {t("turnsRemaining", { remaining: turnsRemaining })}
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-col gap-2">
+              <button
+                onClick={() => setShowAdGate(true)}
+                disabled={isExtending}
+                className="w-full py-2.5 bg-amber-500 text-white rounded-xl font-medium text-sm hover:bg-amber-600 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                <span>🎬</span>
+                {t("watchAdExtend")}
+                <span className="text-xs opacity-75">
+                  {t("extendCountInfo", { current: extendCount, max: 3 })}
+                </span>
+              </button>
+              <Link
+                href="/premium"
+                className="w-full py-2.5 bg-purple-500 text-white rounded-xl font-medium text-sm hover:bg-purple-600 transition-colors text-center flex items-center justify-center gap-2"
+              >
+                <span>👑</span>
+                {t("goPremium")}
+                <span className="text-xs opacity-75">
+                  {t("premiumNoTurnLimit")}
+                </span>
+              </Link>
+            </div>
+          </div>
+        )}
+
         <div ref={chatEndRef} />
       </div>
+
+      {/* AdGate for turn extension */}
+      <AdGate
+        open={showAdGate}
+        onComplete={handleExtendTurns}
+        onCancel={() => setShowAdGate(false)}
+      />
 
       {/* GM BGM Picker */}
       {isHumanGm && bgmPickerOpen && (

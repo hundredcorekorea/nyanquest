@@ -2,7 +2,7 @@ export const PREMIUM_CONFIG = {
   free: {
     dailyQuestLimit: 2,
     weeklyMultiSessionLimit: 1,
-    multiSessionTurns: 15,
+    multiSessionTurns: 25,
     aiModel: "google/gemini-2.5-flash-lite",
     maxTokens: 500,
     turnMultiplier: 1,
@@ -11,7 +11,7 @@ export const PREMIUM_CONFIG = {
   premium: {
     dailyQuestLimit: Infinity,
     weeklyMultiSessionLimit: Infinity,
-    multiSessionTurns: 40,
+    multiSessionTurns: 50,
     aiModel: "google/gemini-2.5-flash",
     maxTokens: 1000,
     turnMultiplier: 2.5,

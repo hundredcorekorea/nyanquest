@@ -91,6 +91,18 @@ const messages: Record<string, Record<Locale, string>> = {
     ko: "파티를 찾을 수 없다냥...",
     en: "Party not found, meow...",
   },
+  recipientNotFound: {
+    ko: "유저를 찾을 수 없다냥",
+    en: "User not found, meow",
+  },
+  recipientAlreadyPremium: {
+    ko: "이미 프리미엄 유저다냥",
+    en: "Already a premium user, meow",
+  },
+  extendLimitReached: {
+    ko: "턴 연장 횟수를 모두 사용했다냥!",
+    en: "You've used all turn extensions, meow!",
+  },
 };
 
 export function getLocaleFromRequest(request: NextRequest | Request): Locale {

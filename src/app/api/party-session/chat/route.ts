@@ -18,17 +18,18 @@ export async function POST(request: NextRequest) {
   }
 
   const body = await request.json();
-  const { sessionId, playerMessage, diceRoll } = body as {
+  const { sessionId, playerMessage, diceRoll, isOpening } = body as {
     sessionId: string;
-    playerMessage: string;
+    playerMessage?: string;
     diceRoll?: { type: string; result: number; results?: number[]; modifier?: number; total: number; dc?: number; target?: number; skillValue?: number; success?: boolean; tier?: string; successes?: number; difficulty?: number; messyCritical?: boolean };
+    isOpening?: boolean;
   };
 
-  if (!sessionId || !playerMessage) {
+  if (!sessionId || (!playerMessage && !isOpening)) {
     return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
-  if (playerMessage.length > 500) {
+  if (playerMessage && playerMessage.length > 500) {
     return Response.json(
       { error: apiMsg("messageTooLong", request) },
       { status: 400 }
@@ -77,21 +78,23 @@ export async function POST(request: NextRequest) {
 
   const playerName = (membership.user as unknown as { nickname: string })?.nickname ?? "모험가";
 
-  // Save player message to session_messages
   // Use service role to bypass RLS for consistency
   const serviceSupabase = createServiceClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!.trim(),
     process.env.SUPABASE_SERVICE_ROLE_KEY!.trim()
   );
 
-  await serviceSupabase.from("session_messages").insert({
-    session_id: sessionId,
-    user_id: user.id,
-    role: "player",
-    player_name: playerName,
-    content: playerMessage,
-    dice_roll: diceRoll ?? null,
-  });
+  // Save player message (skip for opening — GM starts first)
+  if (!isOpening && playerMessage) {
+    await serviceSupabase.from("session_messages").insert({
+      session_id: sessionId,
+      user_id: user.id,
+      role: "player",
+      player_name: playerName,
+      content: playerMessage,
+      dice_roll: diceRoll ?? null,
+    });
+  }
 
   // Fetch recent messages for context
   const { data: recentMessages } = await supabase
@@ -184,10 +187,12 @@ export async function POST(request: NextRequest) {
 
   const openRouterMessages = [
     { role: "system" as const, content: systemPrompt },
-    ...contextMessages.map((m) => ({
-      role: (m.role === "gm" || m.role === "system" ? "assistant" : "user") as "assistant" | "user",
-      content: formatMessageContent(m),
-    })),
+    ...(isOpening
+      ? [{ role: "user" as const, content: "[세션 시작] 모험가들이 모였다. 모험의 시작을 알려줘. 장면을 묘사하고 첫 번째 선택지를 제시해." }]
+      : contextMessages.map((m) => ({
+          role: (m.role === "gm" || m.role === "system" ? "assistant" : "user") as "assistant" | "user",
+          content: formatMessageContent(m),
+        }))),
   ];
 
   // Call OpenRouter with retry logic

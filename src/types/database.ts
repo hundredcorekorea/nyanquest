@@ -150,6 +150,7 @@ export interface Subscription {
   started_at: string;
   expires_at: string;
   cancelled_at: string | null;
+  gifted_by: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -164,15 +165,16 @@ export interface Payment {
   currency: string;
   status: "paid" | "failed" | "cancelled" | "refunded";
   plan: "monthly" | "yearly";
+  gift_to: string | null;
   created_at: string;
 }
 
-export type ReportReason = "spam" | "harassment" | "inappropriate" | "cheating" | "other";
+export type ReportReason = "spam" | "harassment" | "inappropriate" | "cheating" | "copyright" | "other";
 
 export interface Report {
   id: string;
   reporter_id: string;
-  report_type: "post" | "comment" | "user" | "session_message";
+  report_type: "post" | "comment" | "user" | "session_message" | "scenario";
   target_id: string;
   reason: ReportReason;
   description: string | null;
@@ -200,7 +202,8 @@ export type NotificationType =
   | "subscription_expiring"
   | "announcement"
   | "referral_signup"
-  | "referral_premium";
+  | "referral_premium"
+  | "gift_received";
 
 export interface Notification {
   id: string;
@@ -225,5 +228,56 @@ export interface AdEntry {
   placement: AdPlacement;
   priority: number;
   active: boolean;
+  created_at: string;
+}
+
+export type ScenarioGenre =
+  | "fantasy"
+  | "horror"
+  | "comedy"
+  | "scifi"
+  | "mystery"
+  | "romance"
+  | "historical"
+  | "modern"
+  | "other";
+
+export interface CommunityScenario {
+  id: string;
+  creator_id: string;
+  title: string;
+  title_en: string | null;
+  description: string;
+  description_en: string | null;
+  genre: ScenarioGenre;
+  system_id: string | null;
+  language: "ko" | "en";
+  difficulty: "easy" | "normal" | "hard";
+  estimated_turns: number;
+  scenario_data: ScenarioData;
+  tags: string[];
+  is_premium: boolean;
+  status: "draft" | "published" | "hidden";
+  play_count: number;
+  like_count: number;
+  created_at: string;
+  updated_at: string;
+  // Joined
+  creator?: Profile;
+  system?: TrpgSystem;
+}
+
+export interface ScenarioData {
+  background: string;
+  opening: string;
+  gmInstructions: string;
+  npcs?: { name: string; description: string; personality: string }[];
+  keyEvents?: { trigger: string; description: string }[];
+  possibleEndings?: { condition: string; description: string }[];
+}
+
+export interface ScenarioLike {
+  user_id: string;
+  scenario_id: string;
   created_at: string;
 }

@@ -7,7 +7,7 @@ import { useTranslations } from "next-intl";
 import type { ReportReason } from "@/types/database";
 
 interface Props {
-  reportType: "post" | "comment" | "user" | "session_message";
+  reportType: "post" | "comment" | "user" | "session_message" | "scenario";
   targetId: string;
   compact?: boolean;
 }
@@ -26,6 +26,7 @@ export default function ReportButton({ reportType, targetId, compact }: Props) {
     { value: "harassment", label: t("reasons.harassment") },
     { value: "inappropriate", label: t("reasons.inappropriate") },
     { value: "cheating", label: t("reasons.cheating") },
+    { value: "copyright", label: t("reasons.copyright") },
     { value: "other", label: t("reasons.other") },
   ];
 
