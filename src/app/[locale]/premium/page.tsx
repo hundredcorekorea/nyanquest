@@ -60,6 +60,27 @@ export default function PremiumPage() {
 
     setProcessing(true);
     try {
+      if (locale !== "ko") {
+        // Stripe flow for non-Korean locales
+        const res = await fetch("/api/stripe/checkout", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            plan: selectedPlan,
+            ...(mode === "gift" && selectedRecipient ? { giftTo: selectedRecipient.id } : {}),
+          }),
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          toast(data.error || t("paymentInitFailed"), "error");
+          return;
+        }
+        // Redirect to Stripe Checkout
+        window.location.href = data.url;
+        return;
+      }
+
+      // Portone flow for Korean locale
       // 1. Initiate payment
       const initRes = await fetch("/api/payment/initiate", {
         method: "POST",
@@ -415,6 +436,9 @@ function PlanSelector({
   setSelectedPlan: (p: PlanType) => void;
   t: ReturnType<typeof useTranslations<"Premium">>;
 }) {
+  const locale = useLocale();
+  const isKo = locale === "ko";
+
   return (
     <div className="space-y-3">
       {(Object.entries(PLANS) as [PlanType, (typeof PLANS)[PlanType]][]).map(
@@ -430,14 +454,27 @@ function PlanSelector({
           >
             <div className="flex justify-between items-center">
               <div>
-                <p className="font-bold text-gray-900 text-sm">{plan.label}</p>
+                <p className="font-bold text-gray-900 text-sm">
+                  {isKo ? plan.label : plan.labelEn}
+                </p>
                 {"discount" in plan && (
-                  <p className="text-xs text-purple-600 font-medium mt-0.5">{plan.discount}</p>
+                  <p className="text-xs text-purple-600 font-medium mt-0.5">
+                    {isKo ? plan.discount : plan.discountEn}
+                  </p>
                 )}
               </div>
               <p className="text-lg font-bold text-gray-900">
-                {plan.price.toLocaleString()}{t("won")}
-                <span className="text-xs text-gray-400 font-normal">/{plan.period}</span>
+                {isKo ? (
+                  <>
+                    {plan.price.toLocaleString()}{t("won")}
+                    <span className="text-xs text-gray-400 font-normal">/{plan.period}</span>
+                  </>
+                ) : (
+                  <>
+                    ${(plan.priceUsd / 100).toFixed(2)}
+                    <span className="text-xs text-gray-400 font-normal">/{plan.periodEn}</span>
+                  </>
+                )}
               </p>
             </div>
           </button>

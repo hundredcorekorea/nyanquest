@@ -18,14 +18,40 @@ function CompleteContent() {
   );
 
   useEffect(() => {
+    // Lemon Squeezy passes order_id as a query param after checkout
+    const lsOrderId = searchParams.get("order_id");
     const paymentId = searchParams.get("paymentId");
     const plan = searchParams.get("plan");
+
+    if (lsOrderId) {
+      // Lemon Squeezy flow
+      const verifyLs = async () => {
+        try {
+          const res = await fetch("/api/stripe/verify", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ orderId: lsOrderId }),
+          });
+          if (res.ok) {
+            setStatus("success");
+            toast(t("subscriptionStarted"), "success");
+          } else {
+            setStatus("error");
+          }
+        } catch {
+          setStatus("error");
+        }
+      };
+      verifyLs();
+      return;
+    }
 
     if (!paymentId || !plan) {
       setStatus("error");
       return;
     }
 
+    // Portone flow
     const verify = async () => {
       try {
         const res = await fetch("/api/payment/verify", {
