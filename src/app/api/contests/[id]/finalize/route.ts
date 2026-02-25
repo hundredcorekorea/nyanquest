@@ -106,6 +106,16 @@ export async function POST(
       body: `콘테스트 ${contest.title}에서 ${winner.rank || (winners.indexOf(winner) + 1)}위를 차지했다냥!`,
       url: `/scenarios/contest/${contestId}`,
     });
+
+    // Grant "scenario_champion" title
+    await admin.from("user_titles").upsert(
+      {
+        user_id: winner.user_id,
+        title_id: "scenario_champion",
+        earned_at: now.toISOString(),
+      },
+      { onConflict: "user_id,title_id" }
+    );
   }
 
   // Update contest status to finalized

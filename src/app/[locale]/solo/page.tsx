@@ -2,6 +2,8 @@ import { createClient } from "@/lib/supabase/server";
 import { SCENARIOS } from "@/lib/solo-quest/scenarios";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import ScenarioCard from "./ScenarioCard";
+import ScenarioMarketCard from "./ScenarioMarketCard";
+import ScenarioMarketIntro from "./ScenarioMarketIntro";
 import AbandonQuestButton from "./AbandonQuestButton";
 import LoginBanner from "./LoginBanner";
 import type { SoloQuest } from "@/types/solo-quest";
@@ -68,6 +70,22 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
     dailyCount = count ?? 0;
   }
 
+  // Fetch active contest for Scenario Market promotion
+  const { data: activeContestData } = await supabase
+    .from("scenario_contests")
+    .select("id, title, title_en, status")
+    .in("status", ["active", "upcoming"])
+    .order("start_date", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  const hasActiveContest = !!activeContestData;
+  const contestTitle = activeContestData
+    ? (locale === "en" && activeContestData.title_en
+        ? activeContestData.title_en
+        : activeContestData.title)
+    : undefined;
+
   const difficultyLabel = {
     easy: { text: tDifficulty("easy"), color: "bg-green-100 text-green-700" },
     normal: { text: tDifficulty("normal"), color: "bg-amber-100 text-amber-700" },
@@ -120,22 +138,11 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
         </div>
       )}
 
+      {/* Scenario Market Intro Modal (first visit only) */}
+      <ScenarioMarketIntro hasActiveContest={hasActiveContest} contestTitle={contestTitle} />
+
       {/* Scenario Market entry */}
-      <Link
-        href="/scenarios"
-        className="block bg-gradient-to-r from-purple-50 to-indigo-50 rounded-2xl border border-purple-200 p-4 hover:shadow-md transition-all"
-      >
-        <div className="flex items-center gap-3">
-          <span className="text-3xl">📚</span>
-          <div className="flex-1 min-w-0">
-            <h3 className="text-sm font-bold text-purple-800">{t("scenarioMarketTitle")}</h3>
-            <p className="text-xs text-gray-500 mt-0.5">{t("scenarioMarketDesc")}</p>
-          </div>
-          <svg className="w-5 h-5 text-purple-400 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-          </svg>
-        </div>
-      </Link>
+      <ScenarioMarketCard hasActiveContest={hasActiveContest} contestTitle={contestTitle} />
 
       {/* Scenario list */}
       <div className="space-y-4">

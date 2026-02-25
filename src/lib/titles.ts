@@ -40,6 +40,7 @@ export const TITLES: TitleDef[] = [
   // Special
   { id: "premium_cat", name: "프리미엄 냥이", nameEn: "Premium Cat", emoji: "✨", description: "프리미엄 구독으로 모험을 지원하는 후원자", descriptionEn: "Patron who supports adventures with premium", condition: "프리미엄 구독", conditionEn: "Premium subscription", category: "special" },
   { id: "first_explorer", name: "최초의 탐험가", nameEn: "First Explorer", emoji: "🌟", description: "냥퀘스트의 첫 번째 모험가. 전설의 시작.", descriptionEn: "The very first adventurer of nyanQuest. Where the legend began.", condition: "냥퀘스트 1호 유저", conditionEn: "nyanQuest User #1", category: "special" },
+  { id: "scenario_champion", name: "시나리오 챔피언", nameEn: "Scenario Champion", emoji: "🏆", description: "크리에이터 콘테스트에서 우승한 전설적 시나리오 작가", descriptionEn: "Legendary scenario creator who won the Creator Contest", condition: "크리에이터 콘테스트 우승", conditionEn: "Win a Creator Contest", category: "special" },
 ];
 
 export const TITLE_MAP = Object.fromEntries(TITLES.map((t) => [t.id, t]));

@@ -345,7 +345,13 @@
     "scenarioMarketTitle": "Scenario Market",
     "scenarioMarketDesc": "Try adventures made by fellow adventurers, nya!",
     "scenarioMarketBrowse": "Browse",
-    "scenarioMarketCreate": "Create Scenario"
+    "scenarioMarketCreate": "Create Scenario",
+    "marketIntroMessage": "The Scenario Market is open, nya! Train with scenarios made by other adventurers, or create your own!",
+    "marketIntroPlay": "Train with community-made scenarios",
+    "marketIntroCreate": "Create and share your own scenarios",
+    "marketIntroContest": "🔥 Creator contest active: {title}",
+    "marketIntroCta": "Visit Scenario Market →",
+    "marketIntroDismiss": "Maybe later"
   },
   "SoloQuest": {
     "turnProgress": "{current}/{total} turns",

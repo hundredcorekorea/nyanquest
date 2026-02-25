@@ -345,7 +345,13 @@
     "scenarioMarketTitle": "시나리오 마켓",
     "scenarioMarketDesc": "모험자들이 만든 시나리오로 새로운 모험을 시작하라냥!",
     "scenarioMarketBrowse": "둘러보기",
-    "scenarioMarketCreate": "시나리오 만들기"
+    "scenarioMarketCreate": "시나리오 만들기",
+    "marketIntroMessage": "시나리오 마켓이 열렸다냥! 다른 모험자들이 만든 시나리오로 수련하거나, 직접 시나리오를 만들어볼 수 있다냥!",
+    "marketIntroPlay": "다른 모험자의 시나리오로 수련하기",
+    "marketIntroCreate": "나만의 시나리오를 만들어 공유하기",
+    "marketIntroContest": "🔥 크리에이터 콘테스트 진행 중: {title}",
+    "marketIntroCta": "시나리오 마켓 둘러보기 →",
+    "marketIntroDismiss": "나중에 볼게"
   },
   "SoloQuest": {
     "turnProgress": "{current}/{total} 턴",
