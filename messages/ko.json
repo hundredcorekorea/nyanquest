@@ -966,8 +966,16 @@
       "insane": "インセイン(Insane) — 河嶋陶一朗 / 冒険企画局의 저작물"
     },
     "section4Disclaimer": "위 상표의 사용은 해당 게임 시스템과의 호환성을 나타내기 위한 것이며, 각 권리자가 nyanQuest를 후원, 승인 또는 보증하는 것은 아닙니다.",
-    "section5Title": "5. 문의",
-    "section5Content": "라이센스 관련 문의 사항은 osu355@gmail.com으로 연락해 주세요."
+    "section5Title": "5. 오픈 라이선스 저작자 표시",
+    "section5Content": "다음 저작물은 오픈 라이선스에 따라 사용됩니다. nyanQuest는 각 라이선스 조건에 따라 해당 저작물의 게임 메커니즘 및 개념을 활용합니다.",
+    "section5Dw": "던전월드 (Dungeon World)",
+    "section5DwAttribution": "던전월드(Dungeon World)는 세이지 라토라(Sage LaTorra)와 아담 코벌(Adam Koebel)이 창작하였으며, 크리에이티브 커먼즈 저작자표시 3.0 Unported 라이선스(CC BY 3.0)로 공개되었습니다. 던전월드 한국어 공개판은 도서출판 초여명의 김성일이 번역한 작품으로, 동일한 CC BY 3.0 라이선스로 공개됩니다.",
+    "section5DwTerms": "본 라이선스에 따라 nyanQuest는 원저작자(세이지 라토라, 아담 코벌)와 번역자(김성일, 도서출판 초여명)를 밝히는 조건하에 던전월드의 게임 메커니즘 및 콘텐츠를 자유롭게 활용, 변형할 수 있습니다.",
+    "section5Bitd": "블레이즈 인 더 다크 (Blades in the Dark)",
+    "section5BitdAttribution": "블레이즈 인 더 다크(Blades in the Dark)는 존 하퍼(John Harper)가 창작하였으며, 크리에이티브 커먼즈 저작자표시 3.0 Unported 라이선스(CC BY 3.0)로 공개되었습니다.",
+    "section5LicenseLink": "라이선스 전문: https://creativecommons.org/licenses/by/3.0/",
+    "section6Title": "6. 문의",
+    "section6Content": "라이센스 관련 문의 사항은 osu355@gmail.com으로 연락해 주세요."
   },
   "Privacy": {
     "metaTitle": "개인정보처리방침 - nyanQuest",

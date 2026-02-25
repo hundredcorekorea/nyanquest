@@ -966,8 +966,16 @@
       "insane": "Insane (インセイン) — by Toichiro Kawashima / Bouken Kikakukyoku"
     },
     "section4Disclaimer": "Use of these trademarks is for compatibility purposes only. The respective rights holders do not sponsor, authorize, or endorse nyanQuest.",
-    "section5Title": "5. Contact",
-    "section5Content": "For license-related inquiries, please contact osu355@gmail.com."
+    "section5Title": "5. Open License Attribution",
+    "section5Content": "The following works are used under open licenses. nyanQuest utilizes game mechanics and concepts from these works in accordance with their respective license terms.",
+    "section5Dw": "Dungeon World",
+    "section5DwAttribution": "Dungeon World was created by Sage LaTorra and Adam Koebel, licensed under the Creative Commons Attribution 3.0 Unported License (CC BY 3.0). The Korean Open Edition was translated by Sung-il Kim (김성일) of Choyeomyeong Publishing (도서출판 초여명), also released under CC BY 3.0.",
+    "section5DwTerms": "Under this license, nyanQuest is free to use, adapt, and build upon Dungeon World's game mechanics and content, provided that proper attribution is given to the original authors and translator.",
+    "section5Bitd": "Blades in the Dark",
+    "section5BitdAttribution": "Blades in the Dark was created by John Harper, licensed under the Creative Commons Attribution 3.0 Unported License (CC BY 3.0).",
+    "section5LicenseLink": "Full license text: https://creativecommons.org/licenses/by/3.0/",
+    "section6Title": "6. Contact",
+    "section6Content": "For license-related inquiries, please contact osu355@gmail.com."
   },
   "Privacy": {
     "metaTitle": "Privacy Policy - nyanQuest",
