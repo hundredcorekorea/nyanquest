@@ -20,7 +20,7 @@ export default function BottomNav() {
   const tabs = [
     { href: "/" as const, label: t("quest"), icon: "d20" },
     { href: "/community" as const, label: t("guildHall"), emoji: "🏰" },
-    { href: "/solo" as const, label: t("training"), emoji: "⚔️" },
+    { href: "/solo" as const, label: t("training"), emoji: "⚔️", badge: true },
     { href: "/create" as const, label: t("postQuest"), emoji: "📜" },
     { href: "/my" as const, label: t("adventurer"), emoji: "🧙" },
   ];
@@ -41,8 +41,14 @@ export default function BottomNav() {
                 isActive ? "text-amber-600" : "text-gray-400 hover:text-amber-600"
               }`}
             >
-              <span className="text-xl">
+              <span className="relative text-xl">
                 {tab.icon === "d20" ? <D20Icon active={isActive} /> : tab.emoji}
+                {tab.badge && (
+                  <span className="absolute -top-1 -right-2.5 flex h-3 w-3">
+                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75" />
+                    <span className="relative inline-flex rounded-full h-3 w-3 bg-red-500" />
+                  </span>
+                )}
               </span>
               <span className="text-xs font-medium">{tab.label}</span>
             </Link>
