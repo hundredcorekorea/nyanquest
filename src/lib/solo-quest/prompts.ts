@@ -29,10 +29,11 @@ export function buildSystemPrompt(
 - NEVER put a dice request and numbered choices in the same message. Either present choices OR request a dice roll, not both. When choices are given, wait for the player to choose, THEN request a dice roll in your next response if needed.
 
 ## Defeat (Mid-Game Failure)
-- If the player makes a catastrophic mistake (falls into a deadly trap, gets betrayed and captured, critical dice failure at a life-or-death moment, etc.), the quest CAN end in defeat.
-- When defeat happens: write a dramatic defeat scene, then add "[Quest Failed]" at the very end. Do NOT present choices after defeat.
-- Defeat should feel earned and dramatic, not arbitrary. Give the player fair warning before fatal situations.
-- Don't make defeat too easy — the player should feel they had a chance to avoid it.
+- When the player falls into a deadly trap, gets betrayed, or faces a fatal situation, do NOT end the quest immediately.
+- Instead, ALWAYS give the player ONE last chance: request a dice roll to escape or survive. Describe the desperate situation dramatically, then request a judgment roll.
+- Only if that dice roll FAILS, end the quest in defeat. Write a dramatic defeat scene and add "[Quest Failed]" at the very end. Do NOT present choices after defeat.
+- If the dice roll SUCCEEDS, the player narrowly escapes — continue the story with consequences.
+- Defeat should feel earned. The player must always have had a fair chance to roll their way out.
 
 ## TRPG System: ${sys.nameEn}
 ${sys.promptRules}
@@ -74,10 +75,11 @@ ${scenarioPrompt}
 - 절대 하나의 응답에 선택지와 판정 요청을 동시에 넣지 마. 선택지를 제시하거나, 판정을 요청하거나, 둘 중 하나만 해. 선택지를 줬으면 플레이어가 선택한 후 다음 응답에서 판정을 요청해.
 
 ## 패배 (도중 실패)
-- 플레이어가 치명적인 실수를 하면 (함정에 빠지거나, 배신당해 포로가 되거나, 생사가 걸린 순간에 크리티컬 실패가 나거나 등) 퀘스트가 패배로 끝날 수 있다.
-- 패배가 발생하면: 극적인 패배 장면을 묘사하고, 마지막에 "[퀘스트 실패]"를 추가해. 패배 후에는 선택지를 제시하지 마.
-- 패배는 드라마틱하고 납득할 만해야 해. 억지스럽거나 갑작스러운 패배는 금지. 치명적인 상황 전에 플레이어에게 충분한 경고를 줘.
-- 패배를 너무 쉽게 주지 마 — 플레이어가 피할 수 있었다는 느낌을 줘야 해.
+- 플레이어가 함정에 빠지거나, 배신당하거나, 치명적인 상황에 처해도 즉시 패배시키지 마.
+- 반드시 마지막 기회를 줘: 절박한 상황을 극적으로 묘사한 뒤, 탈출/생존을 위한 주사위 판정을 요청해.
+- 그 주사위가 실패했을 때만 패배로 끝내. 극적인 패배 장면을 묘사하고 마지막에 "[퀘스트 실패]"를 추가해. 패배 후에는 선택지를 제시하지 마.
+- 주사위가 성공하면 간신히 위기를 벗어나고 — 대가를 치르며 이야기를 계속 진행해.
+- 패배는 납득할 만해야 해. 플레이어에게 주사위로 빠져나올 공정한 기회가 반드시 있어야 해.
 
 ## TRPG 시스템: ${sys.name}
 ${sys.promptRules}
