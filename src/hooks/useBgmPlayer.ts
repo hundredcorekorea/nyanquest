@@ -143,6 +143,28 @@ export function useBgmPlayer() {
   const activeRef = useRef<"a" | "b">("a");
   const fadeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const loopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  /** true when play() was blocked by autoplay policy */
+  const blockedRef = useRef(false);
+  const playingRef = useRef(false);
+
+  // Resume BGM on first user interaction if autoplay was blocked
+  useEffect(() => {
+    const resume = () => {
+      if (blockedRef.current && currentCategory && enabled) {
+        blockedRef.current = false;
+        const active = activeRef.current === "a" ? audioARef.current : audioBRef.current;
+        if (active && active.src) {
+          active.play().then(() => { playingRef.current = true; }).catch(() => {});
+        }
+      }
+    };
+    document.addEventListener("click", resume, { once: true });
+    document.addEventListener("touchstart", resume, { once: true });
+    return () => {
+      document.removeEventListener("click", resume);
+      document.removeEventListener("touchstart", resume);
+    };
+  }, [currentCategory, enabled]);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -168,6 +190,7 @@ export function useBgmPlayer() {
   }, []);
 
   const stopAll = useCallback(() => {
+    playingRef.current = false;
     if (fadeTimerRef.current) {
       clearInterval(fadeTimerRef.current);
       fadeTimerRef.current = null;
@@ -199,7 +222,9 @@ export function useBgmPlayer() {
       audioBRef.current = new Audio();
       activeRef.current = "a";
 
-      audioA.play().catch(() => {});
+      audioA.play()
+        .then(() => { playingRef.current = true; blockedRef.current = false; })
+        .catch(() => { blockedRef.current = true; playingRef.current = false; });
 
       // Schedule crossfade loop
       const scheduleCrossfade = (current: HTMLAudioElement, label: "a" | "b") => {
@@ -274,7 +299,8 @@ export function useBgmPlayer() {
         setCurrentCategory(category);
         return;
       }
-      if (category === currentCategory) return;
+      // Skip only if same category AND actually playing
+      if (category === currentCategory && playingRef.current) return;
       setCurrentCategory(category);
 
       if (BGM_CATALOG[category].length === 0) {
