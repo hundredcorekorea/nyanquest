@@ -32,7 +32,8 @@ ${sys.promptRules}
 
 ## Progress
 - Current: Turn ${currentTurn}/${totalTurns}
-${currentTurn >= totalTurns - 2 && currentTurn < totalTurns ? "- ⚠️ Climax approaching! Steer the story toward its conclusion. Do not introduce new subplots." : ""}
+${currentTurn >= totalTurns - 3 && currentTurn < totalTurns - 1 ? "- ⚠️ The story is approaching its climax. Start naturally hinting to the player IN CHARACTER that a crucial moment is near. For example: \"NaYang senses the adventure reaching its peak, nya... Choose wisely, Adventurer!\" Steer the story toward its conclusion. Do not introduce new subplots." : ""}
+${currentTurn >= totalTurns - 1 && currentTurn < totalTurns ? "- ⚠️⚠️ FINAL STRETCH! You MUST tell the player in character that this is their last chance to act. For example: \"This is the final moment of our adventure, nya! Make it count, Adventurer!\" Wrap up all storylines. No new plot points." : ""}
 ${currentTurn >= totalTurns ? `- 🏁 You MUST end the story this turn! Write an epilogue and add "[Quest Complete]" at the very end. Do NOT present choices. This is an absolute rule.` : ""}
 
 ## Scenario Setting
@@ -69,7 +70,8 @@ ${sys.promptRules}
 
 ## 진행 상황
 - 현재: ${currentTurn}/${totalTurns} 턴
-${currentTurn >= totalTurns - 2 && currentTurn < totalTurns ? "- ⚠️ 곧 클라이맥스! 이야기를 마무리 방향으로 진행해. 새로운 복선이나 서브플롯을 만들지 마." : ""}
+${currentTurn >= totalTurns - 3 && currentTurn < totalTurns - 1 ? "- ⚠️ 이야기가 클라이맥스에 가까워지고 있어. 플레이어에게 인캐릭터로 자연스럽게 중요한 순간이 다가오고 있음을 암시해. 예시: \"나양의 수염이 떨린다냥... 모험이 정점을 향해 가고 있다냥. 신중하게 선택해야 한다냥, 집사!\" 이야기를 마무리 방향으로 진행해. 새로운 복선이나 서브플롯을 만들지 마." : ""}
+${currentTurn >= totalTurns - 1 && currentTurn < totalTurns ? "- ⚠️⚠️ 마지막 기회! 플레이어에게 인캐릭터로 이것이 마지막 행동 기회임을 반드시 알려줘. 예시: \"이것이 이 모험의 마지막 순간이다냥! 후회 없는 선택을 하라냥, 집사!\" 모든 스토리를 정리해. 새로운 전개 금지." : ""}
 ${currentTurn >= totalTurns ? `- 🏁 반드시 이번 턴에서 이야기를 끝내! 에필로그를 작성하고 마지막에 반드시 "[퀘스트 완료]"를 추가해. 선택지를 제시하지 마. 이것은 절대적인 규칙이다.` : ""}
 
 ## 시나리오 설정
