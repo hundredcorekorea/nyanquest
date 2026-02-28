@@ -135,151 +135,162 @@ function pickRandomUrl(category: BgmCategory): string | null {
 }
 
 /**
- * Simple BGM player hook.
- * Uses a single looping audio element per category.
- * On track end, picks another random track from the same category.
+ * BGM player hook using Web Audio API (AudioContext).
+ *
+ * Why AudioContext instead of HTMLAudioElement:
+ * - HTMLAudioElement requires user gesture for EACH new element
+ * - AudioContext only needs ONE resume() call, then all subsequent
+ *   plays work without gesture — exactly like useQuestSounds SFX
+ * - On mobile, AudioContext.resume() on first click unlocks all audio
  */
 export function useBgmPlayer() {
   const [enabled, setEnabled] = useState(getInitialEnabled);
   const [volume, setVolumeState] = useState(getInitialVolume);
   const [currentCategory, setCurrentCategory] = useState<BgmCategory | null>(null);
 
-  const audioRef = useRef<HTMLAudioElement | null>(null);
+  // Web Audio API refs
+  const ctxRef = useRef<AudioContext | null>(null);
+  const gainRef = useRef<GainNode | null>(null);
+  const sourceRef = useRef<AudioBufferSourceNode | null>(null);
   const playingRef = useRef(false);
-  /** true when play() was blocked by autoplay policy */
-  const blockedRef = useRef(false);
-  // Refs to avoid stale closures in persistent event listeners
+
+  // Refs to avoid stale closures
   const enabledRef = useRef(enabled);
   enabledRef.current = enabled;
   const categoryRef = useRef(currentCategory);
   categoryRef.current = currentCategory;
   const volumeRef = useRef(volume);
   volumeRef.current = volume;
-  /** Store intended trackId for resume after autoplay block */
   const trackIdRef = useRef<string | null>(null);
+
+  /** Get or create AudioContext + GainNode */
+  const ensureCtx = useCallback(() => {
+    if (ctxRef.current) return ctxRef.current;
+    const ctx = new AudioContext();
+    const gain = ctx.createGain();
+    gain.gain.value = volumeRef.current;
+    gain.connect(ctx.destination);
+    ctxRef.current = ctx;
+    gainRef.current = gain;
+    return ctx;
+  }, []);
+
+  // Resume AudioContext on any user interaction (one-time unlock)
+  useEffect(() => {
+    const resumeCtx = () => {
+      const ctx = ctxRef.current;
+      if (ctx && ctx.state === "suspended") {
+        ctx.resume().then(() => {
+          console.log("[BGM] AudioContext resumed");
+        });
+      }
+    };
+    document.addEventListener("click", resumeCtx);
+    document.addEventListener("touchstart", resumeCtx);
+    return () => {
+      document.removeEventListener("click", resumeCtx);
+      document.removeEventListener("touchstart", resumeCtx);
+    };
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = "";
-        audioRef.current = null;
+      if (sourceRef.current) {
+        try { sourceRef.current.stop(); } catch { /* already stopped */ }
+      }
+      if (ctxRef.current) {
+        ctxRef.current.close();
+        ctxRef.current = null;
       }
     };
   }, []);
 
-  // Apply volume changes to active audio
+  // Apply volume changes
   useEffect(() => {
-    if (audioRef.current) audioRef.current.volume = volume;
+    if (gainRef.current) gainRef.current.gain.value = volume;
   }, [volume]);
 
   const stopAll = useCallback(() => {
     playingRef.current = false;
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = "";
-      audioRef.current = null;
+    if (sourceRef.current) {
+      try { sourceRef.current.stop(); } catch { /* already stopped */ }
+      sourceRef.current = null;
     }
   }, []);
 
   /**
-   * Core play function. If specificTrackId is given, plays that track;
-   * otherwise picks a random track from the category.
-   * On track end, picks another random track from the same category.
-   * Sets blockedRef on autoplay failure so resume listener can retry.
+   * Fetch an mp3 file, decode it, and play it through AudioContext.
+   * When the track ends, auto-chain to the next random track in the category.
+   */
+  const playUrl = useCallback(async (url: string) => {
+    const ctx = ensureCtx();
+
+    // Resume if suspended (will succeed if called from user gesture,
+    // or if previously resumed)
+    if (ctx.state === "suspended") {
+      await ctx.resume();
+    }
+
+    // Stop current source
+    if (sourceRef.current) {
+      try { sourceRef.current.stop(); } catch { /* already stopped */ }
+      sourceRef.current = null;
+    }
+
+    try {
+      const response = await fetch(url);
+      if (!response.ok) {
+        console.error("[BGM] fetch failed:", response.status, url);
+        return;
+      }
+      const arrayBuffer = await response.arrayBuffer();
+      const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+
+      // Check if still enabled and context is still valid
+      if (!enabledRef.current || ctx !== ctxRef.current) return;
+
+      const source = ctx.createBufferSource();
+      source.buffer = audioBuffer;
+      source.connect(gainRef.current!);
+      sourceRef.current = source;
+
+      // When track ends, chain to next random track in same category
+      source.onended = () => {
+        if (source !== sourceRef.current) return; // superseded
+        const cat = categoryRef.current;
+        if (!cat || !enabledRef.current) {
+          playingRef.current = false;
+          return;
+        }
+        const nextUrl = pickRandomUrl(cat);
+        if (nextUrl) {
+          playUrl(nextUrl);
+        } else {
+          playingRef.current = false;
+        }
+      };
+
+      source.start();
+      playingRef.current = true;
+      console.log("[BGM] playing:", url);
+    } catch (err) {
+      console.error("[BGM] playUrl error:", err);
+      playingRef.current = false;
+    }
+  }, [ensureCtx]);
+
+  /**
+   * Core play function. Picks a URL and plays it.
    */
   const startPlaying = useCallback((category: BgmCategory, specificTrackId?: string) => {
     const url = specificTrackId
       ? `/bgm/${category}/${specificTrackId}.mp3`
       : pickRandomUrl(category);
     if (!url) return;
-
-    console.log("[BGM] startPlaying:", url);
-
-    // Stop previous
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = "";
-    }
-
-    // Store for resume
     trackIdRef.current = specificTrackId ?? null;
-
-    const audio = new Audio(url);
-    audio.volume = volumeRef.current;
-    audioRef.current = audio;
-
-    audio.addEventListener("error", () => {
-      console.error("[BGM] startPlaying audio error:", audio.error?.code, audio.error?.message, url);
-    });
-
-    // When track ends, pick another random track from same category
-    audio.addEventListener("ended", () => {
-      const cat = categoryRef.current;
-      if (!cat || !enabledRef.current) return;
-      const nextUrl = pickRandomUrl(cat);
-      if (!nextUrl || !audioRef.current) return;
-      audioRef.current.src = nextUrl;
-      audioRef.current.play().catch(() => {});
-    });
-
-    audio.play()
-      .then(() => {
-        console.log("[BGM] startPlaying play() SUCCESS");
-        playingRef.current = true; blockedRef.current = false;
-      })
-      .catch((err) => {
-        console.error("[BGM] startPlaying play() BLOCKED:", err.name, err.message);
-        blockedRef.current = true; playingRef.current = false;
-      });
-  }, []);
-
-  // Resume BGM on first user interaction if autoplay was blocked
-  useEffect(() => {
-    const resume = () => {
-      if (!blockedRef.current || !enabledRef.current || !categoryRef.current) return;
-      blockedRef.current = false;
-
-      // CRITICAL: Create Audio and call play() synchronously within user gesture.
-      // Do not call any async functions or complex logic before play().
-      const cat = categoryRef.current;
-      const tid = trackIdRef.current;
-      const url = tid ? `/bgm/${cat}/${tid}.mp3` : pickRandomUrl(cat);
-      if (!url) return;
-
-      // Stop old audio inline (sync, no function call overhead)
-      if (audioRef.current) {
-        audioRef.current.pause();
-        audioRef.current.src = "";
-      }
-
-      const audio = new Audio(url);
-      audio.volume = volumeRef.current;
-      audioRef.current = audio;
-
-      // Chain next track on end
-      audio.addEventListener("ended", () => {
-        const c = categoryRef.current;
-        if (!c || !enabledRef.current) return;
-        const nextUrl = pickRandomUrl(c);
-        if (!nextUrl || !audioRef.current) return;
-        audioRef.current.src = nextUrl;
-        audioRef.current.play().catch(() => {});
-      });
-
-      audio.play()
-        .then(() => { playingRef.current = true; })
-        .catch(() => { blockedRef.current = true; });
-    };
-
-    document.addEventListener("click", resume);
-    document.addEventListener("touchstart", resume);
-    return () => {
-      document.removeEventListener("click", resume);
-      document.removeEventListener("touchstart", resume);
-    };
-  }, []);
+    playUrl(url);
+  }, [playUrl]);
 
   /** Play a specific track by category and track id */
   const playTrack = useCallback(
@@ -336,65 +347,32 @@ export function useBgmPlayer() {
   }, []);
 
   /**
-   * Play audio DIRECTLY — must be called synchronously inside a user gesture
-   * (click/touch handler). Bypasses all state checks so the browser recognises
-   * the gesture context.  After calling this, also call playCategory/playTrack
-   * so the hook state stays in sync.
+   * Play audio DIRECTLY — call from a user gesture (click/touch handler).
+   * Creates AudioContext if needed and resumes it.
    */
   const playDirect = useCallback((category: BgmCategory, specificTrackId?: string) => {
     const url = specificTrackId
       ? `/bgm/${category}/${specificTrackId}.mp3`
       : pickRandomUrl(category);
-    if (!url) {
-      console.warn("[BGM] playDirect: no url for", category, specificTrackId);
-      return;
-    }
+    if (!url) return;
 
-    console.log("[BGM] playDirect:", url);
-
-    // Stop previous inline
-    if (audioRef.current) {
-      audioRef.current.pause();
-      audioRef.current.src = "";
-    }
-
-    const audio = new Audio(url);
-    audio.volume = volumeRef.current;
-    audioRef.current = audio;
     trackIdRef.current = specificTrackId ?? null;
     categoryRef.current = category;
     enabledRef.current = true;
 
-    audio.addEventListener("error", () => {
-      console.error("[BGM] audio error:", audio.error?.code, audio.error?.message, url);
-    });
+    // Ensure context is created and resumed in this gesture
+    const ctx = ensureCtx();
+    if (ctx.state === "suspended") {
+      ctx.resume();
+    }
 
-    // Chain next track on end
-    audio.addEventListener("ended", () => {
-      const c = categoryRef.current;
-      if (!c || !enabledRef.current) return;
-      const nextUrl = pickRandomUrl(c);
-      if (!nextUrl || !audioRef.current) return;
-      audioRef.current.src = nextUrl;
-      audioRef.current.play().catch(() => {});
-    });
-
-    // This play() call is synchronous from the click — browser will allow it
-    audio.play()
-      .then(() => {
-        console.log("[BGM] play() SUCCESS");
-        playingRef.current = true; blockedRef.current = false;
-      })
-      .catch((err) => {
-        console.error("[BGM] play() BLOCKED:", err.name, err.message);
-        blockedRef.current = true; playingRef.current = false;
-      });
+    playUrl(url);
 
     // Sync React state
     setEnabled(true);
     localStorage.setItem(STORAGE_KEY_ENABLED, "1");
     setCurrentCategory(category);
-  }, []);
+  }, [ensureCtx, playUrl]);
 
   return {
     enabled,
