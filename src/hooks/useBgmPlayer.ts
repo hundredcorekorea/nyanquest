@@ -151,30 +151,8 @@ export function useBgmPlayer() {
   enabledRef.current = enabled;
   const categoryRef = useRef(currentCategory);
   categoryRef.current = currentCategory;
-
-  // Resume BGM on any user interaction if autoplay was blocked
-  useEffect(() => {
-    const resume = () => {
-      if (!blockedRef.current || !enabledRef.current || !categoryRef.current) return;
-      blockedRef.current = false;
-      // Re-create audio in user gesture context
-      const url = `/bgm/${categoryRef.current}/${BGM_CATALOG[categoryRef.current]?.[Math.floor(Math.random() * (BGM_CATALOG[categoryRef.current]?.length || 1))]?.id}.mp3`;
-      if (!url) return;
-      const audio = new Audio(url);
-      audio.volume = getInitialVolume();
-      audioARef.current = audio;
-      activeRef.current = "a";
-      audio.play()
-        .then(() => { playingRef.current = true; })
-        .catch(() => {});
-    };
-    document.addEventListener("click", resume);
-    document.addEventListener("touchstart", resume);
-    return () => {
-      document.removeEventListener("click", resume);
-      document.removeEventListener("touchstart", resume);
-    };
-  }, []);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const startLoopRef = useRef<any>(null);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -283,6 +261,23 @@ export function useBgmPlayer() {
     },
     [volume, getTrackUrl, stopAll]
   );
+  startLoopRef.current = startCrossfadeLoop;
+
+  // Resume BGM on any user interaction if autoplay was blocked
+  useEffect(() => {
+    const resume = () => {
+      if (!blockedRef.current || !enabledRef.current || !categoryRef.current) return;
+      blockedRef.current = false;
+      // Call the full crossfade loop in user gesture context
+      startLoopRef.current?.(categoryRef.current);
+    };
+    document.addEventListener("click", resume);
+    document.addEventListener("touchstart", resume);
+    return () => {
+      document.removeEventListener("click", resume);
+      document.removeEventListener("touchstart", resume);
+    };
+  }, []);
 
   /** Play a specific track by category and track id */
   const playTrack = useCallback(

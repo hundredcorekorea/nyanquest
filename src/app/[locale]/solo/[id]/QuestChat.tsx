@@ -112,13 +112,16 @@ export default function QuestChat({
     }
   }, [messages, isStreaming]);
 
-  // Check for quest completion
+  // Check for quest completion — only when AI explicitly ends the story
   useEffect(() => {
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
-    if (lastGm?.content.includes("[퀘스트 완료]") || turnCount >= totalTurns + 2) {
+    if (
+      lastGm?.content.includes("[퀘스트 완료]") ||
+      lastGm?.content.includes("[Quest Complete]")
+    ) {
       setQuestStatus("completed");
     }
-  }, [messages, turnCount, totalTurns]);
+  }, [messages]);
 
   const sendMessage = useCallback(
     async (playerMessage: string, diceRoll?: DiceRoll) => {
@@ -152,6 +155,10 @@ export default function QuestChat({
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
+          // Server forced completion due to turn limit
+          if (response.status === 400 && err.error) {
+            setQuestStatus("completed");
+          }
           throw new Error(err.error || tQuest("requestFailed"));
         }
 
