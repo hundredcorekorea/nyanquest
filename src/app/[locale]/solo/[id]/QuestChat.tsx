@@ -110,10 +110,20 @@ export default function QuestChat({
     bgmPromptAnsweredRef.current = true;
     localStorage.setItem("nyanquest_bgm_prompted", "yes");
     setShowBgmPrompt(false);
-    // Start BGM immediately in this click handler (user gesture context)
+
+    // CRITICAL: play audio DIRECTLY in this click handler.
+    // Going through bgmMood.analyzeMessage → callback → playTrack loses
+    // the user gesture context and the browser blocks audio.play().
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
-    if (lastGm) bgmMood.analyzeMessage(lastGm.content);
-  }, [messages, bgmMood]);
+    if (lastGm) {
+      const mood = bgmMood.detectMood(lastGm.content);
+      // playDirect is synchronous from the click — browser will allow it
+      bgm.playDirect(mood.category, mood.trackId ?? undefined);
+    } else {
+      // Fallback: play explore as default
+      bgm.playDirect("explore");
+    }
+  }, [messages, bgmMood, bgm]);
 
   const handleBgmDecline = useCallback(() => {
     bgmPromptAnsweredRef.current = true;
@@ -331,22 +341,23 @@ export default function QuestChat({
     )}
     {/* BGM consent prompt */}
     {showBgmPrompt && (
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
-        <div className="bg-gray-900/95 backdrop-blur-sm rounded-2xl border border-amber-500/30 px-5 py-3 flex items-center gap-3 shadow-xl">
-          <span className="text-lg">🎵</span>
-          <span className="text-sm text-gray-200">{tQuest("bgmPrompt")}</span>
-          <button
-            onClick={handleBgmAccept}
-            className="px-3 py-1 text-xs font-medium bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
-          >
-            {tQuest("bgmEnable")}
-          </button>
-          <button
-            onClick={handleBgmDecline}
-            className="px-3 py-1 text-xs font-medium text-gray-400 hover:text-gray-200 transition-colors"
-          >
-            {tQuest("bgmDisable")}
-          </button>
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300 w-[min(280px,90vw)]">
+        <div className="bg-gray-900/95 backdrop-blur-sm rounded-2xl border border-amber-500/30 px-4 py-3 shadow-xl text-center">
+          <p className="text-sm text-gray-200 mb-2.5">🎵 {tQuest("bgmPrompt")}</p>
+          <div className="flex gap-2 justify-center">
+            <button
+              onClick={handleBgmAccept}
+              className="px-4 py-1.5 text-xs font-medium bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+            >
+              {tQuest("bgmEnable")}
+            </button>
+            <button
+              onClick={handleBgmDecline}
+              className="px-4 py-1.5 text-xs font-medium text-gray-400 hover:text-gray-200 border border-white/10 rounded-lg transition-colors"
+            >
+              {tQuest("bgmDisable")}
+            </button>
+          </div>
         </div>
       </div>
     )}

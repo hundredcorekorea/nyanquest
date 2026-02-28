@@ -323,6 +323,52 @@ export function useBgmPlayer() {
     localStorage.setItem(STORAGE_KEY_VOLUME, clamped.toString());
   }, []);
 
+  /**
+   * Play audio DIRECTLY — must be called synchronously inside a user gesture
+   * (click/touch handler). Bypasses all state checks so the browser recognises
+   * the gesture context.  After calling this, also call playCategory/playTrack
+   * so the hook state stays in sync.
+   */
+  const playDirect = useCallback((category: BgmCategory, specificTrackId?: string) => {
+    const url = specificTrackId
+      ? `/bgm/${category}/${specificTrackId}.mp3`
+      : pickRandomUrl(category);
+    if (!url) return;
+
+    // Stop previous inline
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+    }
+
+    const audio = new Audio(url);
+    audio.volume = volumeRef.current;
+    audioRef.current = audio;
+    trackIdRef.current = specificTrackId ?? null;
+    categoryRef.current = category;
+    enabledRef.current = true;
+
+    // Chain next track on end
+    audio.addEventListener("ended", () => {
+      const c = categoryRef.current;
+      if (!c || !enabledRef.current) return;
+      const nextUrl = pickRandomUrl(c);
+      if (!nextUrl || !audioRef.current) return;
+      audioRef.current.src = nextUrl;
+      audioRef.current.play().catch(() => {});
+    });
+
+    // This play() call is synchronous from the click — browser will allow it
+    audio.play()
+      .then(() => { playingRef.current = true; blockedRef.current = false; })
+      .catch(() => { blockedRef.current = true; playingRef.current = false; });
+
+    // Sync React state
+    setEnabled(true);
+    localStorage.setItem(STORAGE_KEY_ENABLED, "1");
+    setCurrentCategory(category);
+  }, []);
+
   return {
     enabled,
     volume,
@@ -331,6 +377,7 @@ export function useBgmPlayer() {
     setVolume,
     playCategory,
     playTrack,
+    playDirect,
     stopAll,
   };
 }
