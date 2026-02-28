@@ -146,25 +146,35 @@ export function useBgmPlayer() {
   /** true when play() was blocked by autoplay policy */
   const blockedRef = useRef(false);
   const playingRef = useRef(false);
+  // Use refs to avoid stale closure in the persistent listener
+  const enabledRef = useRef(enabled);
+  enabledRef.current = enabled;
+  const categoryRef = useRef(currentCategory);
+  categoryRef.current = currentCategory;
 
-  // Resume BGM on first user interaction if autoplay was blocked
+  // Resume BGM on any user interaction if autoplay was blocked
   useEffect(() => {
     const resume = () => {
-      if (blockedRef.current && currentCategory && enabled) {
-        blockedRef.current = false;
-        const active = activeRef.current === "a" ? audioARef.current : audioBRef.current;
-        if (active && active.src) {
-          active.play().then(() => { playingRef.current = true; }).catch(() => {});
-        }
-      }
+      if (!blockedRef.current || !enabledRef.current || !categoryRef.current) return;
+      blockedRef.current = false;
+      // Re-create audio in user gesture context
+      const url = `/bgm/${categoryRef.current}/${BGM_CATALOG[categoryRef.current]?.[Math.floor(Math.random() * (BGM_CATALOG[categoryRef.current]?.length || 1))]?.id}.mp3`;
+      if (!url) return;
+      const audio = new Audio(url);
+      audio.volume = getInitialVolume();
+      audioARef.current = audio;
+      activeRef.current = "a";
+      audio.play()
+        .then(() => { playingRef.current = true; })
+        .catch(() => {});
     };
-    document.addEventListener("click", resume, { once: true });
-    document.addEventListener("touchstart", resume, { once: true });
+    document.addEventListener("click", resume);
+    document.addEventListener("touchstart", resume);
     return () => {
       document.removeEventListener("click", resume);
       document.removeEventListener("touchstart", resume);
     };
-  }, [currentCategory, enabled]);
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
