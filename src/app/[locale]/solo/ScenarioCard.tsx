@@ -18,6 +18,7 @@ interface Props {
   dailyLimitReached: boolean;
   hasActiveQuest: boolean;
   isPremium: boolean;
+  isAdminUser?: boolean;
 }
 
 export default function ScenarioCard({
@@ -27,6 +28,7 @@ export default function ScenarioCard({
   dailyLimitReached,
   hasActiveQuest,
   isPremium,
+  isAdminUser,
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();
@@ -91,7 +93,7 @@ export default function ScenarioCard({
       const limit = premiumStatus
         ? PREMIUM_CONFIG.premium.dailyQuestLimit
         : PREMIUM_CONFIG.free.dailyQuestLimit;
-      if ((dailyStartCount ?? 0) >= limit) {
+      if (!isAdminUser && (dailyStartCount ?? 0) >= limit) {
         toast(tSolo("dailyLimitReached"), "error");
         return;
       }

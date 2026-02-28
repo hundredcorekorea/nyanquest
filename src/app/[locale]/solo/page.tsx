@@ -1,6 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { SCENARIOS } from "@/lib/solo-quest/scenarios";
 import { PREMIUM_CONFIG } from "@/lib/premium";
+import { isAdmin } from "@/lib/admin";
 import ScenarioCard from "./ScenarioCard";
 import ScenarioMarketCard from "./ScenarioMarketCard";
 import ScenarioMarketIntro from "./ScenarioMarketIntro";
@@ -109,7 +110,9 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
               ? isTrial
                 ? `${trialDaysLeft <= 3 ? "⏳ " : ""}${t("trialDaysLeft", { days: trialDaysLeft })}`
                 : t("unlimitedTraining")
-              : t("dailyCount", { count: dailyCount, limit: PREMIUM_CONFIG.free.dailyQuestLimit })}
+              : isAdmin(user?.id)
+                ? t("unlimitedTraining")
+                : t("dailyCount", { count: dailyCount, limit: PREMIUM_CONFIG.free.dailyQuestLimit })}
           </p>
         )}
       </div>
@@ -153,9 +156,10 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
             scenario={scenario}
             difficultyLabel={difficultyLabel[scenario.difficulty]}
             isLoggedIn={!!user}
-            dailyLimitReached={!isPremium && dailyCount >= PREMIUM_CONFIG.free.dailyQuestLimit}
+            dailyLimitReached={!isPremium && !isAdmin(user?.id) && dailyCount >= PREMIUM_CONFIG.free.dailyQuestLimit}
             hasActiveQuest={!!inProgressQuest}
             isPremium={isPremium}
+            isAdminUser={isAdmin(user?.id)}
           />
         ))}
       </div>
