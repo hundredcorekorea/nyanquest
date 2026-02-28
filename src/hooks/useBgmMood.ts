@@ -20,11 +20,11 @@ const MOOD_PATTERNS: { category: BgmCategory; keywords: RegExp }[] = [
     keywords:
       /실패했|패배|게임 오버|쓰러졌|죽었|함정에|전멸|defeat|game over|you died|you fell|failed|trapped/i,
   },
-  // Battle (high energy)
+  // Battle (high energy, danger, emergency)
   {
     category: "battle",
     keywords:
-      /전투|싸움|공격|방어|적이|몬스터|칼을|검을|칼날|화살|마법 공격|피해를|데미지|HP|체력|전사|추격|쫓아|도망|기습|결투|무기|위협|battle|fight|attack|defend|enemy|monster|dragon|sword|damage|combat|chase|ambush|duel|slash|strike/i,
+      /전투|싸움|공격|방어|적이|몬스터|칼을|검을|칼날|화살|마법 공격|피해를|데미지|HP|체력|전사|추격|쫓아|도망|기습|결투|무기|위협|비상|긴급|탈출|위험한|위험해|화재|연기가|연기를|폭발|무너지|산소|대피|충돌|경보|경고|battle|fight|attack|defend|enemy|monster|dragon|sword|damage|combat|chase|ambush|duel|slash|strike|danger|emergency|alarm|explosion|fire|escape|oxygen/i,
   },
   // Horror
   {
@@ -82,9 +82,9 @@ const TRACK_PATTERNS: Partial<Record<BgmCategory, { trackId: string; keywords: R
     { trackId: "battle_02_chase_scene", keywords: /추격|쫓아|도주|chase|pursue|run away|flee/i },
     { trackId: "battle_03_ambush", keywords: /기습|습격|매복|ambush|surprise attack|sudden/i },
     { trackId: "battle_04_duel", keywords: /결투|일대일|맞서|duel|one.on.one|face off/i },
-    { trackId: "battle_05_space_battle", keywords: /우주 전투|함선|레이저|space battle|starship|laser/i },
+    { trackId: "battle_05_space_battle", keywords: /우주 전투|함선|레이저|우주선|정거장|space battle|starship|laser|station/i },
     { trackId: "battle_06_stealth", keywords: /잠입|은밀|숨어|몰래|stealth|sneak|infiltrate|hide/i },
-    { trackId: "battle_08_escape", keywords: /탈출|도망|무너|escape|flee|collapse|crumble/i },
+    { trackId: "battle_08_escape", keywords: /탈출|도망|무너|비상|긴급|화재|연기|산소|대피|폭발|경보|경고|충돌|escape|flee|collapse|crumble|emergency|alarm|fire|oxygen|explosion/i },
     { trackId: "battle_09_monster_encounter", keywords: /몬스터|괴물|조우|creature|monster|beast|encounter/i },
     { trackId: "battle_10_victory_march", keywords: /행진|진군|march|advance|charge/i },
   ],
