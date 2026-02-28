@@ -409,7 +409,10 @@
     "diceCriticalBitd": "Critical!",
     "diceCriticalBitdNyan": "Critical, nya!! Double sixes!",
     "diceRollResultBitd": "Rolled the dice! {pool}d6 → Highest {highest} ({result})",
-    "diceCheckBitd": "{label} Check ({pool}d6)"
+    "diceCheckBitd": "{label} Check ({pool}d6)",
+    "bgmPrompt": "Enable background music, nya?",
+    "bgmEnable": "On",
+    "bgmDisable": "Off"
   },
   "Tutorial": {
     "skip": "Skip",

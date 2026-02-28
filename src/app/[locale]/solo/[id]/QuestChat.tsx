@@ -52,6 +52,8 @@ export default function QuestChat({
     }
   }, [bgm.playTrack, bgm.playCategory]));
   const [showBgmVolume, setShowBgmVolume] = useState(false);
+  const [showBgmPrompt, setShowBgmPrompt] = useState(false);
+  const bgmPromptAnsweredRef = useRef(false);
   const [messages, setMessages] = useState<QuestMessage[]>(quest.messages);
   const [isStreaming, setIsStreaming] = useState(false);
   const [streamingText, setStreamingText] = useState("");
@@ -68,10 +70,19 @@ export default function QuestChat({
     window.scrollTo(0, 0);
   }, []);
 
-  // Analyze initial GM message mood on mount
+  // Show BGM consent prompt on mount (only if not already answered)
   useEffect(() => {
-    const lastGm = [...quest.messages].reverse().find((m) => m.role === "gm");
-    if (lastGm) bgmMood.analyzeMessage(lastGm.content);
+    const answered = localStorage.getItem("nyanquest_bgm_prompted");
+    if (!answered && bgm.enabled) {
+      // Small delay so the page renders first
+      const timer = setTimeout(() => setShowBgmPrompt(true), 800);
+      return () => clearTimeout(timer);
+    }
+    // If already answered "yes" previously, start BGM via mood analysis
+    if (answered === "yes" && bgm.enabled) {
+      const lastGm = [...quest.messages].reverse().find((m) => m.role === "gm");
+      if (lastGm) bgmMood.analyzeMessage(lastGm.content);
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -93,6 +104,24 @@ export default function QuestChat({
     const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
     if (!isVisible) setShowScrollDown(true);
   }, [messages, streamingText]);
+
+  // BGM consent handlers — user click = user gesture = guaranteed audio play
+  const handleBgmAccept = useCallback(() => {
+    bgmPromptAnsweredRef.current = true;
+    localStorage.setItem("nyanquest_bgm_prompted", "yes");
+    setShowBgmPrompt(false);
+    // Start BGM immediately in this click handler (user gesture context)
+    const lastGm = [...messages].reverse().find((m) => m.role === "gm");
+    if (lastGm) bgmMood.analyzeMessage(lastGm.content);
+  }, [messages, bgmMood]);
+
+  const handleBgmDecline = useCallback(() => {
+    bgmPromptAnsweredRef.current = true;
+    localStorage.setItem("nyanquest_bgm_prompted", "no");
+    localStorage.setItem("nyanquest_bgm_enabled", "0");
+    setShowBgmPrompt(false);
+    bgm.toggle(); // turn off
+  }, [bgm]);
 
   const scrollToBottom = useCallback(() => {
     chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
@@ -300,6 +329,28 @@ export default function QuestChat({
     {isPremium && (
       <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-amber-500/5 via-transparent to-amber-500/5" />
     )}
+    {/* BGM consent prompt */}
+    {showBgmPrompt && (
+      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300">
+        <div className="bg-gray-900/95 backdrop-blur-sm rounded-2xl border border-amber-500/30 px-5 py-3 flex items-center gap-3 shadow-xl">
+          <span className="text-lg">🎵</span>
+          <span className="text-sm text-gray-200">{tQuest("bgmPrompt")}</span>
+          <button
+            onClick={handleBgmAccept}
+            className="px-3 py-1 text-xs font-medium bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+          >
+            {tQuest("bgmEnable")}
+          </button>
+          <button
+            onClick={handleBgmDecline}
+            className="px-3 py-1 text-xs font-medium text-gray-400 hover:text-gray-200 transition-colors"
+          >
+            {tQuest("bgmDisable")}
+          </button>
+        </div>
+      </div>
+    )}
+
     <div className="relative max-w-2xl mx-auto px-4 pt-4 pb-24 flex flex-col min-h-[calc(100vh-5rem)]">
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
