@@ -173,6 +173,11 @@ export default function SessionChat({
     loadMessages();
   }, [initialSession.id, initialSession.use_ai_gm, triggerOpening, fetchRoundStatus]);
 
+  // Scroll to top on mount
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Subscribe to realtime messages
   useEffect(() => {
     const channel = supabase

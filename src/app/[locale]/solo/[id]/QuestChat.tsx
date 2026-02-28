@@ -57,6 +57,11 @@ export default function QuestChat({
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
 
+  // Scroll to top on mount so user sees GM opening message first
+  useEffect(() => {
+    window.scrollTo(0, 0);
+  }, []);
+
   // Analyze initial GM message mood on mount
   useEffect(() => {
     const lastGm = [...quest.messages].reverse().find((m) => m.role === "gm");
