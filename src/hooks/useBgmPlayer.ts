@@ -162,6 +162,10 @@ export function useBgmPlayer() {
   const volumeRef = useRef(volume);
   volumeRef.current = volume;
   const trackIdRef = useRef<string | null>(null);
+  /** Current playing URL — used for loop repeat */
+  const currentUrlRef = useRef<string | null>(null);
+  /** Decoded audio buffer cache to avoid re-fetching on repeat */
+  const bufferCacheRef = useRef<Map<string, AudioBuffer>>(new Map());
 
   /** Get or create AudioContext + GainNode */
   const ensureCtx = useCallback(() => {
@@ -213,6 +217,7 @@ export function useBgmPlayer() {
 
   const stopAll = useCallback(() => {
     playingRef.current = false;
+    currentUrlRef.current = null;
     if (sourceRef.current) {
       try { sourceRef.current.stop(); } catch { /* already stopped */ }
       sourceRef.current = null;
@@ -221,10 +226,12 @@ export function useBgmPlayer() {
 
   /**
    * Fetch an mp3 file, decode it, and play it through AudioContext.
-   * When the track ends, auto-chain to the next random track in the category.
+   * When the track ends, repeat the SAME track (loop) until mood changes.
+   * Decoded buffers are cached to avoid re-fetching on repeat.
    */
   const playUrl = useCallback(async (url: string) => {
     const ctx = ensureCtx();
+    currentUrlRef.current = url;
 
     // Resume if suspended (will succeed if called from user gesture,
     // or if previously resumed)
@@ -239,35 +246,38 @@ export function useBgmPlayer() {
     }
 
     try {
-      const response = await fetch(url);
-      if (!response.ok) {
-        console.error("[BGM] fetch failed:", response.status, url);
-        return;
+      // Use cached buffer if available
+      let audioBuffer = bufferCacheRef.current.get(url);
+      if (!audioBuffer) {
+        const response = await fetch(url);
+        if (!response.ok) {
+          console.error("[BGM] fetch failed:", response.status, url);
+          return;
+        }
+        const arrayBuffer = await response.arrayBuffer();
+        audioBuffer = await ctx.decodeAudioData(arrayBuffer);
+        bufferCacheRef.current.set(url, audioBuffer);
       }
-      const arrayBuffer = await response.arrayBuffer();
-      const audioBuffer = await ctx.decodeAudioData(arrayBuffer);
 
-      // Check if still enabled and context is still valid
+      // Check if still enabled, context is valid, and url hasn't changed
       if (!enabledRef.current || ctx !== ctxRef.current) return;
+      if (currentUrlRef.current !== url) return; // mood changed during fetch
 
       const source = ctx.createBufferSource();
       source.buffer = audioBuffer;
       source.connect(gainRef.current!);
       sourceRef.current = source;
 
-      // When track ends, chain to next random track in same category
+      // When track ends, repeat the same track (loop)
       source.onended = () => {
         if (source !== sourceRef.current) return; // superseded
-        const cat = categoryRef.current;
-        if (!cat || !enabledRef.current) {
+        if (!enabledRef.current) {
           playingRef.current = false;
           return;
         }
-        const nextUrl = pickRandomUrl(cat);
-        if (nextUrl) {
-          playUrl(nextUrl);
-        } else {
-          playingRef.current = false;
+        // Repeat same URL — mood-matched track stays until mood changes
+        if (currentUrlRef.current) {
+          playUrl(currentUrlRef.current);
         }
       };
 
