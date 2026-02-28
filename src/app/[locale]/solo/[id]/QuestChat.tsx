@@ -137,12 +137,11 @@ export default function QuestChat({
     setShowScrollDown(false);
   }, []);
 
-  // Parse dice requests from last GM message
+  // Parse dice requests and choices from last GM message
   useEffect(() => {
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
     if (lastGm && !isStreaming) {
       const request = parseSystemDiceRequest(lastGm.content, system);
-      setPendingDice(request);
 
       // Extract numbered suggestions from GM message
       const lines = lastGm.content.split("\n");
@@ -153,8 +152,16 @@ export default function QuestChat({
       if (numbered.length > 0) {
         setSuggestions(numbered);
       }
+
+      // If GM presents both choices AND dice request,
+      // defer dice — let player pick a choice first, then roll dice on next turn.
+      if (request && numbered.length >= 2) {
+        setPendingDice(null);
+      } else {
+        setPendingDice(request);
+      }
     }
-  }, [messages, isStreaming]);
+  }, [messages, isStreaming, system]);
 
   // Check for quest completion — only when AI explicitly ends the story
   useEffect(() => {

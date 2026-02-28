@@ -26,6 +26,7 @@ export function buildSystemPrompt(
 - Present 2-3 numbered choices each turn, always ending with something like "Or feel free to type any action you want, nya!"
 - Embrace creative player actions not listed in the choices.
 - Make both success and failure fun. The story continues even on failure.
+- NEVER put a dice request and numbered choices in the same message. Either present choices OR request a dice roll, not both. When choices are given, wait for the player to choose, THEN request a dice roll in your next response if needed.
 
 ## TRPG System: ${sys.nameEn}
 ${sys.promptRules}
@@ -64,6 +65,7 @@ ${scenarioPrompt}
 - 매 턴마다 2-3가지 선택지를 번호로 제시하되, 마지막에 반드시 "또는 원하는 행동을 자유롭게 입력해도 된다냥!" 같은 자유 입력 안내를 추가해.
 - 플레이어가 선택지에 없는 창의적인 행동을 하면 적극적으로 수용하고 재미있게 진행해.
 - 성공과 실패 모두 재미있게 묘사. 실패해도 이야기는 계속 진행.
+- 절대 하나의 응답에 선택지와 판정 요청을 동시에 넣지 마. 선택지를 제시하거나, 판정을 요청하거나, 둘 중 하나만 해. 선택지를 줬으면 플레이어가 선택한 후 다음 응답에서 판정을 요청해.
 
 ## TRPG 시스템: ${sys.name}
 ${sys.promptRules}

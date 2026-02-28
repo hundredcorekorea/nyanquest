@@ -309,6 +309,8 @@ export function useBgmPlayer() {
         setCurrentCategory(category);
         return;
       }
+      // Skip if same track is already playing — don't restart on every GM message
+      if (trackId === trackIdRef.current && playingRef.current) return;
       setCurrentCategory(category);
       startPlaying(category, trackId);
     },
