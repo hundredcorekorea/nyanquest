@@ -63,7 +63,7 @@ export interface SoloQuest {
   id: string;
   user_id: string;
   scenario_id: string;
-  status: "in_progress" | "completed" | "abandoned";
+  status: "in_progress" | "completed" | "failed" | "abandoned";
   messages: QuestMessage[];
   turn_count: number;
   total_turns: number;

@@ -28,6 +28,12 @@ export function buildSystemPrompt(
 - Make both success and failure fun. The story continues even on failure.
 - NEVER put a dice request and numbered choices in the same message. Either present choices OR request a dice roll, not both. When choices are given, wait for the player to choose, THEN request a dice roll in your next response if needed.
 
+## Defeat (Mid-Game Failure)
+- If the player makes a catastrophic mistake (falls into a deadly trap, gets betrayed and captured, critical dice failure at a life-or-death moment, etc.), the quest CAN end in defeat.
+- When defeat happens: write a dramatic defeat scene, then add "[Quest Failed]" at the very end. Do NOT present choices after defeat.
+- Defeat should feel earned and dramatic, not arbitrary. Give the player fair warning before fatal situations.
+- Don't make defeat too easy — the player should feel they had a chance to avoid it.
+
 ## TRPG System: ${sys.nameEn}
 ${sys.promptRules}
 
@@ -35,7 +41,7 @@ ${sys.promptRules}
 - Current: Turn ${currentTurn}/${totalTurns}
 ${currentTurn >= totalTurns - 3 && currentTurn < totalTurns - 1 ? "- ⚠️ The story is approaching its climax. Start naturally hinting to the player IN CHARACTER that a crucial moment is near. For example: \"NaYang senses the adventure reaching its peak, nya... Choose wisely, Adventurer!\" Steer the story toward its conclusion. Do not introduce new subplots." : ""}
 ${currentTurn >= totalTurns - 1 && currentTurn < totalTurns ? "- ⚠️⚠️ FINAL STRETCH! You MUST tell the player in character that this is their last chance to act. For example: \"This is the final moment of our adventure, nya! Make it count, Adventurer!\" Wrap up all storylines. No new plot points." : ""}
-${currentTurn >= totalTurns ? `- 🏁 You MUST end the story this turn! Write an epilogue and add "[Quest Complete]" at the very end. Do NOT present choices. This is an absolute rule.` : ""}
+${currentTurn >= totalTurns ? `- 🏁 You MUST end the story this turn! Write an epilogue and add "[Quest Complete]" (or "[Quest Failed]" if the story ended in defeat) at the very end. Do NOT present choices. This is an absolute rule.` : ""}
 
 ## Scenario Setting
 ${scenarioPrompt}
@@ -67,6 +73,12 @@ ${scenarioPrompt}
 - 성공과 실패 모두 재미있게 묘사. 실패해도 이야기는 계속 진행.
 - 절대 하나의 응답에 선택지와 판정 요청을 동시에 넣지 마. 선택지를 제시하거나, 판정을 요청하거나, 둘 중 하나만 해. 선택지를 줬으면 플레이어가 선택한 후 다음 응답에서 판정을 요청해.
 
+## 패배 (도중 실패)
+- 플레이어가 치명적인 실수를 하면 (함정에 빠지거나, 배신당해 포로가 되거나, 생사가 걸린 순간에 크리티컬 실패가 나거나 등) 퀘스트가 패배로 끝날 수 있다.
+- 패배가 발생하면: 극적인 패배 장면을 묘사하고, 마지막에 "[퀘스트 실패]"를 추가해. 패배 후에는 선택지를 제시하지 마.
+- 패배는 드라마틱하고 납득할 만해야 해. 억지스럽거나 갑작스러운 패배는 금지. 치명적인 상황 전에 플레이어에게 충분한 경고를 줘.
+- 패배를 너무 쉽게 주지 마 — 플레이어가 피할 수 있었다는 느낌을 줘야 해.
+
 ## TRPG 시스템: ${sys.name}
 ${sys.promptRules}
 
@@ -74,7 +86,7 @@ ${sys.promptRules}
 - 현재: ${currentTurn}/${totalTurns} 턴
 ${currentTurn >= totalTurns - 3 && currentTurn < totalTurns - 1 ? "- ⚠️ 이야기가 클라이맥스에 가까워지고 있어. 플레이어에게 인캐릭터로 자연스럽게 중요한 순간이 다가오고 있음을 암시해. 예시: \"나양의 수염이 떨린다냥... 모험이 정점을 향해 가고 있다냥. 신중하게 선택해야 한다냥, 집사!\" 이야기를 마무리 방향으로 진행해. 새로운 복선이나 서브플롯을 만들지 마." : ""}
 ${currentTurn >= totalTurns - 1 && currentTurn < totalTurns ? "- ⚠️⚠️ 마지막 기회! 플레이어에게 인캐릭터로 이것이 마지막 행동 기회임을 반드시 알려줘. 예시: \"이것이 이 모험의 마지막 순간이다냥! 후회 없는 선택을 하라냥, 집사!\" 모든 스토리를 정리해. 새로운 전개 금지." : ""}
-${currentTurn >= totalTurns ? `- 🏁 반드시 이번 턴에서 이야기를 끝내! 에필로그를 작성하고 마지막에 반드시 "[퀘스트 완료]"를 추가해. 선택지를 제시하지 마. 이것은 절대적인 규칙이다.` : ""}
+${currentTurn >= totalTurns ? `- 🏁 반드시 이번 턴에서 이야기를 끝내! 에필로그를 작성하고 마지막에 반드시 "[퀘스트 완료]" (또는 이야기가 패배로 끝났다면 "[퀘스트 실패]")를 추가해. 선택지를 제시하지 마. 이것은 절대적인 규칙이다.` : ""}
 
 ## 시나리오 설정
 ${scenario.systemPromptAddition}

@@ -163,12 +163,18 @@ export default function QuestChat({
     }
   }, [messages, isStreaming, system]);
 
-  // Check for quest completion — only when AI explicitly ends the story
+  // Check for quest completion or failure — only when AI explicitly ends the story
   useEffect(() => {
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
+    if (!lastGm) return;
     if (
-      lastGm?.content.includes("[퀘스트 완료]") ||
-      lastGm?.content.includes("[Quest Complete]")
+      lastGm.content.includes("[퀘스트 실패]") ||
+      lastGm.content.includes("[Quest Failed]")
+    ) {
+      setQuestStatus("failed");
+    } else if (
+      lastGm.content.includes("[퀘스트 완료]") ||
+      lastGm.content.includes("[Quest Complete]")
     ) {
       setQuestStatus("completed");
     }
@@ -506,9 +512,9 @@ export default function QuestChat({
         </button>
       )}
 
-      {/* Quest completion overlay */}
-      {questStatus === "completed" && (
-        <QuestComplete questId={quest.id} turnCount={turnCount} isPremium={isPremium} />
+      {/* Quest completion/failure overlay */}
+      {(questStatus === "completed" || questStatus === "failed") && (
+        <QuestComplete questId={quest.id} turnCount={turnCount} isPremium={isPremium} isFailed={questStatus === "failed"} />
       )}
 
       {/* Input area */}

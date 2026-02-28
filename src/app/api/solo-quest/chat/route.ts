@@ -287,12 +287,18 @@ export async function POST(request: NextRequest) {
           },
         ];
 
+        // Detect quest end state from GM response
+        const isFailed = fullResponse.includes("[퀘스트 실패]") || fullResponse.includes("[Quest Failed]");
+        const isComplete = fullResponse.includes("[퀘스트 완료]") || fullResponse.includes("[Quest Complete]");
+        const endStatus = isFailed ? "failed" : isComplete ? "completed" : null;
+
         supabase
           .from("solo_quests")
           .update({
             messages: newMessages,
             turn_count: turnCount + 1,
             updated_at: new Date().toISOString(),
+            ...(endStatus ? { status: endStatus } : {}),
           })
           .eq("id", questId)
           .then(() => {});
