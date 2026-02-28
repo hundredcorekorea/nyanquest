@@ -155,6 +155,8 @@ export function useBgmPlayer() {
   categoryRef.current = currentCategory;
   const volumeRef = useRef(volume);
   volumeRef.current = volume;
+  /** Store intended trackId for resume after autoplay block */
+  const trackIdRef = useRef<string | null>(null);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -182,11 +184,15 @@ export function useBgmPlayer() {
   }, []);
 
   /**
-   * Start playing a random track from the given category.
-   * When the track ends, automatically picks another random track.
+   * Core play function. If specificTrackId is given, plays that track;
+   * otherwise picks a random track from the category.
+   * On track end, picks another random track from the same category.
+   * Sets blockedRef on autoplay failure so resume listener can retry.
    */
-  const startPlaying = useCallback((category: BgmCategory) => {
-    const url = pickRandomUrl(category);
+  const startPlaying = useCallback((category: BgmCategory, specificTrackId?: string) => {
+    const url = specificTrackId
+      ? `/bgm/${category}/${specificTrackId}.mp3`
+      : pickRandomUrl(category);
     if (!url) return;
 
     // Stop previous
@@ -194,6 +200,9 @@ export function useBgmPlayer() {
       audioRef.current.pause();
       audioRef.current.src = "";
     }
+
+    // Store for resume
+    trackIdRef.current = specificTrackId ?? null;
 
     const audio = new Audio(url);
     audio.volume = volumeRef.current;
@@ -223,7 +232,8 @@ export function useBgmPlayer() {
       // CRITICAL: Create Audio and call play() synchronously within user gesture.
       // Do not call any async functions or complex logic before play().
       const cat = categoryRef.current;
-      const url = pickRandomUrl(cat);
+      const tid = trackIdRef.current;
+      const url = tid ? `/bgm/${cat}/${tid}.mp3` : pickRandomUrl(cat);
       if (!url) return;
 
       // Stop old audio inline (sync, no function call overhead)
@@ -262,18 +272,14 @@ export function useBgmPlayer() {
   /** Play a specific track by category and track id */
   const playTrack = useCallback(
     (category: BgmCategory, trackId: string) => {
-      if (!enabled) return;
-      stopAll();
+      if (!enabled) {
+        setCurrentCategory(category);
+        return;
+      }
       setCurrentCategory(category);
-
-      const url = `/bgm/${category}/${trackId}.mp3`;
-      const audio = new Audio(url);
-      audio.volume = volume;
-      audio.loop = true;
-      audioRef.current = audio;
-      audio.play().catch(() => {});
+      startPlaying(category, trackId);
     },
-    [enabled, volume, stopAll]
+    [enabled, startPlaying]
   );
 
   /** Switch BGM to match a mood category */
