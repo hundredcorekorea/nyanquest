@@ -20,7 +20,6 @@ export interface BgmTrack {
 
 const STORAGE_KEY_ENABLED = "nyanquest_bgm_enabled";
 const STORAGE_KEY_VOLUME = "nyanquest_bgm_volume";
-const CROSSFADE_DURATION = 2; // seconds
 const DEFAULT_VOLUME = 0.3;
 
 /** Category display names */
@@ -128,149 +127,130 @@ function getInitialVolume(): number {
   return saved ? parseFloat(saved) : DEFAULT_VOLUME;
 }
 
-function pickRandom(tracks: BgmTrack[]): BgmTrack | null {
+function pickRandomUrl(category: BgmCategory): string | null {
+  const tracks = BGM_CATALOG[category];
   if (tracks.length === 0) return null;
-  return tracks[Math.floor(Math.random() * tracks.length)];
+  const track = tracks[Math.floor(Math.random() * tracks.length)];
+  return `/bgm/${category}/${track.id}.mp3`;
 }
 
+/**
+ * Simple BGM player hook.
+ * Uses a single looping audio element per category.
+ * On track end, picks another random track from the same category.
+ */
 export function useBgmPlayer() {
   const [enabled, setEnabled] = useState(getInitialEnabled);
   const [volume, setVolumeState] = useState(getInitialVolume);
   const [currentCategory, setCurrentCategory] = useState<BgmCategory | null>(null);
 
-  const audioARef = useRef<HTMLAudioElement | null>(null);
-  const audioBRef = useRef<HTMLAudioElement | null>(null);
-  const activeRef = useRef<"a" | "b">("a");
-  const fadeTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
-  const loopTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+  const playingRef = useRef(false);
   /** true when play() was blocked by autoplay policy */
   const blockedRef = useRef(false);
-  const playingRef = useRef(false);
-  // Use refs to avoid stale closure in the persistent listener
+  // Refs to avoid stale closures in persistent event listeners
   const enabledRef = useRef(enabled);
   enabledRef.current = enabled;
   const categoryRef = useRef(currentCategory);
   categoryRef.current = currentCategory;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const startLoopRef = useRef<any>(null);
+  const volumeRef = useRef(volume);
+  volumeRef.current = volume;
 
   // Cleanup on unmount
   useEffect(() => {
     return () => {
-      audioARef.current?.pause();
-      audioBRef.current?.pause();
-      if (fadeTimerRef.current) clearInterval(fadeTimerRef.current);
-      if (loopTimerRef.current) clearTimeout(loopTimerRef.current);
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+        audioRef.current = null;
+      }
     };
   }, []);
 
   // Apply volume changes to active audio
   useEffect(() => {
-    const active = activeRef.current === "a" ? audioARef.current : audioBRef.current;
-    if (active) active.volume = volume;
+    if (audioRef.current) audioRef.current.volume = volume;
   }, [volume]);
-
-  const getTrackUrl = useCallback((category: BgmCategory): string | null => {
-    const tracks = BGM_CATALOG[category];
-    const track = pickRandom(tracks);
-    if (!track) return null;
-    return `/bgm/${category}/${track.id}.mp3`;
-  }, []);
 
   const stopAll = useCallback(() => {
     playingRef.current = false;
-    if (fadeTimerRef.current) {
-      clearInterval(fadeTimerRef.current);
-      fadeTimerRef.current = null;
-    }
-    if (loopTimerRef.current) {
-      clearTimeout(loopTimerRef.current);
-      loopTimerRef.current = null;
-    }
-    if (audioARef.current) {
-      audioARef.current.pause();
-      audioARef.current.src = "";
-    }
-    if (audioBRef.current) {
-      audioBRef.current.pause();
-      audioBRef.current.src = "";
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+      audioRef.current = null;
     }
   }, []);
 
-  const startCrossfadeLoop = useCallback(
-    (category: BgmCategory) => {
-      const url = getTrackUrl(category);
-      if (!url) return;
+  /**
+   * Start playing a random track from the given category.
+   * When the track ends, automatically picks another random track.
+   */
+  const startPlaying = useCallback((category: BgmCategory) => {
+    const url = pickRandomUrl(category);
+    if (!url) return;
 
-      stopAll();
+    // Stop previous
+    if (audioRef.current) {
+      audioRef.current.pause();
+      audioRef.current.src = "";
+    }
 
-      const audioA = new Audio(url);
-      audioA.volume = volume;
-      audioARef.current = audioA;
-      audioBRef.current = new Audio();
-      activeRef.current = "a";
+    const audio = new Audio(url);
+    audio.volume = volumeRef.current;
+    audioRef.current = audio;
 
-      audioA.play()
-        .then(() => { playingRef.current = true; blockedRef.current = false; })
-        .catch(() => { blockedRef.current = true; playingRef.current = false; });
+    // When track ends, pick another random track from same category
+    audio.addEventListener("ended", () => {
+      const cat = categoryRef.current;
+      if (!cat || !enabledRef.current) return;
+      const nextUrl = pickRandomUrl(cat);
+      if (!nextUrl || !audioRef.current) return;
+      audioRef.current.src = nextUrl;
+      audioRef.current.play().catch(() => {});
+    });
 
-      // Schedule crossfade loop
-      const scheduleCrossfade = (current: HTMLAudioElement, label: "a" | "b") => {
-        const onTimeUpdate = () => {
-          if (!current.duration) return;
-          const remaining = current.duration - current.currentTime;
+    audio.play()
+      .then(() => { playingRef.current = true; blockedRef.current = false; })
+      .catch(() => { blockedRef.current = true; playingRef.current = false; });
+  }, []);
 
-          if (remaining <= CROSSFADE_DURATION && !fadeTimerRef.current) {
-            // Start next track
-            const nextUrl = getTrackUrl(category);
-            if (!nextUrl) return;
-
-            const next = label === "a" ? audioBRef.current! : audioARef.current!;
-            next.src = nextUrl;
-            next.volume = 0;
-            next.play().catch(() => {});
-
-            const fadeStep = 50; // ms
-            const steps = (CROSSFADE_DURATION * 1000) / fadeStep;
-            let step = 0;
-
-            fadeTimerRef.current = setInterval(() => {
-              step++;
-              const progress = step / steps;
-              current.volume = Math.max(0, volume * (1 - progress));
-              next.volume = Math.min(volume, volume * progress);
-
-              if (step >= steps) {
-                if (fadeTimerRef.current) {
-                  clearInterval(fadeTimerRef.current);
-                  fadeTimerRef.current = null;
-                }
-                current.pause();
-                current.removeEventListener("timeupdate", onTimeUpdate);
-                activeRef.current = label === "a" ? "b" : "a";
-                scheduleCrossfade(next, activeRef.current);
-              }
-            }, fadeStep);
-          }
-        };
-
-        current.addEventListener("timeupdate", onTimeUpdate);
-      };
-
-      scheduleCrossfade(audioA, "a");
-    },
-    [volume, getTrackUrl, stopAll]
-  );
-  startLoopRef.current = startCrossfadeLoop;
-
-  // Resume BGM on any user interaction if autoplay was blocked
+  // Resume BGM on first user interaction if autoplay was blocked
   useEffect(() => {
     const resume = () => {
       if (!blockedRef.current || !enabledRef.current || !categoryRef.current) return;
       blockedRef.current = false;
-      // Call the full crossfade loop in user gesture context
-      startLoopRef.current?.(categoryRef.current);
+
+      // CRITICAL: Create Audio and call play() synchronously within user gesture.
+      // Do not call any async functions or complex logic before play().
+      const cat = categoryRef.current;
+      const url = pickRandomUrl(cat);
+      if (!url) return;
+
+      // Stop old audio inline (sync, no function call overhead)
+      if (audioRef.current) {
+        audioRef.current.pause();
+        audioRef.current.src = "";
+      }
+
+      const audio = new Audio(url);
+      audio.volume = volumeRef.current;
+      audioRef.current = audio;
+
+      // Chain next track on end
+      audio.addEventListener("ended", () => {
+        const c = categoryRef.current;
+        if (!c || !enabledRef.current) return;
+        const nextUrl = pickRandomUrl(c);
+        if (!nextUrl || !audioRef.current) return;
+        audioRef.current.src = nextUrl;
+        audioRef.current.play().catch(() => {});
+      });
+
+      audio.play()
+        .then(() => { playingRef.current = true; })
+        .catch(() => { blockedRef.current = true; });
     };
+
     document.addEventListener("click", resume);
     document.addEventListener("touchstart", resume);
     return () => {
@@ -287,12 +267,11 @@ export function useBgmPlayer() {
       setCurrentCategory(category);
 
       const url = `/bgm/${category}/${trackId}.mp3`;
-      const audioA = new Audio(url);
-      audioA.volume = volume;
-      audioA.loop = true;
-      audioARef.current = audioA;
-      activeRef.current = "a";
-      audioA.play().catch(() => {});
+      const audio = new Audio(url);
+      audio.volume = volume;
+      audio.loop = true;
+      audioRef.current = audio;
+      audio.play().catch(() => {});
     },
     [enabled, volume, stopAll]
   );
@@ -312,9 +291,9 @@ export function useBgmPlayer() {
         stopAll();
         return;
       }
-      startCrossfadeLoop(category);
+      startPlaying(category);
     },
-    [enabled, currentCategory, stopAll, startCrossfadeLoop]
+    [enabled, currentCategory, stopAll, startPlaying]
   );
 
   /** Toggle BGM on/off */
@@ -325,11 +304,11 @@ export function useBgmPlayer() {
       if (!next) {
         stopAll();
       } else if (currentCategory) {
-        startCrossfadeLoop(currentCategory);
+        startPlaying(currentCategory);
       }
       return next;
     });
-  }, [currentCategory, stopAll, startCrossfadeLoop]);
+  }, [currentCategory, stopAll, startPlaying]);
 
   /** Set volume (0-1) */
   const setVolume = useCallback((v: number) => {
