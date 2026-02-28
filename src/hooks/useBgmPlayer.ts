@@ -195,6 +195,8 @@ export function useBgmPlayer() {
       : pickRandomUrl(category);
     if (!url) return;
 
+    console.log("[BGM] startPlaying:", url);
+
     // Stop previous
     if (audioRef.current) {
       audioRef.current.pause();
@@ -208,6 +210,10 @@ export function useBgmPlayer() {
     audio.volume = volumeRef.current;
     audioRef.current = audio;
 
+    audio.addEventListener("error", () => {
+      console.error("[BGM] startPlaying audio error:", audio.error?.code, audio.error?.message, url);
+    });
+
     // When track ends, pick another random track from same category
     audio.addEventListener("ended", () => {
       const cat = categoryRef.current;
@@ -219,8 +225,14 @@ export function useBgmPlayer() {
     });
 
     audio.play()
-      .then(() => { playingRef.current = true; blockedRef.current = false; })
-      .catch(() => { blockedRef.current = true; playingRef.current = false; });
+      .then(() => {
+        console.log("[BGM] startPlaying play() SUCCESS");
+        playingRef.current = true; blockedRef.current = false;
+      })
+      .catch((err) => {
+        console.error("[BGM] startPlaying play() BLOCKED:", err.name, err.message);
+        blockedRef.current = true; playingRef.current = false;
+      });
   }, []);
 
   // Resume BGM on first user interaction if autoplay was blocked
@@ -333,7 +345,12 @@ export function useBgmPlayer() {
     const url = specificTrackId
       ? `/bgm/${category}/${specificTrackId}.mp3`
       : pickRandomUrl(category);
-    if (!url) return;
+    if (!url) {
+      console.warn("[BGM] playDirect: no url for", category, specificTrackId);
+      return;
+    }
+
+    console.log("[BGM] playDirect:", url);
 
     // Stop previous inline
     if (audioRef.current) {
@@ -348,6 +365,10 @@ export function useBgmPlayer() {
     categoryRef.current = category;
     enabledRef.current = true;
 
+    audio.addEventListener("error", () => {
+      console.error("[BGM] audio error:", audio.error?.code, audio.error?.message, url);
+    });
+
     // Chain next track on end
     audio.addEventListener("ended", () => {
       const c = categoryRef.current;
@@ -360,8 +381,14 @@ export function useBgmPlayer() {
 
     // This play() call is synchronous from the click — browser will allow it
     audio.play()
-      .then(() => { playingRef.current = true; blockedRef.current = false; })
-      .catch(() => { blockedRef.current = true; playingRef.current = false; });
+      .then(() => {
+        console.log("[BGM] play() SUCCESS");
+        playingRef.current = true; blockedRef.current = false;
+      })
+      .catch((err) => {
+        console.error("[BGM] play() BLOCKED:", err.name, err.message);
+        blockedRef.current = true; playingRef.current = false;
+      });
 
     // Sync React state
     setEnabled(true);

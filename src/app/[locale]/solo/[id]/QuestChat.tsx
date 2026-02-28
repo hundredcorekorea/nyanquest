@@ -73,6 +73,7 @@ export default function QuestChat({
   // Show BGM consent prompt on mount (only if not already answered)
   useEffect(() => {
     const answered = localStorage.getItem("nyanquest_bgm_prompted");
+    console.log("[BGM] mount: prompted=", answered, "enabled=", bgm.enabled);
     if (!answered && bgm.enabled) {
       // Small delay so the page renders first
       const timer = setTimeout(() => setShowBgmPrompt(true), 800);
@@ -81,6 +82,7 @@ export default function QuestChat({
     // If already answered "yes" previously, start BGM via mood analysis
     if (answered === "yes" && bgm.enabled) {
       const lastGm = [...quest.messages].reverse().find((m) => m.role === "gm");
+      console.log("[BGM] mount: auto-start via analyzeMessage, hasGm=", !!lastGm);
       if (lastGm) bgmMood.analyzeMessage(lastGm.content);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -117,10 +119,10 @@ export default function QuestChat({
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
     if (lastGm) {
       const mood = bgmMood.detectMood(lastGm.content);
-      // playDirect is synchronous from the click — browser will allow it
+      console.log("[BGM] handleBgmAccept mood:", mood.category, mood.trackId);
       bgm.playDirect(mood.category, mood.trackId ?? undefined);
     } else {
-      // Fallback: play explore as default
+      console.log("[BGM] handleBgmAccept: no GM message, fallback to explore");
       bgm.playDirect("explore");
     }
   }, [messages, bgmMood, bgm]);
