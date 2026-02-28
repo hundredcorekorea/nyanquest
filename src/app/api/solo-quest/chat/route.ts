@@ -3,7 +3,7 @@ import { getScenario } from "@/lib/solo-quest/scenarios";
 import { buildSystemPrompt } from "@/lib/solo-quest/prompts";
 import { getSystem } from "@/lib/solo-quest/systems";
 import { PREMIUM_CONFIG } from "@/lib/premium";
-import { apiMsg } from "@/lib/api-messages";
+import { apiMsg, getLocaleFromRequest } from "@/lib/api-messages";
 import { NextRequest } from "next/server";
 import type { QuestMessage } from "@/types/solo-quest";
 
@@ -98,43 +98,52 @@ export async function POST(request: NextRequest) {
     );
   }
 
+  // Detect locale for multilingual AI response
+  const locale = getLocaleFromRequest(request);
+
   // Build system prompt
   const system = getSystem(scenario.system);
-  const systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens, system);
+  const systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens, system, locale);
+
+  // Dice result labels by locale
+  const diceL = locale === "en"
+    ? { result: "Dice Result", success: "Success", failure: "Failure", critical: "Critical!", fumble: "Fumble!", fullSuccess: "Full Success", partialSuccess: "Partial Success", messyCritical: "Messy Critical!", target: "target", skill: "skill", highest: "highest", successes: "successes", difficulty: "difficulty", vs: "vs" }
+    : { result: "주사위 결과", success: "성공", failure: "실패", critical: "크리티컬!", fumble: "펌블!", fullSuccess: "완전 성공", partialSuccess: "부분 성공", messyCritical: "메시 크리티컬!", target: "목표치", skill: "기능치", highest: "최고값", successes: "성공 수", difficulty: "난이도", vs: "vs" };
 
   // Format dice result for AI context based on system
   function formatDiceForAI(roll: typeof diceRoll): string {
     if (!roll) return "";
     const resultsStr = roll.results ? `[${roll.results.join(",")}]` : String(roll.result);
     const modStr = roll.modifier ? ` + ${roll.modifier}` : "";
+    const sf = (s?: boolean) => s ? diceL.success : diceL.failure;
 
     if (system.id === "insane") {
-      return `\n[주사위 결과: 2d6 = ${resultsStr} = ${roll.total} vs 목표치 ${roll.target ?? 0} (${roll.success ? "성공" : "실패"})]`;
+      return `\n[${diceL.result}: 2d6 = ${resultsStr} = ${roll.total} ${diceL.vs} ${diceL.target} ${roll.target ?? 0} (${sf(roll.success)})]`;
     }
     if (system.id === "coc") {
       let extra = "";
-      if (roll.total <= 5) extra = " 크리티컬!";
-      else if (roll.total >= 96) extra = " 펌블!";
-      return `\n[주사위 결과: d100 = ${roll.total} vs 기능치 ${roll.skillValue ?? 0} (${roll.success ? "성공" : "실패"})${extra}]`;
+      if (roll.total <= 5) extra = ` ${diceL.critical}`;
+      else if (roll.total >= 96) extra = ` ${diceL.fumble}`;
+      return `\n[${diceL.result}: d100 = ${roll.total} ${diceL.vs} ${diceL.skill} ${roll.skillValue ?? 0} (${sf(roll.success)})${extra}]`;
     }
     if (system.id === "dungeon-world") {
-      const tierLabel = roll.tier === "success" ? "완전 성공" : roll.tier === "partial" ? "부분 성공" : "실패";
-      return `\n[주사위 결과: 2d6 = ${resultsStr}${modStr} = ${roll.total} (${tierLabel})]`;
+      const tierLabel = roll.tier === "success" ? diceL.fullSuccess : roll.tier === "partial" ? diceL.partialSuccess : diceL.failure;
+      return `\n[${diceL.result}: 2d6 = ${resultsStr}${modStr} = ${roll.total} (${tierLabel})]`;
     }
     if (system.id === "vtm") {
       const resultsDisplay = roll.results ? roll.results.map((r: number) => r >= 6 ? `[${r}✓]` : `[${r}]`).join("") : "";
-      const messy = roll.messyCritical ? " 메시 크리티컬!" : "";
-      return `\n[주사위 결과: ${roll.results?.length ?? 0}d10 = ${resultsDisplay} → 성공 수 ${roll.successes ?? 0} vs 난이도 ${roll.difficulty ?? 0} (${roll.success ? "성공" : "실패"})${messy}]`;
+      const messy = roll.messyCritical ? ` ${diceL.messyCritical}` : "";
+      return `\n[${diceL.result}: ${roll.results?.length ?? 0}d10 = ${resultsDisplay} → ${diceL.successes} ${roll.successes ?? 0} ${diceL.vs} ${diceL.difficulty} ${roll.difficulty ?? 0} (${sf(roll.success)})${messy}]`;
     }
     if (system.id === "bitd") {
       const resultsDisplay = roll.results ? roll.results.map((r: number) => `[${r}]`).join("") : "";
       const highest = roll.total;
-      const tierLabel = roll.tier === "success" ? "완전 성공" : roll.tier === "partial" ? "부분 성공" : "실패";
-      const critical = roll.messyCritical ? " 크리티컬!" : "";
-      return `\n[주사위 결과: ${roll.results?.length ?? 0}d6 = ${resultsDisplay} → 최고값 ${highest} (${tierLabel})${critical}]`;
+      const tierLabel = roll.tier === "success" ? diceL.fullSuccess : roll.tier === "partial" ? diceL.partialSuccess : diceL.failure;
+      const critical = roll.messyCritical ? ` ${diceL.critical}` : "";
+      return `\n[${diceL.result}: ${roll.results?.length ?? 0}d6 = ${resultsDisplay} → ${diceL.highest} ${highest} (${tierLabel})${critical}]`;
     }
     // D&D 5e default
-    return `\n[주사위 결과: ${roll.type} = ${roll.result}${modStr} = ${roll.total}${roll.dc ? ` vs DC ${roll.dc} (${roll.success ? "성공" : "실패"})` : ""}]`;
+    return `\n[${diceL.result}: ${roll.type} = ${roll.result}${modStr} = ${roll.total}${roll.dc ? ` ${diceL.vs} DC ${roll.dc} (${sf(roll.success)})` : ""}]`;
   }
 
   // Build messages for OpenRouter (more context = better coherence)
@@ -253,7 +262,9 @@ export async function POST(request: NextRequest) {
       } finally {
         // Fallback if AI returned empty/too-short response
         if (!fullResponse || fullResponse.trim().length < 10) {
-          const fallback = "...나양 GM이 잠시 생각에 잠겼다냥. 집사, 다시 한 번 말해줄 수 있겠냥?";
+          const fallback = locale === "en"
+            ? "...NaYang GM paused to think, nya. Adventurer, could you say that again?"
+            : "...나양 GM이 잠시 생각에 잠겼다냥. 집사, 다시 한 번 말해줄 수 있겠냥?";
           if (!fullResponse) {
             controller.enqueue(encoder.encode(fallback));
           }

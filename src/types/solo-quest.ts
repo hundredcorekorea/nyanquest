@@ -49,8 +49,11 @@ export interface Scenario {
   genre: string;
   genreEn: string;
   systemPromptAddition: string;
+  systemPromptAdditionEn?: string;
   openingMessage: string;
+  openingMessageEn?: string;
   suggestedActions: string[];
+  suggestedActionsEn?: string[];
   isPremium?: boolean;
   system?: TrpgSystemId;
   theme: ScenarioTheme;

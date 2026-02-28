@@ -48,7 +48,7 @@ export default async function SoloQuestPlayPage({ params }: Props) {
       scenarioTitle={locale === "ko" ? scenario.titleKo : scenario.title}
       scenarioId={scenario.id}
       totalTurns={effectiveTurns}
-      suggestedActions={scenario.suggestedActions}
+      suggestedActions={(locale === "en" && scenario.suggestedActionsEn) ? scenario.suggestedActionsEn : scenario.suggestedActions}
       isPremium={isPremium}
       theme={scenario.theme}
       systemId={scenario.system}

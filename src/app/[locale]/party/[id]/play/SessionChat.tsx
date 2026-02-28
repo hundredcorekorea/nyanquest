@@ -65,6 +65,7 @@ export default function SessionChat({
     initialSession.play_mode === "async" && initialSession.use_ai_gm
   );
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const [showScrollDown, setShowScrollDown] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const isCreator = currentUserId === creatorId;
   const isHumanGm = isCreator && !initialSession.use_ai_gm;
@@ -213,10 +214,29 @@ export default function SessionChat({
     };
   }, [initialSession.id, supabase]);
 
-  // Auto-scroll
+  // Detect when new content is below the viewport
   useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (!chatEndRef.current) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowScrollDown(!entry.isIntersecting),
+      { threshold: 0.1 }
+    );
+    observer.observe(chatEndRef.current);
+    return () => observer.disconnect();
+  }, []);
+
+  // Show scroll indicator when new messages arrive
+  useEffect(() => {
+    if (!chatEndRef.current) return;
+    const rect = chatEndRef.current.getBoundingClientRect();
+    const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+    if (!isVisible) setShowScrollDown(true);
   }, [messages, streamingText]);
+
+  const scrollToBottom = useCallback(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+    setShowScrollDown(false);
+  }, []);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -1019,6 +1039,16 @@ export default function SessionChat({
 
         <div ref={chatEndRef} />
       </div>
+
+      {/* Scroll down indicator */}
+      {showScrollDown && (
+        <button
+          onClick={scrollToBottom}
+          className="sticky bottom-32 ml-auto mr-2 z-40 flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white/80 text-xs px-3 py-1.5 rounded-full hover:bg-white/25 transition-all animate-bounce shadow-lg border border-white/10"
+        >
+          <span>↓</span>
+        </button>
+      )}
 
       {/* AdGate for turn extension */}
       <AdGate

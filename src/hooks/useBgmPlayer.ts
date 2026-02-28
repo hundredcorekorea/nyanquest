@@ -117,7 +117,9 @@ export const BGM_CATALOG: Record<BgmCategory, BgmTrack[]> = {
 
 function getInitialEnabled(): boolean {
   if (typeof window === "undefined") return false;
-  return localStorage.getItem(STORAGE_KEY_ENABLED) === "1";
+  const saved = localStorage.getItem(STORAGE_KEY_ENABLED);
+  if (saved === null) return true; // default ON for new users
+  return saved === "1";
 }
 
 function getInitialVolume(): number {

@@ -106,7 +106,7 @@ export default function ScenarioCard({
           messages: [
             {
               role: "gm",
-              content: scenario.openingMessage,
+              content: (locale === "en" && scenario.openingMessageEn) ? scenario.openingMessageEn : scenario.openingMessage,
               timestamp: new Date().toISOString(),
             },
           ],
