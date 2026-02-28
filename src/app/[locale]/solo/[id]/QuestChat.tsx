@@ -44,7 +44,13 @@ export default function QuestChat({
   const tCommon = useTranslations("Common");
   const sounds = useQuestSounds();
   const bgm = useBgmPlayer();
-  const bgmMood = useBgmMood(bgm.playCategory);
+  const bgmMood = useBgmMood(useCallback((category, trackId) => {
+    if (trackId) {
+      bgm.playTrack(category, trackId);
+    } else {
+      bgm.playCategory(category);
+    }
+  }, [bgm.playTrack, bgm.playCategory]));
   const [showBgmVolume, setShowBgmVolume] = useState(false);
   const [messages, setMessages] = useState<QuestMessage[]>(quest.messages);
   const [isStreaming, setIsStreaming] = useState(false);

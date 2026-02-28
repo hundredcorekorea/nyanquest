@@ -45,7 +45,13 @@ export default function SessionChat({
   const { toast } = useToast();
   const supabase = createClient();
   const bgm = useBgmPlayer();
-  const bgmMood = useBgmMood(bgm.playCategory);
+  const bgmMood = useBgmMood(useCallback((category, trackId) => {
+    if (trackId) {
+      bgm.playTrack(category, trackId);
+    } else {
+      bgm.playCategory(category);
+    }
+  }, [bgm.playTrack, bgm.playCategory]));
   const [messages, setMessages] = useState<SessionMessage[]>([]);
   const [input, setInput] = useState("");
   const [isStreaming, setIsStreaming] = useState(false);
