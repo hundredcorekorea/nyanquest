@@ -12,7 +12,9 @@ import { useQuestSounds } from "@/hooks/useQuestSounds";
 import { useBgmPlayer } from "@/hooks/useBgmPlayer";
 import { useBgmMood } from "@/hooks/useBgmMood";
 import { useSceneBackground } from "@/hooks/useSceneBackground";
+import NaYangCutIn, { type CutInType } from "@/components/NaYangCutIn";
 import type { SoloQuest, QuestMessage, DiceRoll, ScenarioTheme } from "@/types/solo-quest";
+import type { SfxGenre } from "@/hooks/useQuestSounds";
 import ChatBubble from "./ChatBubble";
 import DiceRoller from "./DiceRoller";
 import ActionInput from "./ActionInput";
@@ -28,6 +30,17 @@ interface Props {
   theme: ScenarioTheme;
   systemId?: TrpgSystemId;
   userAvatarUrl: string | null;
+  genre?: string;
+}
+
+// Map scenario genre string to SFX genre category
+function genreToSfx(genre?: string): SfxGenre {
+  if (!genre) return "fantasy";
+  const g = genre.toLowerCase();
+  if (/호러|horror|미스터리|mystery|심리|psycho/.test(g)) return "horror";
+  if (/sf|sci-?fi|우주|space|cyber/.test(g)) return "scifi";
+  if (/고딕|gothic|범죄|crime|noir|dark/.test(g)) return "dark";
+  return "fantasy";
 }
 
 export default function QuestChat({
@@ -40,6 +53,7 @@ export default function QuestChat({
   theme,
   systemId,
   userAvatarUrl,
+  genre,
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();
@@ -70,8 +84,11 @@ export default function QuestChat({
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
   const [screenEffect, setScreenEffect] = useState<"critical" | "fumble" | "success" | "fail" | null>(null);
+  const sfxGenre = genreToSfx(genre);
   const sceneBg = useSceneBackground(scenarioId);
   const [bgLoaded, setBgLoaded] = useState(false);
+  const [cutIn, setCutIn] = useState<{ type: CutInType; key: number } | null>(null);
+  const [sceneTransition, setSceneTransition] = useState(false);
 
   // Stop BGM when navigating away from the quest page
   const pathname = usePathname();
@@ -213,17 +230,25 @@ export default function QuestChat({
       lastGm.content.includes("[Quest Failed]")
     ) {
       setQuestStatus("failed");
+      triggerCutIn("failed");
     } else if (
       lastGm.content.includes("[퀘스트 완료]") ||
       lastGm.content.includes("[Quest Complete]")
     ) {
       setQuestStatus("completed");
+      triggerCutIn("clear");
     }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
   const sendMessage = useCallback(
     async (playerMessage: string, diceRoll?: DiceRoll) => {
       if (isStreaming || questStatus !== "in_progress") return;
+
+      // Scene transition effect
+      setSceneTransition(true);
+      sounds.playTransition();
+      setTimeout(() => setSceneTransition(false), 600);
 
       const playerMsg: QuestMessage = {
         role: "player",
@@ -306,14 +331,19 @@ export default function QuestChat({
     setTimeout(() => setScreenEffect(null), duration);
   }
 
+  function triggerCutIn(type: CutInType) {
+    setCutIn({ type, key: Date.now() });
+    sounds.playCutIn(type);
+  }
+
   function handleDiceRoll(result: DiceRoll) {
-    // Play success/failure sound based on tier or boolean
+    // Play genre-aware success/failure sound based on tier or boolean
     if (result.tier === "partial") {
-      sounds.playSuccess(); // partial is still a success sound
+      sounds.playSuccess(sfxGenre);
     } else if (result.success) {
-      sounds.playSuccess();
+      sounds.playSuccess(sfxGenre);
     } else if (result.success === false) {
-      sounds.playFailure();
+      sounds.playFailure(sfxGenre);
     }
 
     // Create a system message for the dice result
@@ -428,6 +458,25 @@ export default function QuestChat({
     )}
     {screenEffect === "fail" && (
       <div className="pointer-events-none absolute inset-0 z-40 bg-red-500/15 animate-fail-glow" />
+    )}
+    {/* Scene transition overlay — brief blackout between turns */}
+    {sceneTransition && (
+      <div className="pointer-events-none absolute inset-0 z-40 bg-black animate-scene-transition" />
+    )}
+    {/* NaYang Cut-In overlay */}
+    {cutIn && (
+      <NaYangCutIn
+        key={cutIn.key}
+        type={cutIn.type}
+        text={tQuest(
+          cutIn.type === "dice" ? "cutInDice"
+            : cutIn.type === "critical" ? "cutInCritical"
+            : cutIn.type === "fumble" ? "cutInFumble"
+            : cutIn.type === "clear" ? "cutInClear"
+            : "cutInFailed"
+        )}
+        onComplete={() => setCutIn(null)}
+      />
     )}
     {isPremium && (
       <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-amber-500/5 via-transparent to-amber-500/5" />
@@ -588,7 +637,7 @@ export default function QuestChat({
 
         {/* Dice roller */}
         {pendingDice && !isStreaming && questStatus === "in_progress" && (
-          <DiceRoller request={pendingDice} system={system} onRoll={handleDiceRoll} onRolling={sounds.playDiceRoll} onScreenEffect={handleScreenEffect} />
+          <DiceRoller request={pendingDice} system={system} onRoll={handleDiceRoll} onRolling={() => sounds.playDiceRoll(sfxGenre)} onScreenEffect={handleScreenEffect} onCutIn={triggerCutIn} />
         )}
 
         <div ref={chatEndRef} />

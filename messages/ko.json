@@ -452,7 +452,12 @@
     "diceCheckBitd": "{label} 판정 ({pool}d6)",
     "bgmPrompt": "배경음악을 켤까냥?",
     "bgmEnable": "켜기",
-    "bgmDisable": "끄기"
+    "bgmDisable": "끄기",
+    "cutInDice": "판정이다냥!",
+    "cutInCritical": "대성공이다냥!!",
+    "cutInFumble": "...이런냥",
+    "cutInClear": "클리어다냥!",
+    "cutInFailed": "으냥..."
   },
   "Tutorial": {
     "skip": "건너뛰기",

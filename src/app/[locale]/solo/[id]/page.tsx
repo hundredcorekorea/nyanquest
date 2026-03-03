@@ -60,6 +60,7 @@ export default async function SoloQuestPlayPage({ params }: Props) {
       theme={scenario.theme}
       systemId={scenario.system}
       userAvatarUrl={profile?.avatar_url ?? null}
+      genre={scenario.genre}
     />
   );
 }

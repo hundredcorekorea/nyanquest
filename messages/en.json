@@ -452,7 +452,12 @@
     "diceCheckBitd": "{label} Check ({pool}d6)",
     "bgmPrompt": "Enable background music, nya?",
     "bgmEnable": "On",
-    "bgmDisable": "Off"
+    "bgmDisable": "Off",
+    "cutInDice": "ROLL~nya!",
+    "cutInCritical": "CRITICAL~nya!!",
+    "cutInFumble": "...oh no~nya",
+    "cutInClear": "CLEAR~nya!",
+    "cutInFailed": "meow..."
   },
   "Tutorial": {
     "skip": "Skip",

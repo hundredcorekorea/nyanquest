@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { rollSystemDice, type ParsedDiceRequest } from "@/lib/solo-quest/dice";
 import type { TrpgSystemPreset } from "@/lib/solo-quest/systems";
 import type { DiceRoll } from "@/types/solo-quest";
+import type { CutInType } from "@/components/NaYangCutIn";
 
 type ScreenEffect = "critical" | "fumble" | "success" | "fail" | null;
 
@@ -14,6 +15,7 @@ interface Props {
   onRoll: (result: DiceRoll) => void;
   onRolling?: () => void;
   onScreenEffect?: (effect: ScreenEffect) => void;
+  onCutIn?: (type: CutInType) => void;
 }
 
 const DICE_EMOJI: Record<string, string> = {
@@ -26,7 +28,7 @@ const DICE_EMOJI: Record<string, string> = {
   d100: "💯",
 };
 
-export default function DiceRoller({ request, system, onRoll, onRolling, onScreenEffect }: Props) {
+export default function DiceRoller({ request, system, onRoll, onRolling, onScreenEffect, onCutIn }: Props) {
   const t = useTranslations("SoloQuest");
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState<DiceRoll | null>(null);
@@ -49,6 +51,9 @@ export default function DiceRoller({ request, system, onRoll, onRolling, onScree
     setRolling(true);
     onRolling?.();
 
+    // Fire "dice" cut-in immediately when rolling starts
+    onCutIn?.("dice");
+
     // Animate for 1.2 seconds, then show result
     setTimeout(() => {
       const diceResult = rollSystemDice(request, system);
@@ -58,6 +63,13 @@ export default function DiceRoller({ request, system, onRoll, onRolling, onScree
       // Trigger screen effect
       const effect = getScreenEffect(diceResult);
       onScreenEffect?.(effect);
+
+      // Fire critical/fumble cut-in on extreme results
+      if (effect === "critical") {
+        onCutIn?.("critical");
+      } else if (effect === "fumble") {
+        onCutIn?.("fumble");
+      }
 
       // Dramatic pause: critical/fumble show longer before auto-submit
       const isCriticalOrFumble = effect === "critical" || effect === "fumble";
