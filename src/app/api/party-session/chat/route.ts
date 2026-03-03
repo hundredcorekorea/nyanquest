@@ -168,7 +168,7 @@ export async function POST(request: NextRequest) {
           const notifications = unsubmittedMembers.map((m) => ({
             user_id: m.user_id,
             type: "round_your_turn",
-            message: `${playerName}님이 행동을 제출했다냥! (${submitted}/${totalPLs}) 당신의 차례다냥!`,
+            message: JSON.stringify({ ko: `${playerName}님이 행동을 제출했다냥! (${submitted}/${totalPLs}) 당신의 차례다냥!`, en: `${playerName} submitted an action, nya! (${submitted}/${totalPLs}) It's your turn!` }),
             party_id: session.party_id,
             link_path: `/party/${session.party_id}/play`,
           }));
@@ -177,7 +177,7 @@ export async function POST(request: NextRequest) {
           for (const m of unsubmittedMembers) {
             sendPushToUser(m.user_id, {
               title: "nyanQuest ⚔️",
-              body: `${playerName}님이 행동을 제출했다냥! 당신의 차례다냥!`,
+              body: `${playerName} submitted an action, nya! Your turn!`,
               url: `/party/${session.party_id}/play`,
             });
           }
@@ -321,7 +321,7 @@ export async function POST(request: NextRequest) {
           headers: {
             Authorization: `Bearer ${process.env.OPENROUTER_API_KEY?.trim()}`,
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://nyanquest.vercel.app",
+            "HTTP-Referer": "https://nyanquest.com",
             "X-Title": "nyanQuest Party Session",
           },
           body: JSON.stringify({

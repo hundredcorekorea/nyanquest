@@ -25,6 +25,7 @@ export async function POST(request: NextRequest) {
     diceRoll,
     messages,
     turnCount,
+    locale: bodyLocale,
   } = body as {
     questId: string;
     scenarioId: string;
@@ -32,6 +33,7 @@ export async function POST(request: NextRequest) {
     diceRoll?: { type: string; result: number; results?: number[]; modifier?: number; total: number; dc?: number; target?: number; skillValue?: number; success?: boolean; tier?: string; successes?: number; difficulty?: number; messyCritical?: boolean };
     messages: QuestMessage[];
     turnCount: number;
+    locale?: "ko" | "en";
   };
 
   // Validate input
@@ -84,6 +86,10 @@ export async function POST(request: NextRequest) {
   // Calculate total turns with premium multiplier
   const effectiveTotalTurns = Math.round(scenario.estimatedTurns * config.turnMultiplier);
 
+  // Detect locale for multilingual AI response
+  // Prefer explicit locale from client body (most reliable), fallback to cookie/header detection
+  const locale = bodyLocale === "en" || bodyLocale === "ko" ? bodyLocale : getLocaleFromRequest(request);
+
   // Enforce turn limit (allow 2 extra turns for AI to wrap up)
   if (turnCount >= effectiveTotalTurns + 2) {
     // Force complete the quest
@@ -93,13 +99,10 @@ export async function POST(request: NextRequest) {
       .eq("id", questId);
 
     return Response.json(
-      { error: apiMsg("turnLimitExceeded", request) },
+      { error: locale === "en" ? "Turn limit exceeded, meow!" : apiMsg("turnLimitExceeded", request) },
       { status: 400 }
     );
   }
-
-  // Detect locale for multilingual AI response
-  const locale = getLocaleFromRequest(request);
 
   // Build system prompt
   const system = getSystem(scenario.system);
@@ -177,7 +180,7 @@ export async function POST(request: NextRequest) {
           headers: {
             Authorization: `Bearer ${process.env.OPENROUTER_API_KEY?.trim()}`,
             "Content-Type": "application/json",
-            "HTTP-Referer": "https://nyanquest.vercel.app",
+            "HTTP-Referer": "https://nyanquest.com",
             "X-Title": "nyanQuest Solo Quest",
           },
           body: JSON.stringify({
@@ -271,9 +274,15 @@ export async function POST(request: NextRequest) {
           fullResponse = fullResponse || fallback;
         }
 
-        // Save messages to DB (fire-and-forget)
+        // Save messages to DB — fetch full history first to avoid dropping older messages
+        const { data: currentQuest } = await supabase
+          .from("solo_quests")
+          .select("messages")
+          .eq("id", questId)
+          .single();
+        const existingMessages = (currentQuest?.messages as QuestMessage[]) || [];
         const newMessages = [
-          ...messages,
+          ...existingMessages,
           {
             role: "player",
             content: playerMessage,

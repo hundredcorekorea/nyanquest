@@ -42,6 +42,7 @@ export default function SessionChat({
 }: Props) {
   const t = useTranslations("PartyPlay");
   const tc = useTranslations("Common");
+  const tDice = useTranslations("SoloQuest");
   const { toast } = useToast();
   const supabase = createClient();
   const bgm = useBgmPlayer();
@@ -806,29 +807,29 @@ export default function SessionChat({
                       {/* Success/fail indicators */}
                       {dr.dc !== undefined && dr.dc > 0 && (
                         <span className={`ml-1 font-medium ${dr.success ? "text-green-600" : "text-red-500"}`}>
-                          vs DC {dr.dc} {dr.success ? "성공!" : "실패"}
+                          vs DC {dr.dc} {dr.success ? tDice("diceSuccess") : tDice("diceFail")}
                         </span>
                       )}
                       {dr.target !== undefined && dr.target > 0 && (
                         <span className={`ml-1 font-medium ${dr.success ? "text-green-600" : "text-red-500"}`}>
-                          vs 목표치 {dr.target} {dr.success ? "성공!" : "실패"}
+                          vs {tDice("targetValue")} {dr.target} {dr.success ? tDice("diceSuccess") : tDice("diceFail")}
                         </span>
                       )}
                       {dr.skillValue !== undefined && dr.skillValue > 0 && (
                         <span className={`ml-1 font-medium ${dr.success ? "text-green-600" : "text-red-500"}`}>
-                          vs 기능치 {dr.skillValue} {dr.success ? "성공!" : "실패"}
+                          vs {tDice("skillValue")} {dr.skillValue} {dr.success ? tDice("diceSuccess") : tDice("diceFail")}
                         </span>
                       )}
                       {dr.tier && !dr.dc && !dr.target && !dr.skillValue && (
                         <span className={`ml-1 font-medium ${
                           dr.tier === "success" ? "text-green-600" : dr.tier === "partial" ? "text-amber-600" : "text-red-500"
                         }`}>
-                          {dr.tier === "success" ? "성공!" : dr.tier === "partial" ? "부분 성공" : "실패"}
+                          {dr.tier === "success" ? tDice("diceSuccess") : dr.tier === "partial" ? tDice("dicePartial") : tDice("diceFail")}
                         </span>
                       )}
                       {dr.successes !== undefined && (
                         <span className={`ml-1 font-medium ${dr.success ? "text-green-600" : "text-red-500"}`}>
-                          성공 {dr.successes}개{dr.difficulty ? ` vs 난이도 ${dr.difficulty}` : ""} {dr.success ? "성공!" : "실패"}
+                          {tDice("poolSuccessesShort", { count: dr.successes })}{dr.difficulty ? ` vs ${tDice("difficulty")} ${dr.difficulty}` : ""} {dr.success ? tDice("diceSuccess") : tDice("diceFail")}
                         </span>
                       )}
                     </div>

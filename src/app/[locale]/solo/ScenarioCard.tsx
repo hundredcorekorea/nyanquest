@@ -65,8 +65,8 @@ export default function ScenarioCard({
       return;
     }
 
-    // Premium users skip ad gate
-    if (isPremium) {
+    // Premium / admin users skip ad gate
+    if (isPremium || isAdminUser) {
       startQuest();
     } else {
       setShowAdGate(true);

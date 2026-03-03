@@ -197,16 +197,32 @@ export function useBgmPlayer() {
     };
   }, []);
 
-  // Cleanup on unmount
+  // Pause BGM when tab/browser is hidden, resume when visible
   useEffect(() => {
-    return () => {
-      if (sourceRef.current) {
-        try { sourceRef.current.stop(); } catch { /* already stopped */ }
+    const handleVisibility = () => {
+      if (document.hidden) {
+        // Suspend AudioContext — stops all audio output instantly
+        if (ctxRef.current && ctxRef.current.state === "running") {
+          ctxRef.current.suspend();
+        }
+      } else {
+        // Resume AudioContext when tab becomes visible again
+        if (ctxRef.current && ctxRef.current.state === "suspended" && enabledRef.current && playingRef.current) {
+          ctxRef.current.resume();
+        }
       }
+    };
+    // pagehide fires more reliably than beforeunload on mobile
+    const handlePageHide = () => {
       if (ctxRef.current) {
-        ctxRef.current.close();
-        ctxRef.current = null;
+        ctxRef.current.suspend();
       }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+    window.addEventListener("pagehide", handlePageHide);
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibility);
+      window.removeEventListener("pagehide", handlePageHide);
     };
   }, []);
 
@@ -218,10 +234,28 @@ export function useBgmPlayer() {
   const stopAll = useCallback(() => {
     playingRef.current = false;
     currentUrlRef.current = null;
+    trackIdRef.current = null;
     if (sourceRef.current) {
       try { sourceRef.current.stop(); } catch { /* already stopped */ }
       sourceRef.current = null;
     }
+  }, []);
+
+  /** Fully destroy AudioContext — only call on true component unmount */
+  const destroy = useCallback(() => {
+    stopAll();
+    if (ctxRef.current) {
+      ctxRef.current.close().catch(() => {});
+      ctxRef.current = null;
+      gainRef.current = null;
+    }
+  }, [stopAll]);
+
+  // Cleanup on unmount — fully destroy AudioContext
+  const destroyRef = useRef(destroy);
+  destroyRef.current = destroy;
+  useEffect(() => {
+    return () => destroyRef.current();
   }, []);
 
   /**
