@@ -1,7 +1,7 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { createCheckout } from "@/lib/lemonsqueezy";
-import { PLANS, type PlanType } from "@/lib/premium";
+import { PLANS, type PlanType, getVariantId } from "@/lib/premium";
 import { NextRequest } from "next/server";
 import { apiMsg } from "@/lib/api-messages";
 
@@ -64,16 +64,17 @@ export async function POST(request: NextRequest) {
 
   const planConfig = PLANS[plan];
   const origin =
-    request.headers.get("origin") || "https://nyanquest.vercel.app";
+    request.headers.get("origin") || "https://nyanquest.com";
 
   try {
+    const variantId = getVariantId(plan);
     const checkoutUrl = await createCheckout({
-      variantId: planConfig.lsVariantId,
+      variantId,
       redirectUrl: `${origin}/en/premium/complete`,
       customData: {
         userId: user.id,
         plan,
-        giftTo: giftTo || "",
+        ...(giftTo ? { giftTo } : {}),
       },
     });
 

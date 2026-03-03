@@ -44,4 +44,12 @@ export const PLANS = {
   },
 } as const;
 
+/** Server-side only: returns variant ID from env var or fallback from PLANS */
+export function getVariantId(plan: PlanType): string {
+  if (plan === "monthly") {
+    return process.env.LS_MONTHLY_VARIANT_ID || PLANS.monthly.lsVariantId;
+  }
+  return process.env.LS_YEARLY_VARIANT_ID || PLANS.yearly.lsVariantId;
+}
+
 export type PlanType = keyof typeof PLANS;

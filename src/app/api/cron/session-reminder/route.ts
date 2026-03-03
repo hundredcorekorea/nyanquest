@@ -95,7 +95,7 @@ export async function GET(request: NextRequest) {
     const unsubmitted = plMembers.filter((m) => !submittedIds.has(m.user_id));
     if (unsubmitted.length === 0) continue;
 
-    const partyTitle = (session.parties as unknown as { title: string })?.title || "파티";
+    const partyTitle = (session.parties as unknown as { title: string })?.title || "Party";
     const submitted = plMembers.length - unsubmitted.length;
 
     for (const member of unsubmitted) {
@@ -103,7 +103,7 @@ export async function GET(request: NextRequest) {
       await admin.from("notifications").insert({
         user_id: member.user_id,
         type: "round_your_turn",
-        message: `[${partyTitle}] 모험이 기다리고 있다냥! (${submitted}/${plMembers.length}) 동료들이 당신의 행동을 기다리고 있다냥!`,
+        message: JSON.stringify({ ko: `[${partyTitle}] 모험이 기다린다냥! (${submitted}/${plMembers.length}) 파티원이 행동을 기다리고 있다냥!`, en: `[${partyTitle}] Adventure awaits, nya! (${submitted}/${plMembers.length}) Your party is waiting for your action!` }),
         party_id: session.party_id,
         link_path: `/party/${session.party_id}/play`,
       });
@@ -111,7 +111,7 @@ export async function GET(request: NextRequest) {
       // Send push
       sendPushToUser(member.user_id, {
         title: "nyanQuest ⏰",
-        body: `[${partyTitle}] 동료들이 기다리고 있다냥! 어서 행동을 선택하라냥!`,
+        body: `[${partyTitle}] Your party awaits, nya! Time to act!`,
         url: `/party/${session.party_id}/play`,
       });
 

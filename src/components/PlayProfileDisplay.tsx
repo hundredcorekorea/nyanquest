@@ -1,7 +1,7 @@
 "use client";
 
 import type { FavoriteWork } from "@/types/database";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Props {
   favoriteWorks: FavoriteWork[];
@@ -15,6 +15,23 @@ export default function PlayProfileDisplay({
   avoidedElements,
 }: Props) {
   const t = useTranslations("PlayProfile");
+  const locale = useLocale();
+
+  // Build ko↔en tag mapping for display translation
+  const koPreferred = ["전술 전투", "던전 탐험", "캐릭터 드라마", "대서사시", "미스터리/추리", "정치/외교", "코미디/유머", "호러/공포", "월드빌딩", "자유도 높은 플레이"];
+  const enPreferred = ["Tactical Combat", "Dungeon Crawling", "Character Drama", "Epic Narrative", "Mystery/Investigation", "Politics/Diplomacy", "Comedy/Humor", "Horror", "Worldbuilding", "High Freedom Play"];
+  const koAvoided = ["PvP", "과도한 롤플레이 강요", "지나친 전투", "성인 콘텐츠", "하드코어 룰", "즉흥 GM", "긴 세션 (4시간+)"];
+  const enAvoided = ["PvP", "Forced Roleplay", "Excessive Combat", "Adult Content", "Hardcore Rules", "Improv GM", "Long Sessions (4h+)"];
+
+  const tagMap = new Map<string, string>();
+  if (locale !== "ko") {
+    koPreferred.forEach((ko, i) => tagMap.set(ko, enPreferred[i]));
+    koAvoided.forEach((ko, i) => tagMap.set(ko, enAvoided[i]));
+  } else {
+    enPreferred.forEach((en, i) => tagMap.set(en, koPreferred[i]));
+    enAvoided.forEach((en, i) => tagMap.set(en, koAvoided[i]));
+  }
+  const translateTag = (tag: string) => tagMap.get(tag) || tag;
 
   const hasContent =
     favoriteWorks.length > 0 ||
@@ -67,7 +84,7 @@ export default function PlayProfileDisplay({
                 key={el}
                 className="text-xs bg-green-50 text-green-700 px-2.5 py-1 rounded-full border border-green-100"
               >
-                👍 {el}
+                👍 {translateTag(el)}
               </span>
             ))}
           </div>
@@ -86,7 +103,7 @@ export default function PlayProfileDisplay({
                 key={el}
                 className="text-xs bg-red-50 text-red-600 px-2.5 py-1 rounded-full border border-red-100"
               >
-                🚫 {el}
+                🚫 {translateTag(el)}
               </span>
             ))}
           </div>

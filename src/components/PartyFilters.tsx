@@ -25,7 +25,7 @@ export default function PartyFilters({ systems, currentLang }: Props) {
 
   const langOptions = [
     { value: locale, label: locale === "ko" ? "🇰🇷 한국어" : "🇺🇸 English" },
-    { value: locale === "ko" ? "en" : "ko", label: locale === "ko" ? "🇺🇸 English" : "🇰🇷 한국어" },
+    { value: locale === "ko" ? "en" : "ko", label: locale === "ko" ? "🇺🇸 English" : "🇰🇷 Korean" },
     { value: "all", label: t("Party.allLanguages") },
   ];
 

@@ -99,11 +99,11 @@ export async function POST(
     await admin.from("notifications").insert({
       user_id: winner.user_id,
       type: "contest_winner",
-      message: `contest:${contest.title}:rank${winner.rank || (winners.indexOf(winner) + 1)}`,
+      message: JSON.stringify({ ko: `🏆 "${contest.title}" 콘테스트에서 ${winner.rank || (winners.indexOf(winner) + 1)}위를 차지했다냥!`, en: `🏆 You placed #${winner.rank || (winners.indexOf(winner) + 1)} in "${contest.title}", nya!` }),
     });
     sendPushToUser(winner.user_id, {
       title: "nyanQuest 🏆",
-      body: `콘테스트 ${contest.title}에서 ${winner.rank || (winners.indexOf(winner) + 1)}위를 차지했다냥!`,
+      body: `You placed #${winner.rank || (winners.indexOf(winner) + 1)} in ${contest.title}, nya!`,
       url: `/scenarios/contest/${contestId}`,
     });
 

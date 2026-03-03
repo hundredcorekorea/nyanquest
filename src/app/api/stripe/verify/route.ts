@@ -134,7 +134,7 @@ export async function POST(request: NextRequest) {
     await admin.from("notifications").insert({
       user_id: giftTo,
       type: "gift_received",
-      message: `${senderName} gifted you Premium, nya! 👑`,
+      message: JSON.stringify({ ko: `${senderName}님이 프리미엄을 선물했다냥! 👑`, en: `${senderName} gifted you Premium, nya! 👑` }),
     });
     sendPushToUser(giftTo, {
       title: "nyanQuest 👑",

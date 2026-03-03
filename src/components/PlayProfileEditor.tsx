@@ -4,7 +4,7 @@ import { useState } from "react";
 import type { FavoriteWork } from "@/types/database";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Props {
   userId: string;
@@ -44,6 +44,19 @@ export default function PlayProfileEditor({
   const suggestedPreferred = t.raw("suggestedPreferred") as string[];
   const suggestedAvoided = t.raw("suggestedAvoided") as string[];
 
+  // Build ko↔en tag mapping so saved Korean tags display correctly in EN mode
+  const koPreferred = ["전술 전투", "던전 탐험", "캐릭터 드라마", "대서사시", "미스터리/추리", "정치/외교", "코미디/유머", "호러/공포", "월드빌딩", "자유도 높은 플레이"];
+  const enPreferred = ["Tactical Combat", "Dungeon Crawling", "Character Drama", "Epic Narrative", "Mystery/Investigation", "Politics/Diplomacy", "Comedy/Humor", "Horror", "Worldbuilding", "High Freedom Play"];
+  const koAvoided = ["PvP", "과도한 롤플레이 강요", "지나친 전투", "성인 콘텐츠", "하드코어 룰", "즉흥 GM", "긴 세션 (4시간+)"];
+  const enAvoided = ["PvP", "Forced Roleplay", "Excessive Combat", "Adult Content", "Hardcore Rules", "Improv GM", "Long Sessions (4h+)"];
+  const tagMap = new Map<string, string>();
+  const locale = useLocale();
+  if (locale !== "ko") {
+    koPreferred.forEach((ko, i) => tagMap.set(ko, enPreferred[i]));
+    koAvoided.forEach((ko, i) => tagMap.set(ko, enAvoided[i]));
+  }
+  const displayTag = (tag: string) => tagMap.get(tag) || tag;
+
   const updateWork = (index: number, field: "title" | "reason", value: string) => {
     setWorks((prev) => {
       const next = [...prev];
@@ -77,7 +90,7 @@ export default function PlayProfileEditor({
       .eq("id", userId);
 
     if (error) {
-      toast(t("saved").replace("저장", "실패"), "error");
+      toast(tCommon("errorOccurred"), "error");
     } else {
       toast(t("saved"), "success");
       onSave(cleanedWorks, preferred, avoided);
@@ -137,7 +150,7 @@ export default function PlayProfileEditor({
               onClick={() => removeTag(preferred, setPreferred, el)}
               className="text-xs bg-green-100 text-green-700 px-2.5 py-1 rounded-full hover:bg-green-200 transition-colors"
             >
-              {el} ✕
+              {displayTag(el)} ✕
             </button>
           ))}
         </div>
@@ -184,7 +197,7 @@ export default function PlayProfileEditor({
               onClick={() => removeTag(avoided, setAvoided, el)}
               className="text-xs bg-red-100 text-red-600 px-2.5 py-1 rounded-full hover:bg-red-200 transition-colors"
             >
-              {el} ✕
+              {displayTag(el)} ✕
             </button>
           ))}
         </div>

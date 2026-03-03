@@ -9,6 +9,6 @@ export default function robots(): MetadataRoute.Robots {
         disallow: ["/api/", "/my/", "/_next/", "/offline/"],
       },
     ],
-    sitemap: "https://nyanquest.vercel.app/sitemap.xml",
+    sitemap: "https://nyanquest.com/sitemap.xml",
   };
 }

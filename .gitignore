@@ -37,6 +37,9 @@ yarn-error.log*
 # vercel
 .vercel
 
+# credentials
+lemonsqueezy_2fa_backup.txt
+
 # typescript
 *.tsbuildinfo
 next-env.d.ts

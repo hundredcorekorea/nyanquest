@@ -121,13 +121,13 @@ export async function POST(request: NextRequest) {
       .select("nickname")
       .eq("id", user.id)
       .single();
-    const senderName = sender?.nickname || "누군가";
+    const senderName = sender?.nickname || "Someone";
     await admin.from("notifications").insert({
       user_id: giftTo,
       type: "gift_received",
-      message: `${senderName}님이 프리미엄 구독을 선물했다냥! 👑`,
+      message: JSON.stringify({ ko: `${senderName}님이 프리미엄을 선물했다냥! 👑`, en: `${senderName} gifted you Premium, nya! 👑` }),
     });
-    sendPushToUser(giftTo, { title: "nyanQuest 👑", body: `${senderName}님이 프리미엄을 선물했다냥!` });
+    sendPushToUser(giftTo, { title: "nyanQuest 👑", body: `${senderName} gifted you Premium, nya!` });
   }
 
   // Reward referrer if this user was referred (only for self-purchase)

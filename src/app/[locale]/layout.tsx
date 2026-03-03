@@ -60,6 +60,11 @@ export async function generateMetadata({
       ],
       apple: [{ url: "/icons/icon-192.png" }],
     },
+    verification: {
+      other: {
+        "naver-site-verification": "011ffdb2db998398d5f821358cbe6a99ffa3ca32",
+      },
+    },
     other: {
       "mobile-web-app-capable": "yes",
       "apple-mobile-web-app-capable": "yes",
@@ -87,7 +92,7 @@ export default async function LocaleLayout({
     "@context": "https://schema.org",
     "@type": "WebApplication",
     name: "nyanQuest",
-    url: "https://nyanquest.vercel.app",
+    url: "https://nyanquest.com",
     description:
       locale === "ko"
         ? "AI GM과 함께하는 온라인 TRPG 플랫폼. 솔로 퀘스트, 파티 모드, 커뮤니티 모집."

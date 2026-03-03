@@ -9,12 +9,7 @@ export async function middleware(request: NextRequest) {
   // 1. Run next-intl middleware (locale detection, redirects, rewrites)
   const intlResponse = intlMiddleware(request);
 
-  // If next-intl issued a redirect (e.g., / -> /ko/), return it with auth cookies
-  if (intlResponse.status >= 300 && intlResponse.status < 400) {
-    return intlResponse;
-  }
-
-  // 2. Run Supabase session refresh on the intl response
+  // 2. Run Supabase session refresh — even on redirects so auth cookies persist
   return await updateSession(request, intlResponse);
 }
 

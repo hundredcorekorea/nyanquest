@@ -3,7 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import { Link } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 
 interface Notification {
   id: string;
@@ -31,9 +31,25 @@ const typeEmoji: Record<string, string> = {
   contest_ended: "🏁",
 };
 
+/** Parse a notification message that may be JSON {ko,en} or a plain string */
+function getLocalizedMessage(message: string, locale: string): string {
+  if (message.startsWith("{")) {
+    try {
+      const parsed = JSON.parse(message);
+      if (parsed && typeof parsed === "object") {
+        return (locale === "ko" ? parsed.ko : parsed.en) || parsed.ko || parsed.en || message;
+      }
+    } catch {
+      // Not valid JSON — use raw string
+    }
+  }
+  return message;
+}
+
 export default function NotificationBell({ userId }: { userId: string }) {
   const t = useTranslations("Notification");
   const tTime = useTranslations("TimeAgo");
+  const locale = useLocale();
   const supabase = createClient();
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [open, setOpen] = useState(false);
@@ -66,8 +82,22 @@ export default function NotificationBell({ userId }: { userId: string }) {
 
   useEffect(() => {
     loadNotifications();
-    const interval = setInterval(loadNotifications, 30000);
-    return () => clearInterval(interval);
+    let interval = setInterval(loadNotifications, 30000);
+
+    const handleVisibility = () => {
+      if (document.hidden) {
+        clearInterval(interval);
+      } else {
+        loadNotifications();
+        interval = setInterval(loadNotifications, 30000);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibility);
+
+    return () => {
+      clearInterval(interval);
+      document.removeEventListener("visibilitychange", handleVisibility);
+    };
   }, [userId]);
 
   const markAllRead = async () => {
@@ -121,7 +151,7 @@ export default function NotificationBell({ userId }: { userId: string }) {
                     <div className="flex gap-2">
                       <span className="text-sm shrink-0">{typeEmoji[n.type] ?? "🐱"}</span>
                       <div className="min-w-0">
-                        <p className="text-xs text-gray-700 leading-relaxed">{n.message}</p>
+                        <p className="text-xs text-gray-700 leading-relaxed">{getLocalizedMessage(n.message, locale)}</p>
                         <p className="text-[10px] text-gray-400 mt-1">{timeAgo(n.created_at)}</p>
                       </div>
                     </div>

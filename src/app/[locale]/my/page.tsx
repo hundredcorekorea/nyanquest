@@ -633,7 +633,7 @@ export default function MyPage() {
           {/* Share button */}
           <button
             onClick={() => {
-              const url = `https://nyanquest.vercel.app/?ref=${referralStats.referral_code}`;
+              const url = `https://nyanquest.com/?ref=${referralStats.referral_code}`;
               if (navigator.share) {
                 navigator.share({
                   title: "nyanQuest",

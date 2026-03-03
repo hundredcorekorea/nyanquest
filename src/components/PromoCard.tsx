@@ -1,6 +1,8 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
+import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import type { AdEntry, AdPlacement } from "@/types/database";
 
@@ -11,8 +13,14 @@ interface Props {
 
 export default function PromoCard({ placement, className = "" }: Props) {
   const [ad, setAd] = useState<AdEntry | null>(null);
+  const locale = useLocale();
+  const searchParams = useSearchParams();
+
+  // Hide ads when ?noads=1 is in the URL (for recording/screenshots)
+  const noAds = searchParams.get("noads") === "1";
 
   useEffect(() => {
+    if (noAds) return;
     const supabase = createClient();
     supabase
       .from("ads_manager")
@@ -22,21 +30,31 @@ export default function PromoCard({ placement, className = "" }: Props) {
       .order("priority", { ascending: false })
       .then(({ data }) => {
         if (!data || data.length === 0) return;
+
+        // For non-Korean locales, filter to ads that have English translations
+        const candidates = locale !== "ko"
+          ? data.filter((d) => d.title_en)
+          : data;
+        if (candidates.length === 0) return;
+
         // Priority-weighted random selection
-        const total = data.reduce((sum, d) => sum + (d.priority || 1), 0);
+        const total = candidates.reduce((sum, d) => sum + (d.priority || 1), 0);
         let rand = Math.random() * total;
-        for (const d of data) {
+        for (const d of candidates) {
           rand -= d.priority || 1;
           if (rand <= 0) {
             setAd(d as AdEntry);
             return;
           }
         }
-        setAd(data[0] as AdEntry);
+        setAd(candidates[0] as AdEntry);
       });
-  }, [placement]);
+  }, [placement, locale]);
 
   if (!ad) return null;
+
+  const title = (locale !== "ko" && ad.title_en) ? ad.title_en : ad.title;
+  const description = (locale !== "ko" && ad.description_en) ? ad.description_en : ad.description;
 
   // Banner variant (with image)
   if (ad.banner_url) {
@@ -64,7 +82,7 @@ export default function PromoCard({ placement, className = "" }: Props) {
               </span>
             </div>
             <p className="text-xs font-bold text-white leading-tight">
-              {ad.title}
+              {title}
             </p>
           </div>
         </div>
@@ -98,9 +116,9 @@ export default function PromoCard({ placement, className = "" }: Props) {
             </span>
           </div>
           <p className="text-sm font-semibold text-gray-800 mt-0.5">
-            {ad.title}
+            {title}
           </p>
-          <p className="text-xs text-gray-500">{ad.description}</p>
+          <p className="text-xs text-gray-500">{description}</p>
         </div>
       </div>
     </a>

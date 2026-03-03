@@ -225,7 +225,9 @@ export interface AdEntry {
   id: string;
   app_name: string;
   title: string;
+  title_en: string | null;
   description: string;
+  description_en: string | null;
   img_url: string | null;
   banner_url: string | null;
   link: string;

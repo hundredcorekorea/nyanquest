@@ -43,8 +43,8 @@ export async function createCheckout(opts: {
 
   if (!res.ok) {
     const errText = await res.text();
-    console.error("[lemonsqueezy] Checkout creation failed:", errText);
-    throw new Error(`Lemon Squeezy error: ${res.status}`);
+    console.error("[lemonsqueezy] Checkout creation failed:", res.status, errText);
+    throw new Error(`Lemon Squeezy error ${res.status}: ${errText.slice(0, 200)}`);
   }
 
   const json = await res.json();
