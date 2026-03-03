@@ -1,8 +1,8 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import { useRouter } from "@/i18n/navigation";
-import { useTranslations } from "next-intl";
+import { useRouter, usePathname } from "@/i18n/navigation";
+import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { parseSystemDiceRequest, rollSystemDice, type ParsedDiceRequest } from "@/lib/solo-quest/dice";
@@ -42,6 +42,7 @@ export default function QuestChat({
   const tQuest = useTranslations("SoloQuest");
   const tSolo = useTranslations("Solo");
   const tCommon = useTranslations("Common");
+  const locale = useLocale();
   const sounds = useQuestSounds();
   const bgm = useBgmPlayer();
   const bgmMood = useBgmMood(useCallback((category, trackId) => {
@@ -64,6 +65,30 @@ export default function QuestChat({
   const [suggestions, setSuggestions] = useState(initialSuggestions);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
+  const [screenEffect, setScreenEffect] = useState<"critical" | "fumble" | "success" | "fail" | null>(null);
+
+  // Stop BGM when navigating away from the quest page
+  const pathname = usePathname();
+  const initialPathRef = useRef(pathname);
+  const stopAllRef = useRef(bgm.stopAll);
+  stopAllRef.current = bgm.stopAll;
+  useEffect(() => {
+    // If pathname changed from the initial quest page, stop BGM
+    if (pathname !== initialPathRef.current) {
+      stopAllRef.current();
+    }
+  }, [pathname]);
+
+  // Also stop on browser back/close/tab switch
+  useEffect(() => {
+    const handleBeforeUnload = () => stopAllRef.current();
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+      // Cleanup: stop BGM when component unmounts (navigating away)
+      stopAllRef.current();
+    };
+  }, []);
 
   // Scroll to top on mount so user sees GM opening message first
   useEffect(() => {
@@ -144,12 +169,22 @@ export default function QuestChat({
       const request = parseSystemDiceRequest(lastGm.content, system);
 
       // Extract numbered suggestions from GM message
+      // Pattern: lines starting with "1. ", "2. ", "3. " etc.
       const lines = lastGm.content.split("\n");
       const numbered = lines
-        .filter((l) => /^\d+\.\s/.test(l.trim()))
-        .map((l) => l.replace(/^\d+\.\s*[^\s]*\s*/, "").trim())
-        .filter((l) => l.length > 0 && l.length < 30);
-      if (numbered.length > 0) {
+        .map((l) => l.trim())
+        .filter((l) => /^\d+[\.\)]\s/.test(l))
+        .map((l) => {
+          // Remove leading number + dot/paren + space, strip markdown bold markers, strip dice tags
+          const text = l
+            .replace(/^\d+[\.\)]\s*/, "")
+            .replace(/\*\*/g, "")
+            .replace(/\s*\[판정 필요:[^\]]*\]/g, "")
+            .trim();
+          return text;
+        })
+        .filter((l) => l.length > 0 && l.length < 80);
+      if (numbered.length >= 2) {
         setSuggestions(numbered);
       }
 
@@ -197,6 +232,8 @@ export default function QuestChat({
       setPendingDice(null);
 
       try {
+        // Send previous messages (WITHOUT the new player message) as context.
+        // The API will add playerMessage separately for both AI and DB save.
         const response = await fetch("/api/solo-quest/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -205,8 +242,9 @@ export default function QuestChat({
             scenarioId,
             playerMessage,
             diceRoll,
-            messages: updatedMessages.slice(-6),
+            messages: messages.slice(-6),
             turnCount,
+            locale,
           }),
         });
 
@@ -254,6 +292,13 @@ export default function QuestChat({
     },
     [isStreaming, questStatus, messages, quest.id, scenarioId, turnCount, toast, tQuest, tCommon]
   );
+
+  function handleScreenEffect(effect: "critical" | "fumble" | "success" | "fail" | null) {
+    if (!effect) return;
+    setScreenEffect(effect);
+    const duration = effect === "critical" || effect === "fumble" ? 700 : 500;
+    setTimeout(() => setScreenEffect(null), duration);
+  }
 
   function handleDiceRoll(result: DiceRoll) {
     // Play success/failure sound based on tier or boolean
@@ -348,6 +393,19 @@ export default function QuestChat({
     <div className={`relative -mx-4 -mt-4 min-h-[calc(100vh-5rem)] bg-linear-to-b ${theme.bgGradient} ${isPremium ? "ring-1 ring-inset ring-amber-500/20" : ""}`}>
     {/* Vignette + radial glow for depth */}
     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.4)_100%)]" />
+    {/* Dice result screen effects */}
+    {screenEffect === "critical" && (
+      <div className="pointer-events-none absolute inset-0 z-40 bg-amber-400/20 animate-critical-flash" />
+    )}
+    {screenEffect === "fumble" && (
+      <div className="pointer-events-none absolute inset-0 z-40 bg-red-500/20 animate-fumble-flash" />
+    )}
+    {screenEffect === "success" && (
+      <div className="pointer-events-none absolute inset-0 z-40 bg-green-500/15 animate-success-glow" />
+    )}
+    {screenEffect === "fail" && (
+      <div className="pointer-events-none absolute inset-0 z-40 bg-red-500/15 animate-fail-glow" />
+    )}
     {isPremium && (
       <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-amber-500/5 via-transparent to-amber-500/5" />
     )}
@@ -374,7 +432,7 @@ export default function QuestChat({
       </div>
     )}
 
-    <div className="relative max-w-2xl mx-auto px-4 pt-4 pb-24 flex flex-col min-h-[calc(100vh-5rem)]">
+    <div className={`relative max-w-2xl mx-auto px-4 pt-4 pb-24 flex flex-col min-h-[calc(100vh-5rem)] ${screenEffect === "fumble" ? "animate-screen-shake" : ""}`}>
       {/* Header */}
       <div className="flex items-center justify-between mb-4">
         <div>
@@ -474,21 +532,14 @@ export default function QuestChat({
 
         {/* Loading indicator */}
         {isStreaming && !streamingText && (
-          <div className="flex gap-2 items-center">
-            <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm">
+          <div className="flex gap-2 items-center animate-bubble-in">
+            <div className="w-8 h-8 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-sm">
               🧙‍♂️
             </div>
-            <div className={`${theme.bubbleColor} rounded-2xl rounded-tl-sm px-4 py-3`}>
-              <div className="flex gap-1">
-                <span className="w-2 h-2 bg-white/40 rounded-full animate-bounce" />
-                <span
-                  className="w-2 h-2 bg-white/40 rounded-full animate-bounce"
-                  style={{ animationDelay: "0.15s" }}
-                />
-                <span
-                  className="w-2 h-2 bg-white/40 rounded-full animate-bounce"
-                  style={{ animationDelay: "0.3s" }}
-                />
+            <div className={`${theme.bubbleColor} rounded-2xl rounded-tl-sm px-4 py-3 border border-white/5`}>
+              <div className="flex items-center gap-2">
+                <span className="text-base animate-pen-write">✍️</span>
+                <span className="text-xs text-gray-400">{tQuest("gmThinking")}</span>
               </div>
             </div>
           </div>
@@ -496,7 +547,7 @@ export default function QuestChat({
 
         {/* Dice roller */}
         {pendingDice && !isStreaming && questStatus === "in_progress" && (
-          <DiceRoller request={pendingDice} system={system} onRoll={handleDiceRoll} onRolling={sounds.playDiceRoll} />
+          <DiceRoller request={pendingDice} system={system} onRoll={handleDiceRoll} onRolling={sounds.playDiceRoll} onScreenEffect={handleScreenEffect} />
         )}
 
         <div ref={chatEndRef} />

@@ -6,11 +6,14 @@ import { rollSystemDice, type ParsedDiceRequest } from "@/lib/solo-quest/dice";
 import type { TrpgSystemPreset } from "@/lib/solo-quest/systems";
 import type { DiceRoll } from "@/types/solo-quest";
 
+type ScreenEffect = "critical" | "fumble" | "success" | "fail" | null;
+
 interface Props {
   request: ParsedDiceRequest;
   system: TrpgSystemPreset;
   onRoll: (result: DiceRoll) => void;
   onRolling?: () => void;
+  onScreenEffect?: (effect: ScreenEffect) => void;
 }
 
 const DICE_EMOJI: Record<string, string> = {
@@ -23,10 +26,24 @@ const DICE_EMOJI: Record<string, string> = {
   d100: "💯",
 };
 
-export default function DiceRoller({ request, system, onRoll, onRolling }: Props) {
+export default function DiceRoller({ request, system, onRoll, onRolling, onScreenEffect }: Props) {
   const t = useTranslations("SoloQuest");
   const [rolling, setRolling] = useState(false);
   const [result, setResult] = useState<DiceRoll | null>(null);
+
+  function getScreenEffect(r: DiceRoll): ScreenEffect {
+    // CoC critical (≤5) or messy critical
+    if ((system.id === "coc" && r.total <= 5) || r.messyCritical) return "critical";
+    // CoC fumble (≥96)
+    if (system.id === "coc" && r.total >= 96) return "fumble";
+    // Tier-based
+    if (r.tier === "success") return "success";
+    if (r.tier === "fail") return "fail";
+    // Binary
+    if (r.success === true) return "success";
+    if (r.success === false) return "fail";
+    return null;
+  }
 
   function handleRoll() {
     setRolling(true);
@@ -38,10 +55,17 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
       setResult(diceResult);
       setRolling(false);
 
-      // Auto-submit after showing result
+      // Trigger screen effect
+      const effect = getScreenEffect(diceResult);
+      onScreenEffect?.(effect);
+
+      // Dramatic pause: critical/fumble show longer before auto-submit
+      const isCriticalOrFumble = effect === "critical" || effect === "fumble";
+      const submitDelay = isCriticalOrFumble ? 1500 : 800;
+
       setTimeout(() => {
         onRoll(diceResult);
-      }, 800);
+      }, submitDelay);
     }, 1200);
   }
 
@@ -149,7 +173,7 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
     if (isPool) {
       const isHighestPool = system.judgmentType === "pool-highest";
       return (
-        <div className="flex justify-center animate-bubble-in">
+        <div className="flex justify-center animate-result-impact">
           <div className={`rounded-2xl px-6 py-4 text-center max-w-xs ${getResultStyle(result)}`}>
             {renderPoolResult(result)}
             {isHighestPool ? (
@@ -184,7 +208,7 @@ export default function DiceRoller({ request, system, onRoll, onRolling }: Props
     }
 
     return (
-      <div className="flex justify-center animate-bubble-in">
+      <div className="flex justify-center animate-result-impact">
         <div className={`rounded-2xl px-6 py-4 text-center ${getResultStyle(result)}`}>
           <div className="text-3xl mb-1">
             {system.diceCount > 1 ? (

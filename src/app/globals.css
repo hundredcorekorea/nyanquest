@@ -106,3 +106,85 @@
     linear-gradient(90deg, rgba(217, 119, 6, 0.04) 1px, transparent 1px);
   background-size: 24px 24px;
 }
+
+/* ── Quest UI Enhancements ── */
+
+/* Critical success — golden flash overlay */
+@keyframes critical-flash {
+  0% { opacity: 0; }
+  15% { opacity: 0.35; }
+  100% { opacity: 0; }
+}
+
+.animate-critical-flash {
+  animation: critical-flash 0.6s ease-out forwards;
+}
+
+/* Fumble — red flash overlay */
+@keyframes fumble-flash {
+  0% { opacity: 0; }
+  15% { opacity: 0.3; }
+  100% { opacity: 0; }
+}
+
+.animate-fumble-flash {
+  animation: fumble-flash 0.5s ease-out forwards;
+}
+
+/* Screen shake on fumble/fail */
+@keyframes screen-shake {
+  0%, 100% { transform: translateX(0); }
+  15% { transform: translateX(-4px); }
+  30% { transform: translateX(4px); }
+  45% { transform: translateX(-3px); }
+  60% { transform: translateX(3px); }
+  75% { transform: translateX(-1px); }
+}
+
+.animate-screen-shake {
+  animation: screen-shake 0.4s ease-out;
+}
+
+/* Dice result impact entrance */
+@keyframes result-impact {
+  0% { transform: scale(0.5); opacity: 0; }
+  60% { transform: scale(1.12); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+.animate-result-impact {
+  animation: result-impact 0.35s ease-out;
+}
+
+/* Success glow pulse */
+@keyframes success-glow {
+  0% { opacity: 0; }
+  30% { opacity: 0.2; }
+  100% { opacity: 0; }
+}
+
+.animate-success-glow {
+  animation: success-glow 0.5s ease-out forwards;
+}
+
+/* Fail glow pulse */
+@keyframes fail-glow {
+  0% { opacity: 0; }
+  30% { opacity: 0.2; }
+  100% { opacity: 0; }
+}
+
+.animate-fail-glow {
+  animation: fail-glow 0.5s ease-out forwards;
+}
+
+/* GM thinking pen animation */
+@keyframes pen-write {
+  0%, 100% { transform: rotate(0deg) translateY(0); }
+  25% { transform: rotate(-5deg) translateY(-2px); }
+  75% { transform: rotate(5deg) translateY(-1px); }
+}
+
+.animate-pen-write {
+  animation: pen-write 1s ease-in-out infinite;
+}
