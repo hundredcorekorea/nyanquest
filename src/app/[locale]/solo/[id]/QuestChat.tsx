@@ -536,8 +536,8 @@ export default function QuestChat({
           />
         )}
 
-        {/* ── GM Panel (1fr — fills remaining space) ── */}
-        <div className="flex-1 min-h-0 overflow-hidden">
+        {/* ── GM Panel (capped height, scrollable) ── */}
+        <div className="shrink-0 max-h-[30vh] overflow-hidden">
           <GmPanel
             currentTurn={currentTurn}
             isStreaming={isStreaming}

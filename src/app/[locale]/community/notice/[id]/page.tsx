@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Link } from "@/i18n/navigation";
 import type { Announcement, AnnouncementCategory } from "@/types/database";
 import { getTranslations } from "next-intl/server";
+import SimpleMarkdown from "@/components/SimpleMarkdown";
 
 const categoryStyle: Record<AnnouncementCategory, { emoji: string; label: string }> = {
   update: { emoji: "⚔️", label: "업데이트" },
@@ -52,7 +53,7 @@ export default async function NoticeDetailPage({ params }: Props) {
       </Link>
 
       {/* Card */}
-      <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 overflow-hidden">
+      <div className="bg-linear-to-br from-amber-50 to-orange-50 rounded-2xl border border-amber-200 overflow-hidden">
         {/* Header */}
         <div className="px-5 pt-5 pb-3 border-b border-amber-200/50">
           <div className="flex items-center gap-2 mb-2">
@@ -67,9 +68,10 @@ export default async function NoticeDetailPage({ params }: Props) {
 
         {/* Content */}
         <div className="px-5 py-4">
-          <div className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
-            {announcement.content}
-          </div>
+          <SimpleMarkdown
+            content={announcement.content}
+            className="text-sm text-gray-700 leading-relaxed"
+          />
         </div>
       </div>
     </div>
