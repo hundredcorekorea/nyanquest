@@ -399,6 +399,8 @@
     "diceFailNyan": "Failure, nya...",
     "diceRolling": "Rolling...",
     "gmThinking": "NaYang is thinking...",
+    "gmName": "NaYang GM",
+    "adventurerLabel": "Adventurer",
     "diceRoll": "Roll",
     "diceCheck": "{label} Check (DC {dc})",
     "diceRollResult": "Rolled the dice! {type} = {total} (DC {dc} {result})",

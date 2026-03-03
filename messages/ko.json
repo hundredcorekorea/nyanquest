@@ -399,6 +399,8 @@
     "diceFailNyan": "실패다냥...",
     "diceRolling": "굴리는 중...",
     "gmThinking": "나양이 생각하는 중...",
+    "gmName": "나냥 GM",
+    "adventurerLabel": "모험가",
     "diceRoll": "굴리기",
     "diceCheck": "{label} 판정 (DC {dc})",
     "diceRollResult": "주사위를 굴렸다! {type} = {total} (DC {dc} {result})",

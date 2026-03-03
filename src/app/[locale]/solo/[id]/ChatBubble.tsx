@@ -1,6 +1,7 @@
 "use client";
 
 import { Fragment } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { QuestMessage, ScenarioTheme } from "@/types/solo-quest";
 import type { TrpgSystemId } from "@/lib/solo-quest/systems";
@@ -65,9 +66,10 @@ interface Props {
   isStreaming?: boolean;
   theme?: ScenarioTheme;
   systemId?: TrpgSystemId;
+  userAvatarUrl?: string | null;
 }
 
-export default function ChatBubble({ message, isStreaming, theme, systemId }: Props) {
+export default function ChatBubble({ message, isStreaming, theme, systemId, userAvatarUrl }: Props) {
   const t = useTranslations("SoloQuest");
   if (message.role === "system") {
     return (
@@ -244,33 +246,76 @@ export default function ChatBubble({ message, isStreaming, theme, systemId }: Pr
 
   const isGm = message.role === "gm";
   const bubbleBg = theme?.bubbleColor ?? "bg-amber-950/60";
+  const accentBorder = theme?.accentColor?.replace("text-", "border-") ?? "border-amber-400";
 
-  return (
-    <div
-      className={`flex gap-2 animate-bubble-in ${
-        isGm ? "justify-start" : "justify-end"
-      }`}
-    >
-      {isGm && (
-        <div className="w-8 h-8 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-sm shrink-0">
-          🧙‍♂️
+  // ── GM message: visual novel dialogue box ──
+  if (isGm) {
+    return (
+      <div className="animate-bubble-in w-full">
+        <div className={`${bubbleBg} rounded-xl px-3 py-3 border border-white/5 backdrop-blur-xs`}>
+          <div className="flex gap-3">
+            {/* NaYang portrait */}
+            <div className="shrink-0 animate-portrait-in">
+              <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg ${accentBorder} border-2 overflow-hidden bg-black/30`}>
+                <Image
+                  src="/images/nayang/neutral.svg"
+                  alt="NaYang GM"
+                  width={64}
+                  height={64}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            </div>
+            {/* Text area */}
+            <div className="flex-1 min-w-0">
+              <div className={`text-xs font-bold mb-1 ${theme?.accentColor ?? "text-amber-400"}`}>
+                {t("gmName")}
+              </div>
+              <div className="text-sm leading-relaxed whitespace-pre-wrap text-gray-100">
+                {renderInlineMarkdown(stripDiceTags(message.content))}
+                {isStreaming && <span className="streaming-cursor" />}
+              </div>
+            </div>
+          </div>
         </div>
-      )}
-      <div
-        className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap ${
-          isGm
-            ? `${bubbleBg} text-gray-100 rounded-tl-sm border border-white/5 backdrop-blur-xs`
-            : "bg-white/15 text-white rounded-tr-sm border border-white/10"
-        }`}
-      >
-        {isGm ? renderInlineMarkdown(stripDiceTags(message.content)) : message.content}
-        {isStreaming && <span className="streaming-cursor" />}
       </div>
-      {!isGm && (
-        <div className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center text-sm shrink-0">
-          🧑
+    );
+  }
+
+  // ── Player message: right-aligned with user avatar ──
+  return (
+    <div className="animate-bubble-in w-full">
+      <div className="bg-white/10 rounded-xl px-3 py-3 border border-white/10">
+        <div className="flex gap-3 flex-row-reverse">
+          {/* User avatar */}
+          <div className="shrink-0">
+            <div className="w-10 h-10 rounded-lg border-2 border-white/20 overflow-hidden bg-black/30">
+              {userAvatarUrl ? (
+                <Image
+                  src={userAvatarUrl}
+                  alt=""
+                  width={40}
+                  height={40}
+                  className="w-full h-full object-cover"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center text-lg">
+                  🧑
+                </div>
+              )}
+            </div>
+          </div>
+          {/* Text area */}
+          <div className="flex-1 min-w-0">
+            <div className="text-xs font-bold mb-1 text-white/60 text-right">
+              {t("adventurerLabel")}
+            </div>
+            <div className="text-sm leading-relaxed whitespace-pre-wrap text-white text-right">
+              {message.content}
+            </div>
+          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

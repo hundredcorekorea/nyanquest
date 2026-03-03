@@ -188,3 +188,23 @@
 .animate-pen-write {
   animation: pen-write 1s ease-in-out infinite;
 }
+
+/* Scene background cinematic reveal */
+@keyframes scene-reveal {
+  0% { opacity: 0; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+.animate-scene-reveal {
+  animation: scene-reveal 1.5s ease-out forwards;
+}
+
+/* Portrait slide-in for visual novel dialogue */
+@keyframes portrait-in {
+  from { opacity: 0; transform: translateX(-12px) scale(0.9); }
+  to { opacity: 1; transform: translateX(0) scale(1); }
+}
+
+.animate-portrait-in {
+  animation: portrait-in 0.3s ease-out;
+}

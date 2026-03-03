@@ -30,6 +30,13 @@ export default async function SoloQuestPlayPage({ params }: Props) {
   const scenario = getScenario(typedQuest.scenario_id);
   if (!scenario) notFound();
 
+  // Fetch user profile for avatar
+  const { data: profile } = await supabase
+    .from("profiles")
+    .select("avatar_url")
+    .eq("id", user.id)
+    .single();
+
   // Check premium status
   const { data: premiumStatus } = await supabase.rpc("is_premium", {
     p_user_id: user.id,
@@ -52,6 +59,7 @@ export default async function SoloQuestPlayPage({ params }: Props) {
       isPremium={isPremium}
       theme={scenario.theme}
       systemId={scenario.system}
+      userAvatarUrl={profile?.avatar_url ?? null}
     />
   );
 }
