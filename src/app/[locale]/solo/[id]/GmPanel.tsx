@@ -59,16 +59,31 @@ export default function GmPanel({
       {/* GM narrative content */}
       <div
         ref={scrollRef}
-        className="flex-1 overflow-y-auto px-3 py-2 gm-panel-scroll relative"
+        className="flex-1 overflow-y-auto gm-panel-scroll relative"
       >
-        {/* Streaming: show partial text with cursor */}
-        {isCurrentTurnStreaming && streamingText ? (
-          <div className="flex gap-2.5 animate-turn-slide-in">
-            <div className="w-11 h-11 rounded-lg border border-white/20 overflow-hidden bg-black/30 shrink-0">
-              <Image src="/images/nayang/neutral.svg" alt="NaYang" width={44} height={44} className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className={`text-[10px] font-bold mb-0.5 ${theme.accentColor}`}>{t("gmName")}</div>
+        {/* NaYang portrait — always visible at top */}
+        <div className="relative w-full h-24 overflow-hidden shrink-0">
+          <Image
+            src="/images/nayang/gm.png"
+            alt="NaYang GM"
+            width={480}
+            height={200}
+            className={`w-full h-full object-cover object-top ${isCurrentTurnStreaming && !streamingText ? "animate-gm-breathe" : ""}`}
+            priority
+          />
+          {/* Bottom fade into text area */}
+          <div className={`absolute inset-x-0 bottom-0 h-10 bg-linear-to-t from-black/80 to-transparent`} />
+          {/* GM name overlay */}
+          <div className={`absolute bottom-1 left-3 text-[10px] font-bold ${theme.accentColor}`}>
+            {t("gmName")}
+          </div>
+        </div>
+
+        {/* Text area — speech bubble style */}
+        <div className="px-3 py-2">
+          {/* Streaming: show partial text with cursor */}
+          {isCurrentTurnStreaming && streamingText ? (
+            <div className="animate-turn-slide-in">
               <div className="text-sm leading-relaxed">
                 {stripDiceTags(streamingText).split("\n").map((line, i) => (
                   <p key={i} className={`${i > 0 ? "mt-1.5" : ""}`}>
@@ -78,34 +93,19 @@ export default function GmPanel({
                 <span className="streaming-cursor" />
               </div>
             </div>
-          </div>
-        ) : isCurrentTurnStreaming && !streamingText ? (
-          /* Loading state: NaYang thinking */
-          <div className="flex gap-2.5 items-center">
-            <div className="w-11 h-11 rounded-lg border border-white/20 overflow-hidden bg-black/30 shrink-0 animate-gm-breathe">
-              <Image src="/images/nayang/neutral.svg" alt="NaYang" width={44} height={44} className="w-full h-full object-cover" />
+          ) : isCurrentTurnStreaming && !streamingText ? (
+            /* Loading state: NaYang thinking */
+            <div className="flex items-center gap-1.5 py-2">
+              <span className="text-base animate-pen-write">✍️</span>
+              <span className="text-xs text-gray-400">{t("gmThinking")}</span>
             </div>
-            <div>
-              <div className={`text-[10px] font-bold mb-0.5 ${theme.accentColor}`}>{t("gmName")}</div>
-              <div className="flex items-center gap-1.5">
-                <span className="text-base animate-pen-write">✍️</span>
-                <span className="text-xs text-gray-400">{t("gmThinking")}</span>
-              </div>
-            </div>
-          </div>
-        ) : displayText ? (
-          /* Normal turn: show GM message */
-          <div className="flex gap-2.5 animate-turn-slide-in" key={currentViewIndex}>
-            <div className="w-11 h-11 rounded-lg border border-white/20 overflow-hidden bg-black/30 shrink-0">
-              <Image src="/images/nayang/neutral.svg" alt="NaYang" width={44} height={44} className="w-full h-full object-cover" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <div className={`text-[10px] font-bold mb-0.5 ${theme.accentColor}`}>{t("gmName")}</div>
+          ) : displayText ? (
+            /* Normal turn: show GM message */
+            <div className="animate-turn-slide-in" key={currentViewIndex}>
               <div className="text-sm leading-relaxed">
                 {displayText.split("\n").map((line, i) => {
                   const trimmed = line.trim();
                   if (!trimmed) return null;
-                  // Numbered choices: render as styled items
                   if (/^\d+[\.\)]\s/.test(trimmed)) {
                     return (
                       <p key={i} className="mt-1 text-gray-200">
@@ -121,13 +121,13 @@ export default function GmPanel({
                 })}
               </div>
             </div>
-          </div>
-        ) : (
-          /* No GM message yet (incomplete turn) */
-          <div className="flex items-center justify-center h-full text-gray-500 text-xs">
-            {t("gmThinking")}
-          </div>
-        )}
+          ) : (
+            /* No GM message yet */
+            <div className="flex items-center justify-center py-4 text-gray-500 text-xs">
+              {t("gmThinking")}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
