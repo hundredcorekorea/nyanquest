@@ -42,12 +42,14 @@ export default async function SoloQuestPlayPage({ params }: Props) {
     p_user_id: user.id,
   });
   const isPremium = !!premiumStatus;
-  const effectiveTurns = Math.round(
+  const calculatedTurns = Math.round(
     scenario.estimatedTurns *
       (isPremium
         ? PREMIUM_CONFIG.premium.turnMultiplier
         : PREMIUM_CONFIG.free.turnMultiplier)
   );
+  // Use quest's total_turns if it was overridden (e.g. by turn extension)
+  const effectiveTurns = typedQuest.total_turns || calculatedTurns;
 
   return (
     <QuestChat

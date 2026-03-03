@@ -457,7 +457,19 @@
     "cutInCritical": "CRITICAL~nya!!",
     "cutInFumble": "...oh no~nya",
     "cutInClear": "CLEAR~nya!",
-    "cutInFailed": "meow..."
+    "cutInFailed": "meow...",
+    "inputModeChoice": "Choice",
+    "inputModeShort": "Short",
+    "inputModeNarrative": "Narrative",
+    "turnOf": "Turn {current}/{total}",
+    "shortAnswerPlaceholder": "Enter a quick action, nya...",
+    "noChoicesAvailable": "No choices available, nya. Try another mode!",
+    "previousAction": "Previous action",
+    "turnExtendTitle": "Only {remaining} turns left, nya!",
+    "turnExtendAd": "Watch ad for +3 turns",
+    "turnExtendPremium": "Go Premium for 2.5x turns",
+    "turnExtended": "+3 turns added, nya!",
+    "turnExtendAdNotReady": "Ad not ready yet, nya..."
   },
   "Tutorial": {
     "skip": "Skip",

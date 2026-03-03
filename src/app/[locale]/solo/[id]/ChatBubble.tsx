@@ -1,65 +1,10 @@
 "use client";
 
-import { Fragment } from "react";
 import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { QuestMessage, ScenarioTheme } from "@/types/solo-quest";
 import type { TrpgSystemId } from "@/lib/solo-quest/systems";
-
-/** Strip [판정 필요: ...] tags from displayed text — these are machine-parsed, not for the player */
-function stripDiceTags(text: string): string {
-  return text.replace(/\s*\[판정 필요:[^\]]*\]/g, "").trim();
-}
-
-/** Render inline markdown: **bold**, *italic*, "dialogue" → JSX */
-function renderInlineMarkdown(text: string): React.ReactNode[] {
-  const parts: React.ReactNode[] = [];
-  // Match **bold**, *italic*, or "quoted dialogue" (including Korean quotation marks)
-  const regex = /(\*\*(.+?)\*\*|\*(.+?)\*|"([^"]+)"|"([^"]+)")/g;
-  let lastIndex = 0;
-  let match: RegExpExecArray | null;
-
-  while ((match = regex.exec(text)) !== null) {
-    // Push text before this match (narration — slightly dimmer)
-    if (match.index > lastIndex) {
-      parts.push(
-        <span key={`n${lastIndex}`} className="text-gray-300">
-          {text.slice(lastIndex, match.index)}
-        </span>
-      );
-    }
-    if (match[2]) {
-      // **bold**
-      parts.push(<strong key={match.index} className="font-bold text-white">{match[2]}</strong>);
-    } else if (match[3]) {
-      // *italic*
-      parts.push(<em key={match.index} className="italic text-gray-200">{match[3]}</em>);
-    } else if (match[4] || match[5]) {
-      // "dialogue" or \u201Cdialogue\u201D — bright with left accent bar
-      const dialogue = match[4] || match[5];
-      parts.push(
-        <span
-          key={match.index}
-          className="inline text-white font-medium border-l-2 border-amber-400/60 pl-1.5 ml-0.5"
-        >
-          &ldquo;{dialogue}&rdquo;
-        </span>
-      );
-    }
-    lastIndex = match.index + match[0].length;
-  }
-
-  // Push remaining text
-  if (lastIndex < text.length) {
-    parts.push(
-      <span key={`n${lastIndex}`} className="text-gray-300">
-        {text.slice(lastIndex)}
-      </span>
-    );
-  }
-
-  return parts.length > 0 ? parts : [<span key="t" className="text-gray-300">{text}</span>];
-}
+import { stripDiceTags, renderInlineMarkdown } from "@/lib/solo-quest/text-format";
 
 interface Props {
   message: QuestMessage;

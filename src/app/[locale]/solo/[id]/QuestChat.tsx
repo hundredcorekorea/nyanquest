@@ -1,23 +1,25 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
-import Image from "next/image";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
-import { parseSystemDiceRequest, rollSystemDice, type ParsedDiceRequest } from "@/lib/solo-quest/dice";
+import { parseSystemDiceRequest, type ParsedDiceRequest } from "@/lib/solo-quest/dice";
 import { getSystem, type TrpgSystemId } from "@/lib/solo-quest/systems";
 import { useQuestSounds } from "@/hooks/useQuestSounds";
 import { useBgmPlayer } from "@/hooks/useBgmPlayer";
 import { useBgmMood } from "@/hooks/useBgmMood";
 import { useSceneBackground } from "@/hooks/useSceneBackground";
+import { useTurns } from "@/hooks/useTurns";
 import NaYangCutIn, { type CutInType } from "@/components/NaYangCutIn";
 import type { SoloQuest, QuestMessage, DiceRoll, ScenarioTheme } from "@/types/solo-quest";
 import type { SfxGenre } from "@/hooks/useQuestSounds";
-import ChatBubble from "./ChatBubble";
+import GmPanel from "./GmPanel";
+import ScenePanel from "./ScenePanel";
+import PlayerPanel, { type InputMode } from "./PlayerPanel";
 import DiceRoller from "./DiceRoller";
-import ActionInput from "./ActionInput";
+import TurnExtendBanner from "./TurnExtendBanner";
 import QuestComplete from "./QuestComplete";
 
 interface Props {
@@ -81,14 +83,40 @@ export default function QuestChat({
   const system = getSystem(systemId);
   const [pendingDice, setPendingDice] = useState<ParsedDiceRequest | null>(null);
   const [suggestions, setSuggestions] = useState(initialSuggestions);
-  const chatEndRef = useRef<HTMLDivElement>(null);
-  const [showScrollDown, setShowScrollDown] = useState(false);
   const [screenEffect, setScreenEffect] = useState<"critical" | "fumble" | "success" | "fail" | null>(null);
   const sfxGenre = genreToSfx(genre);
   const sceneBg = useSceneBackground(scenarioId);
-  const [bgLoaded, setBgLoaded] = useState(false);
   const [cutIn, setCutIn] = useState<{ type: CutInType; key: number } | null>(null);
   const [sceneTransition, setSceneTransition] = useState(false);
+
+  // Turn extension state
+  const [effectiveTotalTurns, setEffectiveTotalTurns] = useState(totalTurns);
+  const [turnsExtended, setTurnsExtended] = useState(quest.turns_extended ?? false);
+
+  // 3-panel state
+  const turns = useTurns(messages);
+  const [currentViewIndex, setCurrentViewIndex] = useState(Math.max(0, turns.length - 1));
+  const [inputMode, setInputMode] = useState<InputMode>("choice");
+
+  // Keep view at latest turn when new turns come in or streaming starts
+  useEffect(() => {
+    if (isStreaming || turns.length > 0) {
+      setCurrentViewIndex(turns.length - 1);
+    }
+  }, [turns.length, isStreaming]);
+
+  const currentTurn = turns[currentViewIndex] ?? null;
+  // Previous turn for "last player action" display
+  const previousTurn = currentViewIndex > 0 ? turns[currentViewIndex - 1] : null;
+
+  // Auto-switch to "choice" when GM provides numbered suggestions
+  const prevSuggestionsLenRef = useRef(suggestions.length);
+  useEffect(() => {
+    if (suggestions.length >= 2 && prevSuggestionsLenRef.current !== suggestions.length && !pendingDice) {
+      setInputMode("choice");
+    }
+    prevSuggestionsLenRef.current = suggestions.length;
+  }, [suggestions, pendingDice]);
 
   // Stop BGM when navigating away from the quest page
   const pathname = usePathname();
@@ -96,7 +124,6 @@ export default function QuestChat({
   const stopAllRef = useRef(bgm.stopAll);
   stopAllRef.current = bgm.stopAll;
   useEffect(() => {
-    // If pathname changed from the initial quest page, stop BGM
     if (pathname !== initialPathRef.current) {
       stopAllRef.current();
     }
@@ -108,26 +135,17 @@ export default function QuestChat({
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => {
       window.removeEventListener("beforeunload", handleBeforeUnload);
-      // Cleanup: stop BGM when component unmounts (navigating away)
       stopAllRef.current();
     };
-  }, []);
-
-  // Scroll to top on mount so user sees GM opening message first
-  useEffect(() => {
-    window.scrollTo(0, 0);
   }, []);
 
   // Show BGM consent prompt on mount (only if not already answered)
   useEffect(() => {
     const answered = localStorage.getItem("nyanquest_bgm_prompted");
     if (!answered && bgm.enabled) {
-      // Small delay so the page renders first
       const timer = setTimeout(() => setShowBgmPrompt(true), 800);
       return () => clearTimeout(timer);
     }
-    // If already answered "yes" previously, start BGM via mood analysis.
-    // AudioContext will auto-resume on first user click if suspended.
     if (answered === "yes" && bgm.enabled) {
       const lastGm = [...quest.messages].reverse().find((m) => m.role === "gm");
       if (lastGm) bgmMood.analyzeMessage(lastGm.content);
@@ -135,34 +153,11 @@ export default function QuestChat({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Detect when new content is below the viewport
-  useEffect(() => {
-    if (!chatEndRef.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => setShowScrollDown(!entry.isIntersecting),
-      { threshold: 0.1 }
-    );
-    observer.observe(chatEndRef.current);
-    return () => observer.disconnect();
-  }, []);
-
-  // Show scroll indicator when new messages arrive
-  useEffect(() => {
-    if (!chatEndRef.current) return;
-    const rect = chatEndRef.current.getBoundingClientRect();
-    const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
-    if (!isVisible) setShowScrollDown(true);
-  }, [messages, streamingText]);
-
-  // BGM consent handlers — user click = user gesture = guaranteed audio play
+  // BGM consent handlers
   const handleBgmAccept = useCallback(() => {
     bgmPromptAnsweredRef.current = true;
     localStorage.setItem("nyanquest_bgm_prompted", "yes");
     setShowBgmPrompt(false);
-
-    // CRITICAL: play audio DIRECTLY in this click handler.
-    // Going through bgmMood.analyzeMessage → callback → playTrack loses
-    // the user gesture context and the browser blocks audio.play().
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
     if (lastGm) {
       const mood = bgmMood.detectMood(lastGm.content);
@@ -177,42 +172,29 @@ export default function QuestChat({
     localStorage.setItem("nyanquest_bgm_prompted", "no");
     localStorage.setItem("nyanquest_bgm_enabled", "0");
     setShowBgmPrompt(false);
-    bgm.toggle(); // turn off
+    bgm.toggle();
   }, [bgm]);
-
-  const scrollToBottom = useCallback(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
-    setShowScrollDown(false);
-  }, []);
 
   // Parse dice requests and choices from last GM message
   useEffect(() => {
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
     if (lastGm && !isStreaming) {
       const request = parseSystemDiceRequest(lastGm.content, system);
-
-      // Extract numbered suggestions from GM message
-      // Pattern: lines starting with "1. ", "2. ", "3. " etc.
       const lines = lastGm.content.split("\n");
       const numbered = lines
         .map((l) => l.trim())
         .filter((l) => /^\d+[\.\)]\s/.test(l))
-        .map((l) => {
-          // Remove leading number + dot/paren + space, strip markdown bold markers, strip dice tags
-          const text = l
+        .map((l) =>
+          l
             .replace(/^\d+[\.\)]\s*/, "")
             .replace(/\*\*/g, "")
             .replace(/\s*\[판정 필요:[^\]]*\]/g, "")
-            .trim();
-          return text;
-        })
+            .trim()
+        )
         .filter((l) => l.length > 0 && l.length < 80);
       if (numbered.length >= 2) {
         setSuggestions(numbered);
       }
-
-      // If GM presents both choices AND dice request,
-      // defer dice — let player pick a choice first, then roll dice on next turn.
       if (request && numbered.length >= 2) {
         setPendingDice(null);
       } else {
@@ -221,20 +203,14 @@ export default function QuestChat({
     }
   }, [messages, isStreaming, system]);
 
-  // Check for quest completion or failure — only when AI explicitly ends the story
+  // Check for quest completion or failure
   useEffect(() => {
     const lastGm = [...messages].reverse().find((m) => m.role === "gm");
     if (!lastGm) return;
-    if (
-      lastGm.content.includes("[퀘스트 실패]") ||
-      lastGm.content.includes("[Quest Failed]")
-    ) {
+    if (lastGm.content.includes("[퀘스트 실패]") || lastGm.content.includes("[Quest Failed]")) {
       setQuestStatus("failed");
       triggerCutIn("failed");
-    } else if (
-      lastGm.content.includes("[퀘스트 완료]") ||
-      lastGm.content.includes("[Quest Complete]")
-    ) {
+    } else if (lastGm.content.includes("[퀘스트 완료]") || lastGm.content.includes("[Quest Complete]")) {
       setQuestStatus("completed");
       triggerCutIn("clear");
     }
@@ -245,7 +221,6 @@ export default function QuestChat({
     async (playerMessage: string, diceRoll?: DiceRoll) => {
       if (isStreaming || questStatus !== "in_progress") return;
 
-      // Scene transition effect
       setSceneTransition(true);
       sounds.playTransition();
       setTimeout(() => setSceneTransition(false), 600);
@@ -263,8 +238,6 @@ export default function QuestChat({
       setPendingDice(null);
 
       try {
-        // Send previous messages (WITHOUT the new player message) as context.
-        // The API will add playerMessage separately for both AI and DB save.
         const response = await fetch("/api/solo-quest/chat", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -281,7 +254,6 @@ export default function QuestChat({
 
         if (!response.ok) {
           const err = await response.json().catch(() => ({}));
-          // Server forced completion due to turn limit
           if (response.status === 400 && err.error) {
             setQuestStatus("completed");
           }
@@ -315,13 +287,12 @@ export default function QuestChat({
           err instanceof Error ? err.message : tCommon("errorOccurred"),
           "error"
         );
-        // Remove the player message on error
         setMessages(messages);
       } finally {
         setIsStreaming(false);
       }
     },
-    [isStreaming, questStatus, messages, quest.id, scenarioId, turnCount, toast, tQuest, tCommon]
+    [isStreaming, questStatus, messages, quest.id, scenarioId, turnCount, toast, tQuest, tCommon, locale, sounds, bgmMood]
   );
 
   function handleScreenEffect(effect: "critical" | "fumble" | "success" | "fail" | null) {
@@ -337,7 +308,6 @@ export default function QuestChat({
   }
 
   function handleDiceRoll(result: DiceRoll) {
-    // Play genre-aware success/failure sound based on tier or boolean
     if (result.tier === "partial") {
       sounds.playSuccess(sfxGenre);
     } else if (result.success) {
@@ -346,7 +316,6 @@ export default function QuestChat({
       sounds.playFailure(sfxGenre);
     }
 
-    // Create a system message for the dice result
     const diceMsg: QuestMessage = {
       role: "system",
       content: "",
@@ -355,7 +324,6 @@ export default function QuestChat({
     };
     setMessages((prev) => [...prev, diceMsg]);
 
-    // Build result text based on system
     let resultText: string;
     if (system.id === "dungeon-world") {
       const tierLabel = result.tier === "success"
@@ -363,10 +331,7 @@ export default function QuestChat({
         : result.tier === "partial"
         ? tQuest("diceResultPartial")
         : tQuest("diceResultFail");
-      resultText = tQuest("diceRollResultTier", {
-        total: result.total,
-        result: tierLabel,
-      });
+      resultText = tQuest("diceRollResultTier", { total: result.total, result: tierLabel });
     } else if (system.id === "insane") {
       resultText = tQuest("diceRollResultTarget", {
         total: result.total,
@@ -421,255 +386,209 @@ export default function QuestChat({
       .from("solo_quests")
       .update({ status: "abandoned", updated_at: new Date().toISOString() })
       .eq("id", quest.id);
-
     router.push("/solo");
   }
 
+  const progressPercent = Math.min((turnCount / effectiveTotalTurns) * 100, 100);
+  const remainingTurns = effectiveTotalTurns - turnCount;
+
   return (
-    <div className={`relative -mx-4 -mt-4 min-h-[calc(100vh-5rem)] bg-linear-to-b ${theme.bgGradient} ${isPremium ? "ring-1 ring-inset ring-amber-500/20" : ""}`}>
-    {/* Scene background image from Pexels */}
-    {sceneBg && (
-      <div
-        className={`absolute inset-0 overflow-hidden ${bgLoaded ? "animate-scene-reveal" : "opacity-0"}`}
-      >
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src={sceneBg.url}
-          alt=""
-          onLoad={() => setBgLoaded(true)}
-          className="absolute inset-0 w-full h-full object-cover"
-          style={{ filter: "blur(2px) brightness(0.3) saturate(1.2)" }}
+    <div className={`relative -mx-4 -mt-4 h-dvh overflow-hidden bg-linear-to-b ${theme.bgGradient} ${isPremium ? "ring-1 ring-inset ring-amber-500/20" : ""}`}>
+      {/* Screen effects layer */}
+      {screenEffect === "critical" && (
+        <div className="pointer-events-none absolute inset-0 z-40 bg-amber-400/20 animate-critical-flash" />
+      )}
+      {screenEffect === "fumble" && (
+        <div className="pointer-events-none absolute inset-0 z-40 bg-red-500/20 animate-fumble-flash" />
+      )}
+      {screenEffect === "success" && (
+        <div className="pointer-events-none absolute inset-0 z-40 bg-green-500/15 animate-success-glow" />
+      )}
+      {screenEffect === "fail" && (
+        <div className="pointer-events-none absolute inset-0 z-40 bg-red-500/15 animate-fail-glow" />
+      )}
+      {sceneTransition && (
+        <div className="pointer-events-none absolute inset-0 z-40 bg-black animate-scene-transition" />
+      )}
+      {cutIn && (
+        <NaYangCutIn
+          key={cutIn.key}
+          type={cutIn.type}
+          text={tQuest(
+            cutIn.type === "dice" ? "cutInDice"
+              : cutIn.type === "critical" ? "cutInCritical"
+              : cutIn.type === "fumble" ? "cutInFumble"
+              : cutIn.type === "clear" ? "cutInClear"
+              : "cutInFailed"
+          )}
+          onComplete={() => setCutIn(null)}
         />
-        {/* Theme color tint overlay */}
-        <div className={`absolute inset-0 bg-linear-to-b ${theme.bgGradient} opacity-60`} />
-      </div>
-    )}
-    {/* Vignette + radial glow for depth */}
-    <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.4)_100%)]" />
-    {/* Dice result screen effects */}
-    {screenEffect === "critical" && (
-      <div className="pointer-events-none absolute inset-0 z-40 bg-amber-400/20 animate-critical-flash" />
-    )}
-    {screenEffect === "fumble" && (
-      <div className="pointer-events-none absolute inset-0 z-40 bg-red-500/20 animate-fumble-flash" />
-    )}
-    {screenEffect === "success" && (
-      <div className="pointer-events-none absolute inset-0 z-40 bg-green-500/15 animate-success-glow" />
-    )}
-    {screenEffect === "fail" && (
-      <div className="pointer-events-none absolute inset-0 z-40 bg-red-500/15 animate-fail-glow" />
-    )}
-    {/* Scene transition overlay — brief blackout between turns */}
-    {sceneTransition && (
-      <div className="pointer-events-none absolute inset-0 z-40 bg-black animate-scene-transition" />
-    )}
-    {/* NaYang Cut-In overlay */}
-    {cutIn && (
-      <NaYangCutIn
-        key={cutIn.key}
-        type={cutIn.type}
-        text={tQuest(
-          cutIn.type === "dice" ? "cutInDice"
-            : cutIn.type === "critical" ? "cutInCritical"
-            : cutIn.type === "fumble" ? "cutInFumble"
-            : cutIn.type === "clear" ? "cutInClear"
-            : "cutInFailed"
-        )}
-        onComplete={() => setCutIn(null)}
-      />
-    )}
-    {isPremium && (
-      <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-amber-500/5 via-transparent to-amber-500/5" />
-    )}
-    {/* BGM consent prompt */}
-    {showBgmPrompt && (
-      <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300 w-[min(280px,90vw)]">
-        <div className="bg-gray-900/95 backdrop-blur-sm rounded-2xl border border-amber-500/30 px-4 py-3 shadow-xl text-center">
-          <p className="text-sm text-gray-200 mb-2.5">🎵 {tQuest("bgmPrompt")}</p>
-          <div className="flex gap-2 justify-center">
-            <button
-              onClick={handleBgmAccept}
-              className="px-4 py-1.5 text-xs font-medium bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
-            >
-              {tQuest("bgmEnable")}
-            </button>
-            <button
-              onClick={handleBgmDecline}
-              className="px-4 py-1.5 text-xs font-medium text-gray-400 hover:text-gray-200 border border-white/10 rounded-lg transition-colors"
-            >
-              {tQuest("bgmDisable")}
-            </button>
+      )}
+      {isPremium && (
+        <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-amber-500/5 via-transparent to-amber-500/5" />
+      )}
+
+      {/* BGM consent prompt */}
+      {showBgmPrompt && (
+        <div className="fixed top-4 left-1/2 -translate-x-1/2 z-50 animate-in fade-in slide-in-from-top-2 duration-300 w-[min(280px,90vw)]">
+          <div className="bg-gray-900/95 backdrop-blur-sm rounded-2xl border border-amber-500/30 px-4 py-3 shadow-xl text-center">
+            <p className="text-sm text-gray-200 mb-2.5">🎵 {tQuest("bgmPrompt")}</p>
+            <div className="flex gap-2 justify-center">
+              <button
+                onClick={handleBgmAccept}
+                className="px-4 py-1.5 text-xs font-medium bg-amber-500 text-white rounded-lg hover:bg-amber-600 transition-colors"
+              >
+                {tQuest("bgmEnable")}
+              </button>
+              <button
+                onClick={handleBgmDecline}
+                className="px-4 py-1.5 text-xs font-medium text-gray-400 hover:text-gray-200 border border-white/10 rounded-lg transition-colors"
+              >
+                {tQuest("bgmDisable")}
+              </button>
+            </div>
           </div>
         </div>
-      </div>
-    )}
+      )}
 
-    <div className={`relative max-w-2xl mx-auto px-4 pt-4 pb-24 flex flex-col min-h-[calc(100vh-5rem)] ${screenEffect === "fumble" ? "animate-screen-shake" : ""}`}>
-      {/* Header */}
-      <div className="flex items-center justify-between mb-4">
-        <div>
-          <h1 className={`text-sm font-bold ${theme.accentColor}`}>{scenarioTitle}</h1>
-          <div className="flex items-center gap-2">
-            <p className="text-xs text-gray-400">
-              {tQuest("turnProgress", { current: turnCount, total: totalTurns })}
-            </p>
+      {/* 3-Panel Grid Layout */}
+      <div className={`relative h-full max-w-2xl mx-auto flex flex-col ${screenEffect === "fumble" ? "animate-screen-shake" : ""}`}>
+        {/* ── Header (44px) ── */}
+        <div className="flex items-center justify-between px-3 h-11 shrink-0 border-b border-white/5">
+          <div className="flex items-center gap-2 min-w-0">
+            <h1 className={`text-xs font-bold truncate ${theme.accentColor}`}>{scenarioTitle}</h1>
             {isPremium && (
-              <span className="text-[10px] font-bold text-amber-400 bg-amber-500/20 rounded-full px-1.5 py-0.5">
-                👑 Premium
+              <span className="text-[8px] font-bold text-amber-400 bg-amber-500/20 rounded-full px-1 py-0.5 shrink-0">
+                👑
               </span>
             )}
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {/* BGM toggle + volume */}
-          <div className="relative flex items-center gap-1">
-            <button
-              onClick={bgm.toggle}
-              className={`text-sm px-2 py-1 rounded-lg transition-colors ${
-                bgm.enabled ? "text-amber-400 hover:text-amber-300" : "text-gray-500 hover:text-gray-300"
-              }`}
-              title={bgm.enabled ? "BGM Off" : "BGM On"}
-            >
-              {bgm.enabled ? "♫" : "♪"}
-            </button>
-            {bgm.enabled && (
+          <div className="flex items-center gap-1 shrink-0">
+            {/* BGM toggle + volume */}
+            <div className="relative flex items-center">
               <button
-                onClick={() => setShowBgmVolume((v) => !v)}
-                className="text-xs text-gray-400 hover:text-gray-200 transition-colors"
-                title="Volume"
+                onClick={bgm.toggle}
+                className={`text-xs px-1.5 py-1 rounded transition-colors ${
+                  bgm.enabled ? "text-amber-400 hover:text-amber-300" : "text-gray-500 hover:text-gray-300"
+                }`}
               >
-                ▾
+                {bgm.enabled ? "♫" : "♪"}
+              </button>
+              {bgm.enabled && (
+                <button
+                  onClick={() => setShowBgmVolume((v) => !v)}
+                  className="text-[10px] text-gray-400 hover:text-gray-200 transition-colors"
+                >
+                  ▾
+                </button>
+              )}
+              {showBgmVolume && bgm.enabled && (
+                <div className="absolute top-full right-0 mt-1 bg-gray-900/95 backdrop-blur-sm rounded-lg p-2 z-50 border border-white/10">
+                  <input
+                    type="range"
+                    min={0}
+                    max={100}
+                    value={Math.round(bgm.volume * 100)}
+                    onChange={(e) => bgm.setVolume(Number(e.target.value) / 100)}
+                    className="w-24 h-1 accent-amber-400"
+                  />
+                </div>
+              )}
+            </div>
+            {/* SFX toggle */}
+            <button
+              onClick={sounds.toggle}
+              className="text-xs px-1.5 py-1 rounded text-gray-400 hover:text-gray-200 transition-colors"
+            >
+              {sounds.enabled ? "🔊" : "🔇"}
+            </button>
+            {questStatus === "in_progress" && (
+              <button
+                onClick={handleAbandon}
+                className="text-[10px] text-gray-400 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-red-950/30"
+              >
+                ✕
               </button>
             )}
-            {showBgmVolume && bgm.enabled && (
-              <div className="absolute top-full right-0 mt-1 bg-gray-900/95 backdrop-blur-sm rounded-lg p-2 z-50 border border-white/10">
-                <input
-                  type="range"
-                  min={0}
-                  max={100}
-                  value={Math.round(bgm.volume * 100)}
-                  onChange={(e) => bgm.setVolume(Number(e.target.value) / 100)}
-                  className="w-24 h-1 accent-amber-400"
-                />
-              </div>
-            )}
           </div>
-          {/* SFX toggle */}
-          <button
-            onClick={sounds.toggle}
-            className="text-sm px-2 py-1 rounded-lg text-gray-400 hover:text-gray-200 transition-colors"
-            title={sounds.enabled ? "Mute SFX" : "Unmute SFX"}
-          >
-            {sounds.enabled ? "🔊" : "🔇"}
-          </button>
-          {questStatus === "in_progress" && (
-            <button
-              onClick={handleAbandon}
-              className="text-xs text-gray-400 hover:text-red-400 transition-colors px-3 py-1 rounded-lg hover:bg-red-950/30"
-            >
-              {tSolo("abandon")}
-            </button>
+        </div>
+
+        {/* Turn progress bar */}
+        <div className="h-1 bg-white/10 shrink-0">
+          <div
+            className="h-full bg-linear-to-r from-amber-400 to-orange-400 transition-all duration-500"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+
+        {/* Turn extension banner */}
+        {questStatus === "in_progress" && (
+          <TurnExtendBanner
+            questId={quest.id}
+            remainingTurns={remainingTurns}
+            isPremium={isPremium}
+            turnsExtended={turnsExtended}
+            theme={theme}
+            onExtended={(newTotal) => {
+              setEffectiveTotalTurns(newTotal);
+              setTurnsExtended(true);
+            }}
+          />
+        )}
+
+        {/* ── GM Panel (1fr — fills remaining space) ── */}
+        <div className="flex-1 min-h-0 overflow-hidden">
+          <GmPanel
+            currentTurn={currentTurn}
+            isStreaming={isStreaming}
+            streamingText={streamingText}
+            theme={theme}
+            currentViewIndex={currentViewIndex}
+            totalTurns={turns.length}
+            onNavigateTurn={setCurrentViewIndex}
+          />
+        </div>
+
+        {/* ── Scene Image Panel (auto) ── */}
+        <div className="shrink-0 px-2 py-1">
+          <ScenePanel sceneBg={sceneBg} theme={theme} />
+        </div>
+
+        {/* ── Bottom Panel: Player Input / Dice / QuestComplete (auto) ── */}
+        <div className="shrink-0">
+          {(questStatus === "completed" || questStatus === "failed") ? (
+            <div className="px-3 py-2 max-h-[40vh] overflow-y-auto">
+              <QuestComplete
+                questId={quest.id}
+                turnCount={turnCount}
+                isPremium={isPremium}
+                isFailed={questStatus === "failed"}
+              />
+            </div>
+          ) : pendingDice && !isStreaming ? (
+            <div className="px-3 py-3">
+              <DiceRoller
+                request={pendingDice}
+                system={system}
+                onRoll={handleDiceRoll}
+                onRolling={() => sounds.playDiceRoll(sfxGenre)}
+                onScreenEffect={handleScreenEffect}
+                onCutIn={triggerCutIn}
+              />
+            </div>
+          ) : (
+            <PlayerPanel
+              onSend={(msg) => sendMessage(msg)}
+              disabled={isStreaming}
+              suggestions={suggestions}
+              theme={theme}
+              inputMode={inputMode}
+              onInputModeChange={setInputMode}
+              previousTurn={currentViewIndex > 0 ? turns[currentViewIndex] : null}
+            />
           )}
         </div>
       </div>
-
-      {/* Pexels attribution */}
-      {sceneBg && bgLoaded && (
-        <a
-          href={sceneBg.pexelsUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="text-[9px] text-white/20 hover:text-white/40 transition-colors mb-1 block"
-        >
-          Photo: {sceneBg.photographer} / Pexels
-        </a>
-      )}
-
-      {/* Turn progress bar */}
-      <div className="h-1.5 bg-white/10 rounded-full mb-4 overflow-hidden">
-        <div
-          className="h-full bg-linear-to-r from-amber-400 to-orange-400 rounded-full transition-all duration-500"
-          style={{
-            width: `${Math.min((turnCount / totalTurns) * 100, 100)}%`,
-          }}
-        />
-      </div>
-
-      {/* Chat area */}
-      <div className="flex-1 space-y-4 mb-4">
-        {messages.map((msg, i) => (
-          <ChatBubble key={i} message={msg} theme={theme} systemId={systemId} userAvatarUrl={userAvatarUrl} />
-        ))}
-
-        {/* Streaming text */}
-        {isStreaming && streamingText && (
-          <ChatBubble
-            message={{
-              role: "gm",
-              content: streamingText,
-              timestamp: new Date().toISOString(),
-            }}
-            isStreaming
-            theme={theme}
-            userAvatarUrl={userAvatarUrl}
-          />
-        )}
-
-        {/* Loading indicator */}
-        {isStreaming && !streamingText && (
-          <div className="animate-bubble-in w-full">
-            <div className={`${theme.bubbleColor} rounded-xl px-3 py-3 border border-white/5 backdrop-blur-xs`}>
-              <div className="flex gap-3 items-center">
-                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg border-2 border-white/20 overflow-hidden bg-black/30 shrink-0">
-                  <Image src="/images/nayang/neutral.svg" alt="NaYang GM" width={64} height={64} className="w-full h-full object-cover" />
-                </div>
-                <div>
-                  <div className={`text-xs font-bold mb-1 ${theme.accentColor}`}>{tQuest("gmName")}</div>
-                  <div className="flex items-center gap-2">
-                    <span className="text-base animate-pen-write">✍️</span>
-                    <span className="text-xs text-gray-400">{tQuest("gmThinking")}</span>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Dice roller */}
-        {pendingDice && !isStreaming && questStatus === "in_progress" && (
-          <DiceRoller request={pendingDice} system={system} onRoll={handleDiceRoll} onRolling={() => sounds.playDiceRoll(sfxGenre)} onScreenEffect={handleScreenEffect} onCutIn={triggerCutIn} />
-        )}
-
-        <div ref={chatEndRef} />
-      </div>
-
-      {/* Scroll down indicator */}
-      {showScrollDown && (
-        <button
-          onClick={scrollToBottom}
-          className="sticky bottom-32 ml-auto mr-2 z-40 flex items-center gap-1.5 bg-white/15 backdrop-blur-sm text-white/80 text-xs px-3 py-1.5 rounded-full hover:bg-white/25 transition-all animate-bounce shadow-lg border border-white/10"
-        >
-          <span>↓</span>
-        </button>
-      )}
-
-      {/* Quest completion/failure overlay */}
-      {(questStatus === "completed" || questStatus === "failed") && (
-        <QuestComplete questId={quest.id} turnCount={turnCount} isPremium={isPremium} isFailed={questStatus === "failed"} />
-      )}
-
-      {/* Input area */}
-      {questStatus === "in_progress" && !pendingDice && (
-        <div className="sticky bottom-16 backdrop-blur-md pt-6 pb-3 bg-linear-to-t from-black/50 via-black/30 to-transparent">
-          <ActionInput
-            onSend={(msg) => sendMessage(msg)}
-            disabled={isStreaming}
-            suggestedActions={suggestions}
-            theme={theme}
-          />
-        </div>
-      )}
-    </div>
     </div>
   );
 }

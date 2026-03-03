@@ -46,9 +46,19 @@ ${sys.promptRulesEn}
 
 ## Progress
 - Current: Turn ${currentTurn}/${totalTurns}
-${currentTurn >= totalTurns - 3 && currentTurn < totalTurns - 1 ? "- ⚠️ The story is approaching its climax. Start naturally hinting to the player IN CHARACTER that a crucial moment is near. For example: \"NaYang senses the adventure reaching its peak, nya... Choose wisely, Adventurer!\" Steer the story toward its conclusion. Do not introduce new subplots." : ""}
-${currentTurn >= totalTurns - 1 && currentTurn < totalTurns ? "- ⚠️⚠️ FINAL STRETCH! You MUST tell the player in character that this is their LAST chance to act. For example: \"This is the final moment of our adventure, nya! Make it count, Adventurer!\" Wrap up ALL storylines. No new plot points. Present final choices that naturally lead to a conclusion." : ""}
-${currentTurn >= totalTurns ? `- 🏁🏁🏁 MANDATORY ENDING — You MUST end the story RIGHT NOW this turn! This is NON-NEGOTIABLE. Write a satisfying epilogue describing the outcome. Then add "[Quest Complete]" (or "[Quest Failed]" if the story ended in defeat) at the VERY END of your message. Do NOT present choices. Do NOT continue the story. The adventure is OVER. If you do not include "[Quest Complete]" or "[Quest Failed]", the system will break.` : ""}
+${(() => {
+  const progress = totalTurns > 0 ? currentTurn / totalTurns : 0;
+  if (progress >= 1.0) {
+    return `- 🏁🏁🏁 MANDATORY ENDING — You MUST end the story RIGHT NOW this turn! This is NON-NEGOTIABLE. Write a satisfying epilogue describing the outcome. Then add "[Quest Complete]" (or "[Quest Failed]" if the story ended in defeat) at the VERY END of your message. Do NOT present choices. Do NOT continue the story. The adventure is OVER. If you do not include "[Quest Complete]" or "[Quest Failed]", the system will break.`;
+  } else if (progress >= 0.85) {
+    return `- ⚠️⚠️ FINAL STRETCH! This is one of the LAST turns! You MUST tell the player in character that this is their final chance to act. For example: "This is the final moment of our adventure, nya! Make it count, Adventurer!" Wrap up ALL storylines. No new plot points. Present final choices that DIRECTLY lead to the story's conclusion. The next turn will be the MANDATORY ENDING.`;
+  } else if (progress >= 0.7) {
+    return `- ⚠️ CLIMAX PHASE! The story MUST be heading toward its climax NOW. Present dramatic, decisive choices that push toward a resolution. Do NOT introduce any new subplots, characters, or mysteries. Start resolving existing plot threads. Hint in character that a crucial moment is near: "NaYang senses the adventure reaching its peak, nya..."`;
+  } else if (progress >= 0.5) {
+    return `- 💡 MID-STORY: The story is past the halfway point. Focus on developing existing plotlines rather than introducing new ones. Start building toward the climax naturally. Avoid opening new subplots or introducing major new characters.`;
+  }
+  return "";
+})()}
 
 ## Scenario Setting
 ${scenarioPrompt}
@@ -100,9 +110,19 @@ ${sys.promptRules}
 
 ## 진행 상황
 - 현재: ${currentTurn}/${totalTurns} 턴
-${currentTurn >= totalTurns - 3 && currentTurn < totalTurns - 1 ? "- ⚠️ 이야기가 클라이맥스에 가까워지고 있어. 플레이어에게 인캐릭터로 자연스럽게 중요한 순간이 다가오고 있음을 암시해. 예시: \"나양의 수염이 떨린다냥... 모험이 정점을 향해 가고 있다냥. 신중하게 선택해야 한다냥, 집사!\" 이야기를 마무리 방향으로 진행해. 새로운 복선이나 서브플롯을 만들지 마." : ""}
-${currentTurn >= totalTurns - 1 && currentTurn < totalTurns ? "- ⚠️⚠️ 마지막 기회! 플레이어에게 인캐릭터로 이것이 마지막 행동 기회임을 반드시 알려줘. 예시: \"이것이 이 모험의 마지막 순간이다냥! 후회 없는 선택을 하라냥, 집사!\" 모든 스토리를 정리해. 새로운 전개 금지." : ""}
-${currentTurn >= totalTurns ? `- 🏁🏁🏁 강제 엔딩 — 반드시 이번 턴에서 이야기를 끝내야 한다! 이것은 협상 불가. 결과를 묘사하는 에필로그를 쓰고, 메시지 맨 마지막에 반드시 "[퀘스트 완료]" (또는 이야기가 패배로 끝났다면 "[퀘스트 실패]")를 추가해. 선택지를 제시하지 마. 이야기를 계속하지 마. 모험은 끝났다. "[퀘스트 완료]" 또는 "[퀘스트 실패]"를 포함하지 않으면 시스템이 오류를 일으킨다.` : ""}
+${(() => {
+  const progress = totalTurns > 0 ? currentTurn / totalTurns : 0;
+  if (progress >= 1.0) {
+    return `- 🏁🏁🏁 강제 엔딩 — 반드시 이번 턴에서 이야기를 끝내야 한다! 이것은 협상 불가. 결과를 묘사하는 에필로그를 쓰고, 메시지 맨 마지막에 반드시 "[퀘스트 완료]" (또는 이야기가 패배로 끝났다면 "[퀘스트 실패]")를 추가해. 선택지를 제시하지 마. 이야기를 계속하지 마. 모험은 끝났다. "[퀘스트 완료]" 또는 "[퀘스트 실패]"를 포함하지 않으면 시스템이 오류를 일으킨다.`;
+  } else if (progress >= 0.85) {
+    return `- ⚠️⚠️ 마지막 기회! 이것은 마지막 몇 턴 중 하나다! 플레이어에게 인캐릭터로 이것이 마지막 행동 기회임을 반드시 알려줘. 예시: "이것이 이 모험의 마지막 순간이다냥! 후회 없는 선택을 하라냥, 집사!" 모든 스토리를 정리해. 새로운 전개 금지. 이야기의 결말로 직결되는 최종 선택지를 제시해. 다음 턴이 강제 엔딩이다.`;
+  } else if (progress >= 0.7) {
+    return `- ⚠️ 클라이맥스 단계! 이야기가 반드시 클라이맥스로 향해야 한다. 극적이고 결정적인 선택지를 제시해서 이야기를 마무리 방향으로 몰아가. 새로운 복선, 캐릭터, 미스터리를 절대 추가하지 마. 기존 줄거리를 정리하기 시작해. 인캐릭터로 중요한 순간이 다가옴을 암시해: "나양의 수염이 떨린다냥... 모험이 정점을 향해 가고 있다냥..."`;
+  } else if (progress >= 0.5) {
+    return `- 💡 중반부: 이야기가 절반을 넘었다. 새로운 복선이나 서브플롯을 만들기보다 기존 줄거리를 발전시키는 데 집중해. 자연스럽게 클라이맥스를 향해 이야기를 전개해. 새로운 주요 캐릭터를 등장시키지 마.`;
+  }
+  return "";
+})()}
 
 ## 시나리오 설정
 ${scenario.systemPromptAddition}

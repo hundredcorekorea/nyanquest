@@ -69,6 +69,7 @@ export interface SoloQuest {
   messages: QuestMessage[];
   turn_count: number;
   total_turns: number;
+  turns_extended?: boolean;
   exp_earned: number;
   created_at: string;
   completed_at: string | null;

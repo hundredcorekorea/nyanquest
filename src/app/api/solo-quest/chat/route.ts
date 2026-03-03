@@ -90,8 +90,8 @@ export async function POST(request: NextRequest) {
   // Prefer explicit locale from client body (most reliable), fallback to cookie/header detection
   const locale = bodyLocale === "en" || bodyLocale === "ko" ? bodyLocale : getLocaleFromRequest(request);
 
-  // Enforce turn limit (allow 2 extra turns for AI to wrap up)
-  if (turnCount >= effectiveTotalTurns + 2) {
+  // Enforce turn limit (allow 3 extra turns for AI to wrap up gracefully)
+  if (turnCount >= effectiveTotalTurns + 3) {
     // Force complete the quest
     await supabase
       .from("solo_quests")
@@ -298,7 +298,16 @@ export async function POST(request: NextRequest) {
 
         // Detect quest end state from GM response
         const isFailed = fullResponse.includes("[퀘스트 실패]") || fullResponse.includes("[Quest Failed]");
-        const isComplete = fullResponse.includes("[퀘스트 완료]") || fullResponse.includes("[Quest Complete]");
+        let isComplete = fullResponse.includes("[퀘스트 완료]") || fullResponse.includes("[Quest Complete]");
+
+        // If we're past the turn limit and AI didn't include an ending tag, force it
+        if (!isFailed && !isComplete && turnCount >= effectiveTotalTurns) {
+          const endTag = locale === "en" ? "\n\n[Quest Complete]" : "\n\n[퀘스트 완료]";
+          fullResponse += endTag;
+          controller.enqueue(encoder.encode(endTag));
+          isComplete = true;
+        }
+
         const endStatus = isFailed ? "failed" : isComplete ? "completed" : null;
 
         supabase

@@ -457,7 +457,19 @@
     "cutInCritical": "대성공이다냥!!",
     "cutInFumble": "...이런냥",
     "cutInClear": "클리어다냥!",
-    "cutInFailed": "으냥..."
+    "cutInFailed": "으냥...",
+    "inputModeChoice": "선택형",
+    "inputModeShort": "단답형",
+    "inputModeNarrative": "서술형",
+    "turnOf": "{current}/{total} 턴",
+    "shortAnswerPlaceholder": "짧게 행동을 입력하라냥...",
+    "noChoicesAvailable": "선택지가 없다냥. 다른 모드를 사용해봐냥!",
+    "previousAction": "이전 행동",
+    "turnExtendTitle": "턴이 {remaining}턴 남았다냥!",
+    "turnExtendAd": "광고 보고 +3턴",
+    "turnExtendPremium": "프리미엄으로 2.5배 턴",
+    "turnExtended": "턴이 3턴 추가되었다냥!",
+    "turnExtendAdNotReady": "광고 준비 중이다냥..."
   },
   "Tutorial": {
     "skip": "건너뛰기",

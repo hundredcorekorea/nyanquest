@@ -1,0 +1,8 @@
+User-Agent: *
+Allow: /
+Disallow: /api/
+Disallow: /my/
+Disallow: /_next/
+Disallow: /offline/
+
+Sitemap: https://nyanquest.com/sitemap.xml
