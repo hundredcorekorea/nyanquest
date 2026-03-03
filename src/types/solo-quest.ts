@@ -57,6 +57,8 @@ export interface Scenario {
   isPremium?: boolean;
   system?: TrpgSystemId;
   theme: ScenarioTheme;
+  /** English keywords for Pexels background image search */
+  sceneKeywords?: string;
 }
 
 export interface SoloQuest {

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from "react";
+import Image from "next/image";
 import { useRouter, usePathname } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -10,6 +11,7 @@ import { getSystem, type TrpgSystemId } from "@/lib/solo-quest/systems";
 import { useQuestSounds } from "@/hooks/useQuestSounds";
 import { useBgmPlayer } from "@/hooks/useBgmPlayer";
 import { useBgmMood } from "@/hooks/useBgmMood";
+import { useSceneBackground } from "@/hooks/useSceneBackground";
 import type { SoloQuest, QuestMessage, DiceRoll, ScenarioTheme } from "@/types/solo-quest";
 import ChatBubble from "./ChatBubble";
 import DiceRoller from "./DiceRoller";
@@ -25,6 +27,7 @@ interface Props {
   isPremium: boolean;
   theme: ScenarioTheme;
   systemId?: TrpgSystemId;
+  userAvatarUrl: string | null;
 }
 
 export default function QuestChat({
@@ -36,6 +39,7 @@ export default function QuestChat({
   isPremium,
   theme,
   systemId,
+  userAvatarUrl,
 }: Props) {
   const router = useRouter();
   const { toast } = useToast();
@@ -66,6 +70,8 @@ export default function QuestChat({
   const chatEndRef = useRef<HTMLDivElement>(null);
   const [showScrollDown, setShowScrollDown] = useState(false);
   const [screenEffect, setScreenEffect] = useState<"critical" | "fumble" | "success" | "fail" | null>(null);
+  const sceneBg = useSceneBackground(scenarioId);
+  const [bgLoaded, setBgLoaded] = useState(false);
 
   // Stop BGM when navigating away from the quest page
   const pathname = usePathname();
@@ -391,6 +397,23 @@ export default function QuestChat({
 
   return (
     <div className={`relative -mx-4 -mt-4 min-h-[calc(100vh-5rem)] bg-linear-to-b ${theme.bgGradient} ${isPremium ? "ring-1 ring-inset ring-amber-500/20" : ""}`}>
+    {/* Scene background image from Pexels */}
+    {sceneBg && (
+      <div
+        className={`absolute inset-0 overflow-hidden ${bgLoaded ? "animate-scene-reveal" : "opacity-0"}`}
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={sceneBg.url}
+          alt=""
+          onLoad={() => setBgLoaded(true)}
+          className="absolute inset-0 w-full h-full object-cover"
+          style={{ filter: "blur(2px) brightness(0.3) saturate(1.2)" }}
+        />
+        {/* Theme color tint overlay */}
+        <div className={`absolute inset-0 bg-linear-to-b ${theme.bgGradient} opacity-60`} />
+      </div>
+    )}
     {/* Vignette + radial glow for depth */}
     <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_30%,rgba(0,0,0,0.4)_100%)]" />
     {/* Dice result screen effects */}
@@ -501,6 +524,18 @@ export default function QuestChat({
         </div>
       </div>
 
+      {/* Pexels attribution */}
+      {sceneBg && bgLoaded && (
+        <a
+          href={sceneBg.pexelsUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-[9px] text-white/20 hover:text-white/40 transition-colors mb-1 block"
+        >
+          Photo: {sceneBg.photographer} / Pexels
+        </a>
+      )}
+
       {/* Turn progress bar */}
       <div className="h-1.5 bg-white/10 rounded-full mb-4 overflow-hidden">
         <div
@@ -514,7 +549,7 @@ export default function QuestChat({
       {/* Chat area */}
       <div className="flex-1 space-y-4 mb-4">
         {messages.map((msg, i) => (
-          <ChatBubble key={i} message={msg} theme={theme} systemId={systemId} />
+          <ChatBubble key={i} message={msg} theme={theme} systemId={systemId} userAvatarUrl={userAvatarUrl} />
         ))}
 
         {/* Streaming text */}
@@ -527,19 +562,25 @@ export default function QuestChat({
             }}
             isStreaming
             theme={theme}
+            userAvatarUrl={userAvatarUrl}
           />
         )}
 
         {/* Loading indicator */}
         {isStreaming && !streamingText && (
-          <div className="flex gap-2 items-center animate-bubble-in">
-            <div className="w-8 h-8 rounded-full bg-white/10 border border-white/10 flex items-center justify-center text-sm">
-              🧙‍♂️
-            </div>
-            <div className={`${theme.bubbleColor} rounded-2xl rounded-tl-sm px-4 py-3 border border-white/5`}>
-              <div className="flex items-center gap-2">
-                <span className="text-base animate-pen-write">✍️</span>
-                <span className="text-xs text-gray-400">{tQuest("gmThinking")}</span>
+          <div className="animate-bubble-in w-full">
+            <div className={`${theme.bubbleColor} rounded-xl px-3 py-3 border border-white/5 backdrop-blur-xs`}>
+              <div className="flex gap-3 items-center">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-lg border-2 border-white/20 overflow-hidden bg-black/30 shrink-0">
+                  <Image src="/images/nayang/neutral.svg" alt="NaYang GM" width={64} height={64} className="w-full h-full object-cover" />
+                </div>
+                <div>
+                  <div className={`text-xs font-bold mb-1 ${theme.accentColor}`}>{tQuest("gmName")}</div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-base animate-pen-write">✍️</span>
+                    <span className="text-xs text-gray-400">{tQuest("gmThinking")}</span>
+                  </div>
+                </div>
               </div>
             </div>
           </div>

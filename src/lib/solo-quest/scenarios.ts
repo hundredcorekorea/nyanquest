@@ -57,6 +57,7 @@ Adventurer, what will you do~nya?
       accentColor: "text-amber-400",
       bubbleColor: "bg-amber-900/40",
     },
+    sceneKeywords: "dark cave torchlight fantasy dungeon",
   },
   {
     id: "haunted-library",
@@ -117,6 +118,7 @@ Adventurer, what will you do~nya?
       accentColor: "text-purple-400",
       bubbleColor: "bg-purple-900/40",
     },
+    sceneKeywords: "ancient library dark dusty bookshelves candlelight",
   },
   {
     id: "space-station",
@@ -175,6 +177,7 @@ The AI voice blares and the floor shakes~nya! Emergency lights flash red in the 
       accentColor: "text-cyan-400",
       bubbleColor: "bg-cyan-900/40",
     },
+    sceneKeywords: "space station interior sci-fi corridor lights",
   },
   {
     id: "cat-kingdom",
@@ -237,6 +240,7 @@ Adventurer, shall we begin the investigation~nya?
       accentColor: "text-yellow-400",
       bubbleColor: "bg-yellow-900/40",
     },
+    sceneKeywords: "fantasy castle throne room golden fairytale",
   },
   // === Premium Scenarios ===
   {
@@ -304,6 +308,7 @@ Adventurer, what will you do before the dragon~nya?
       accentColor: "text-orange-400",
       bubbleColor: "bg-orange-900/40",
     },
+    sceneKeywords: "dragon lair volcanic cavern treasure fantasy",
   },
   {
     id: "time-loop",
@@ -370,6 +375,7 @@ Adventurer, what will you do~nya?
       accentColor: "text-violet-400",
       bubbleColor: "bg-violet-900/40",
     },
+    sceneKeywords: "medieval tavern inn candlelight night mysterious",
   },
   // === Multi-TRPG System Scenarios ===
   {
@@ -438,6 +444,7 @@ Adventurer, what will you do~nya?
       accentColor: "text-emerald-400",
       bubbleColor: "bg-emerald-900/40",
     },
+    sceneKeywords: "abandoned hospital dark corridor horror",
   },
   {
     id: "innsmouth-files",
@@ -509,6 +516,7 @@ Adventurer, shall we begin the investigation~nya?
       accentColor: "text-teal-400",
       bubbleColor: "bg-teal-900/40",
     },
+    sceneKeywords: "foggy coastal town harbor fishing village eerie",
   },
   {
     id: "red-forest-witch",
@@ -578,6 +586,7 @@ Adventurer, where will you go~nya?
       accentColor: "text-rose-400",
       bubbleColor: "bg-rose-900/40",
     },
+    sceneKeywords: "red autumn forest magical crimson leaves dark path",
   },
   {
     id: "nights-of-seoul",
@@ -685,6 +694,7 @@ Adventurer, what will you do~nya?
       accentColor: "text-red-400",
       bubbleColor: "bg-red-950/50",
     },
+    sceneKeywords: "seoul night neon lights dark alley urban",
   },
   {
     id: "doskvol-heist",
@@ -788,6 +798,7 @@ This is the crew's first job~nya. What "approach" will you take~nya?
       accentColor: "text-slate-300",
       bubbleColor: "bg-slate-900/50",
     },
+    sceneKeywords: "victorian gaslit alley rain cobblestone gothic city night",
   },
 ];
 
