@@ -537,11 +537,8 @@ export default function QuestChat({
           />
         )}
 
-        {/* ── Spacer: lets the background scene show through ── */}
-        <div className="flex-1 min-h-0" />
-
-        {/* ── GM Panel (overlaid at bottom, capped height) ── */}
-        <div className="shrink-0 max-h-[35vh] overflow-hidden mx-2 mb-1.5 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10">
+        {/* ── GM Panel (top, capped height) ── */}
+        <div className="shrink-0 max-h-[35vh] overflow-hidden mx-2 mt-1.5 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10">
           <GmPanel
             currentTurn={currentTurn}
             isStreaming={isStreaming}
@@ -552,6 +549,9 @@ export default function QuestChat({
             onNavigateTurn={setCurrentViewIndex}
           />
         </div>
+
+        {/* ── Spacer: background scene visible here ── */}
+        <div className="flex-1 min-h-0" />
 
         {/* ── Bottom Panel: Player Input / Dice / QuestComplete ── */}
         <div className="shrink-0 mx-2 mb-2 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10 overflow-hidden">
