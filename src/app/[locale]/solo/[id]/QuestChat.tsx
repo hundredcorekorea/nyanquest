@@ -106,8 +106,6 @@ export default function QuestChat({
   }, [turns.length, isStreaming]);
 
   const currentTurn = turns[currentViewIndex] ?? null;
-  // Previous turn for "last player action" display
-  const previousTurn = currentViewIndex > 0 ? turns[currentViewIndex - 1] : null;
 
   // Auto-switch to "choice" when GM provides numbered suggestions
   const prevSuggestionsLenRef = useRef(suggestions.length);
@@ -537,7 +535,7 @@ export default function QuestChat({
         )}
 
         {/* ── GM Panel (capped height, scrollable) ── */}
-        <div className="shrink-0 max-h-[30vh] overflow-hidden">
+        <div className="shrink-0 max-h-[32vh] overflow-hidden">
           <GmPanel
             currentTurn={currentTurn}
             isStreaming={isStreaming}
@@ -549,13 +547,13 @@ export default function QuestChat({
           />
         </div>
 
-        {/* ── Scene Image Panel (auto) ── */}
-        <div className="shrink-0 px-2 py-1">
+        {/* ── Scene Image Panel ── */}
+        <div className="shrink-0 px-2 py-1.5">
           <ScenePanel sceneBg={sceneBg} theme={theme} />
         </div>
 
-        {/* ── Bottom Panel: Player Input / Dice / QuestComplete (auto) ── */}
-        <div className="shrink-0">
+        {/* ── Bottom Panel: Player Input / Dice / QuestComplete ── */}
+        <div className="shrink-0 mt-auto">
           {(questStatus === "completed" || questStatus === "failed") ? (
             <div className="px-3 py-2 max-h-[40vh] overflow-y-auto">
               <QuestComplete

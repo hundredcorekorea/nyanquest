@@ -30,9 +30,7 @@ export default function PlayerPanel({
   const tCommon = useTranslations("Common");
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
-  // Auto-resize textarea
   useEffect(() => {
     if (textareaRef.current) {
       textareaRef.current.style.height = "auto";
@@ -57,33 +55,34 @@ export default function PlayerPanel({
 
   const previousAction = previousTurn?.playerMessage?.content;
   const maxLen = inputMode === "short" ? 100 : 500;
+  const accentBg = theme.accentColor.replace("text-", "bg-").replace("-400", "-500");
 
-  const modes: { key: InputMode; label: string }[] = [
-    { key: "choice", label: t("inputModeChoice") },
-    { key: "short", label: t("inputModeShort") },
-    { key: "narrative", label: t("inputModeNarrative") },
+  const modes: { key: InputMode; label: string; icon: string }[] = [
+    { key: "choice", label: t("inputModeChoice"), icon: "⚔️" },
+    { key: "short", label: t("inputModeShort"), icon: "✏️" },
+    { key: "narrative", label: t("inputModeNarrative"), icon: "📜" },
   ];
 
   return (
-    <div className={`${theme.bubbleColor} border-t border-white/5 px-3 py-2`}>
-      {/* Mode tabs */}
+    <div className="border-t border-white/10 px-3 py-2">
+      {/* Mode tabs — RPG toggle style */}
       <div className="flex items-center gap-1 mb-2">
         {modes.map((m) => (
           <button
             key={m.key}
             onClick={() => onInputModeChange(m.key)}
-            className={`text-[10px] px-2.5 py-1 rounded-full transition-all ${
+            className={`text-[10px] px-2.5 py-1 rounded-lg transition-all border ${
               inputMode === m.key
-                ? `${theme.accentColor} bg-white/10 font-bold`
-                : "text-gray-400 hover:text-gray-200 hover:bg-white/5"
+                ? `${theme.accentColor} bg-white/10 border-white/15 font-bold shadow-sm`
+                : "text-gray-500 border-transparent hover:text-gray-300 hover:bg-white/5"
             }`}
           >
-            {m.label}
+            {m.icon} {m.label}
           </button>
         ))}
       </div>
 
-      {/* Choice mode: vertical button list */}
+      {/* Choice mode */}
       {inputMode === "choice" && (
         <div className="space-y-1.5 mb-2">
           {suggestions.length > 0 ? (
@@ -92,32 +91,37 @@ export default function PlayerPanel({
                 key={i}
                 onClick={() => !disabled && onSend(s)}
                 disabled={disabled}
-                className={`w-full text-left text-sm px-3 py-2 rounded-xl transition-all disabled:opacity-50 ${theme.bubbleColor} border border-white/10 hover:border-white/25 hover:bg-white/5 active:scale-[0.98]`}
+                className="group w-full text-left text-sm px-3 py-2.5 rounded-xl transition-all disabled:opacity-40 bg-black/30 border border-white/10 hover:border-white/25 hover:bg-white/5 active:scale-[0.98]"
               >
-                <span className={`font-bold mr-1.5 ${theme.accentColor}`}>{i + 1}.</span>
-                <span className="text-gray-200">{s}</span>
+                {/* Numbered badge */}
+                <span className={`inline-flex items-center justify-center w-5 h-5 rounded-md text-[10px] font-bold mr-2 ${accentBg}/30 ${theme.accentColor} border border-current/20 group-hover:${accentBg}/50`}>
+                  {i + 1}
+                </span>
+                <span className="text-gray-200 group-hover:text-white transition-colors">{s}</span>
               </button>
             ))
           ) : (
-            <p className="text-xs text-gray-500 text-center py-2">
+            <p className="text-xs text-gray-500 text-center py-3">
               {t("noChoicesAvailable")}
             </p>
           )}
-          {/* Also show a small text input for free-form in choice mode */}
-          <div className="flex gap-2 items-end mt-1">
-            <input
-              type="text"
-              value={input}
-              onChange={(e) => setInput(e.target.value.slice(0, 100))}
-              onKeyDown={handleKeyDown}
-              disabled={disabled}
-              placeholder={t("shortAnswerPlaceholder")}
-              className="flex-1 bg-transparent text-sm text-white placeholder-gray-500 px-3 py-1.5 rounded-lg border border-white/10 focus:border-white/20 focus:outline-none"
-            />
+          {/* Free input in choice mode */}
+          <div className="flex gap-2 items-center mt-1.5">
+            <div className="flex-1 relative">
+              <input
+                type="text"
+                value={input}
+                onChange={(e) => setInput(e.target.value.slice(0, 100))}
+                onKeyDown={handleKeyDown}
+                disabled={disabled}
+                placeholder={t("shortAnswerPlaceholder")}
+                className="w-full bg-black/20 text-sm text-white placeholder-gray-600 px-3 py-2 rounded-xl border border-white/10 focus:border-white/25 focus:outline-none transition-colors"
+              />
+            </div>
             <button
               onClick={handleSubmit}
               disabled={disabled || !input.trim()}
-              className={`px-3 py-1.5 text-xs font-medium rounded-lg transition-all shrink-0 disabled:opacity-30 ${theme.accentColor.replace("text-", "bg-").replace("-400", "-500")} text-white`}
+              className={`px-3.5 py-2 text-xs font-bold rounded-xl transition-all shrink-0 disabled:opacity-20 ${accentBg} text-white hover:brightness-110 active:scale-95`}
             >
               {tCommon("send")}
             </button>
@@ -125,33 +129,32 @@ export default function PlayerPanel({
         </div>
       )}
 
-      {/* Short answer mode: single line input */}
+      {/* Short answer mode */}
       {inputMode === "short" && (
         <div className="flex gap-2 items-center mb-1">
           <input
-            ref={inputRef}
             type="text"
             value={input}
             onChange={(e) => setInput(e.target.value.slice(0, maxLen))}
             onKeyDown={handleKeyDown}
             disabled={disabled}
             placeholder={disabled ? t("waitingPlaceholder") : t("shortAnswerPlaceholder")}
-            className="flex-1 bg-transparent text-sm text-white placeholder-gray-500 px-3 py-2 rounded-xl border border-white/10 focus:border-white/20 focus:outline-none"
+            className="flex-1 bg-black/20 text-sm text-white placeholder-gray-600 px-3 py-2.5 rounded-xl border border-white/10 focus:border-white/25 focus:outline-none transition-colors"
           />
           <button
             onClick={handleSubmit}
             disabled={disabled || !input.trim()}
-            className={`px-4 py-2 text-xs font-medium rounded-xl transition-all shrink-0 disabled:opacity-30 ${theme.accentColor.replace("text-", "bg-").replace("-400", "-500")} text-white`}
+            className={`px-4 py-2.5 text-xs font-bold rounded-xl transition-all shrink-0 disabled:opacity-20 ${accentBg} text-white hover:brightness-110 active:scale-95`}
           >
             {tCommon("send")}
           </button>
         </div>
       )}
 
-      {/* Narrative mode: multi-line textarea */}
+      {/* Narrative mode */}
       {inputMode === "narrative" && (
         <div className="mb-1">
-          <div className="flex gap-2 items-end rounded-xl border border-white/10 p-1.5">
+          <div className="flex gap-2 items-end rounded-xl border border-white/10 bg-black/20 p-1.5">
             <textarea
               ref={textareaRef}
               value={input}
@@ -160,24 +163,24 @@ export default function PlayerPanel({
               disabled={disabled}
               placeholder={disabled ? t("waitingPlaceholder") : t("inputPlaceholder")}
               rows={2}
-              className="flex-1 bg-transparent text-sm text-white placeholder-gray-500 px-2 py-1.5 resize-none focus:outline-none"
+              className="flex-1 bg-transparent text-sm text-white placeholder-gray-600 px-2 py-1.5 resize-none focus:outline-none"
             />
             <button
               onClick={handleSubmit}
               disabled={disabled || !input.trim()}
-              className={`px-4 py-2 text-xs font-medium rounded-lg transition-all shrink-0 self-end disabled:opacity-30 ${theme.accentColor.replace("text-", "bg-").replace("-400", "-500")} text-white`}
+              className={`px-4 py-2 text-xs font-bold rounded-lg transition-all shrink-0 self-end disabled:opacity-20 ${accentBg} text-white hover:brightness-110 active:scale-95`}
             >
               {tCommon("send")}
             </button>
           </div>
-          <p className="text-[10px] text-gray-500 text-right mt-0.5">{input.length}/{maxLen}</p>
+          <p className="text-[10px] text-gray-600 text-right mt-0.5">{input.length}/{maxLen}</p>
         </div>
       )}
 
       {/* Previous player action */}
       {previousAction && (
-        <div className="text-[10px] text-gray-500 truncate">
-          💬 {t("previousAction")}: {previousAction}
+        <div className="text-[10px] text-gray-500 truncate mt-0.5">
+          <span className="text-gray-600">●</span> {t("previousAction")}: <span className="text-gray-400">{previousAction}</span>
         </div>
       )}
     </div>

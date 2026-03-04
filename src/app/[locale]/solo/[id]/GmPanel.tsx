@@ -62,10 +62,13 @@ export default function GmPanel({
     });
   }
 
+  // Derive accent border from theme
+  const accentBorder = theme.accentColor.replace("text-", "border-");
+
   return (
-    <div className={`relative flex flex-col overflow-hidden h-full ${theme.bubbleColor} border-b border-white/5`}>
-      {/* Turn navigation bar */}
-      <div className="flex items-center justify-between px-3 py-1 border-b border-white/5 shrink-0">
+    <div className="relative flex flex-col overflow-hidden h-full">
+      {/* Turn navigation */}
+      <div className="flex items-center justify-between px-3 py-1 shrink-0">
         <TurnNav
           currentIndex={currentViewIndex}
           totalTurns={totalTurns}
@@ -74,46 +77,70 @@ export default function GmPanel({
         />
       </div>
 
-      {/* NaYang portrait + speech bubble layout */}
-      <div className="flex-1 overflow-hidden flex">
-        {/* NaYang portrait — fixed left column */}
-        <div className="shrink-0 flex flex-col items-center pt-2 pl-2 pb-2 w-16">
-          <div className={`w-14 h-14 rounded-xl border-2 overflow-hidden bg-black/40 ${isCurrentTurnStreaming && !streamingText ? "animate-gm-breathe" : ""} ${theme.accentColor.replace("text-", "border-")}`}>
-            <Image
-              src="/images/nayang/gm.png"
-              alt="NaYang GM"
-              width={56}
-              height={56}
-              className="w-full h-full object-cover"
-              priority
-            />
+      {/* Dialogue box area */}
+      <div className="flex-1 overflow-hidden flex gap-2 px-2 pb-2">
+        {/* Portrait column */}
+        <div className="shrink-0 flex flex-col items-center w-18">
+          {/* Decorative portrait frame */}
+          <div className={`relative w-17 h-17 rounded-lg ${isCurrentTurnStreaming && !streamingText ? "animate-gm-breathe" : ""}`}>
+            {/* Outer decorative border */}
+            <div className={`absolute inset-0 rounded-lg border-2 ${accentBorder} opacity-60`} />
+            {/* Inner image */}
+            <div className={`absolute inset-0.75 rounded-md overflow-hidden border ${accentBorder}`}>
+              <Image
+                src="/images/nayang/gm.png"
+                alt="NaYang GM"
+                width={62}
+                height={62}
+                className="w-full h-full object-cover"
+                priority
+              />
+            </div>
+            {/* Corner accents */}
+            <div className={`absolute -top-0.5 -left-0.5 w-2 h-2 border-t-2 border-l-2 ${accentBorder} rounded-tl-sm`} />
+            <div className={`absolute -top-0.5 -right-0.5 w-2 h-2 border-t-2 border-r-2 ${accentBorder} rounded-tr-sm`} />
+            <div className={`absolute -bottom-0.5 -left-0.5 w-2 h-2 border-b-2 border-l-2 ${accentBorder} rounded-bl-sm`} />
+            <div className={`absolute -bottom-0.5 -right-0.5 w-2 h-2 border-b-2 border-r-2 ${accentBorder} rounded-br-sm`} />
           </div>
-          <div className={`text-[9px] font-bold mt-0.5 ${theme.accentColor}`}>
+          {/* Name plate */}
+          <div className={`mt-1 text-[9px] font-bold px-2 py-0.5 rounded-full bg-black/40 border ${accentBorder} border-opacity-40 ${theme.accentColor}`}>
             {t("gmName")}
           </div>
         </div>
 
-        {/* Speech bubble — scrollable text area */}
-        <div className="flex-1 min-w-0 relative py-2 pr-2 pl-1">
-          {/* Speech bubble tail */}
-          <div className={`absolute left-0 top-5 w-2 h-3 ${theme.bubbleColor}`} style={{ clipPath: "polygon(100% 0, 100% 100%, 0 50%)" }} />
+        {/* Dialogue box */}
+        <div className="flex-1 min-w-0 relative">
+          {/* Decorative dialogue frame */}
+          <div className="absolute inset-0 rounded-xl bg-black/50 border border-white/10" />
+          {/* Inner accent border */}
+          <div className={`absolute inset-0.5 rounded-[10px] border ${accentBorder} opacity-20`} />
 
+          {/* Speech bubble tail (triangle pointing to portrait) */}
+          <div className="absolute -left-1.5 top-6 w-0 h-0"
+            style={{
+              borderTop: "5px solid transparent",
+              borderBottom: "5px solid transparent",
+              borderRight: "6px solid rgba(255,255,255,0.1)",
+            }}
+          />
+
+          {/* Scrollable text content */}
           <div
             ref={scrollRef}
-            className="h-full overflow-y-auto rounded-xl bg-black/20 border border-white/5 px-3 py-2 gm-panel-scroll"
+            className="relative h-full overflow-y-auto rounded-xl px-3 py-2.5 gm-panel-scroll"
           >
             {isCurrentTurnStreaming && streamingText ? (
-              <div className="animate-turn-slide-in text-sm leading-relaxed">
+              <div className="animate-turn-slide-in text-[13px] leading-relaxed text-gray-100">
                 {renderTextContent(stripDiceTags(streamingText))}
                 <span className="streaming-cursor" />
               </div>
             ) : isCurrentTurnStreaming && !streamingText ? (
-              <div className="flex items-center gap-1.5 py-1">
-                <span className="text-base animate-pen-write">✍️</span>
+              <div className="flex items-center gap-2 py-2">
+                <span className="text-lg animate-pen-write">✍️</span>
                 <span className="text-xs text-gray-400">{t("gmThinking")}</span>
               </div>
             ) : displayText ? (
-              <div className="animate-turn-slide-in text-sm leading-relaxed" key={currentViewIndex}>
+              <div className="animate-turn-slide-in text-[13px] leading-relaxed text-gray-100" key={currentViewIndex}>
                 {renderTextContent(displayText)}
               </div>
             ) : (
