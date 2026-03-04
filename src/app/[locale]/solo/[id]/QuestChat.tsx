@@ -449,12 +449,15 @@ export default function QuestChat({
         </div>
       )}
 
-      {/* 3-Panel Grid Layout */}
-      <div className={`relative h-full max-w-2xl mx-auto flex flex-col ${screenEffect === "fumble" ? "animate-screen-shake" : ""}`}>
-        {/* ── Header (44px) ── */}
-        <div className="flex items-center justify-between px-3 h-11 shrink-0 border-b border-white/5">
+      {/* ── Full-screen scene background (z-0) ── */}
+      <ScenePanel sceneBg={sceneBg} theme={theme} />
+
+      {/* ── All UI overlaid on top of the scene ── */}
+      <div className={`relative z-10 h-full max-w-2xl mx-auto flex flex-col ${screenEffect === "fumble" ? "animate-screen-shake" : ""}`}>
+        {/* ── Header bar ── */}
+        <div className="flex items-center justify-between px-3 h-11 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
-            <h1 className={`text-xs font-bold truncate ${theme.accentColor}`}>{scenarioTitle}</h1>
+            <h1 className="text-xs font-bold truncate text-white drop-shadow-sm">{scenarioTitle}</h1>
             {isPremium && (
               <span className="text-[8px] font-bold text-amber-400 bg-amber-500/20 rounded-full px-1 py-0.5 shrink-0">
                 👑
@@ -467,7 +470,7 @@ export default function QuestChat({
               <button
                 onClick={bgm.toggle}
                 className={`text-xs px-1.5 py-1 rounded transition-colors ${
-                  bgm.enabled ? "text-amber-400 hover:text-amber-300" : "text-gray-500 hover:text-gray-300"
+                  bgm.enabled ? "text-amber-400 hover:text-amber-300" : "text-gray-400 hover:text-gray-200"
                 }`}
               >
                 {bgm.enabled ? "♫" : "♪"}
@@ -475,7 +478,7 @@ export default function QuestChat({
               {bgm.enabled && (
                 <button
                   onClick={() => setShowBgmVolume((v) => !v)}
-                  className="text-[10px] text-gray-400 hover:text-gray-200 transition-colors"
+                  className="text-[10px] text-gray-300 hover:text-gray-100 transition-colors"
                 >
                   ▾
                 </button>
@@ -496,14 +499,14 @@ export default function QuestChat({
             {/* SFX toggle */}
             <button
               onClick={sounds.toggle}
-              className="text-xs px-1.5 py-1 rounded text-gray-400 hover:text-gray-200 transition-colors"
+              className="text-xs px-1.5 py-1 rounded text-gray-300 hover:text-white transition-colors"
             >
               {sounds.enabled ? "🔊" : "🔇"}
             </button>
             {questStatus === "in_progress" && (
               <button
                 onClick={handleAbandon}
-                className="text-[10px] text-gray-400 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-red-950/30"
+                className="text-[10px] text-gray-300 hover:text-red-400 transition-colors px-2 py-1 rounded hover:bg-red-950/30"
               >
                 ✕
               </button>
@@ -512,9 +515,9 @@ export default function QuestChat({
         </div>
 
         {/* Turn progress bar */}
-        <div className="h-1 bg-white/10 shrink-0">
+        <div className="h-1 bg-white/15 shrink-0 mx-3 rounded-full overflow-hidden">
           <div
-            className="h-full bg-linear-to-r from-amber-400 to-orange-400 transition-all duration-500"
+            className="h-full bg-linear-to-r from-amber-400 to-orange-400 transition-all duration-500 rounded-full"
             style={{ width: `${progressPercent}%` }}
           />
         </div>
@@ -534,8 +537,11 @@ export default function QuestChat({
           />
         )}
 
-        {/* ── GM Panel (capped height, scrollable) ── */}
-        <div className="shrink-0 max-h-[32vh] overflow-hidden">
+        {/* ── Spacer: lets the background scene show through ── */}
+        <div className="flex-1 min-h-0" />
+
+        {/* ── GM Panel (overlaid at bottom, capped height) ── */}
+        <div className="shrink-0 max-h-[35vh] overflow-hidden mx-2 mb-1.5 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10">
           <GmPanel
             currentTurn={currentTurn}
             isStreaming={isStreaming}
@@ -547,13 +553,8 @@ export default function QuestChat({
           />
         </div>
 
-        {/* ── Scene Image Panel ── */}
-        <div className="shrink-0 px-2 py-1.5">
-          <ScenePanel sceneBg={sceneBg} theme={theme} />
-        </div>
-
         {/* ── Bottom Panel: Player Input / Dice / QuestComplete ── */}
-        <div className="shrink-0 mt-auto">
+        <div className="shrink-0 mx-2 mb-2 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10 overflow-hidden">
           {(questStatus === "completed" || questStatus === "failed") ? (
             <div className="px-3 py-2 max-h-[40vh] overflow-y-auto">
               <QuestComplete

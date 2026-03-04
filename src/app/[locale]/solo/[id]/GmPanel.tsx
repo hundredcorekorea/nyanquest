@@ -110,10 +110,8 @@ export default function GmPanel({
 
         {/* Dialogue box */}
         <div className="flex-1 min-w-0 relative">
-          {/* Decorative dialogue frame */}
-          <div className="absolute inset-0 rounded-xl bg-black/50 border border-white/10" />
           {/* Inner accent border */}
-          <div className={`absolute inset-0.5 rounded-[10px] border ${accentBorder} opacity-20`} />
+          <div className={`absolute inset-0 rounded-xl border ${accentBorder} opacity-15`} />
 
           {/* Speech bubble tail (triangle pointing to portrait) */}
           <div className="absolute -left-1.5 top-6 w-0 h-0"

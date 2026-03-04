@@ -64,7 +64,7 @@ export default function PlayerPanel({
   ];
 
   return (
-    <div className="border-t border-white/10 px-3 py-2">
+    <div className="px-3 py-2">
       {/* Mode tabs — RPG toggle style */}
       <div className="flex items-center gap-1 mb-2">
         {modes.map((m) => (
