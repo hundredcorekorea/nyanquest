@@ -6,6 +6,7 @@ interface SceneBackground {
   url: string;
   photographer: string;
   pexelsUrl: string;
+  source?: "freepik" | "pexels";
 }
 
 /**
