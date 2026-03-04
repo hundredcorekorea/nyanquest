@@ -11,12 +11,12 @@ interface Props {
   onComplete?: () => void;
 }
 
-const ACCENT_COLORS: Record<CutInType, { bg: string; text: string; line: string }> = {
-  dice:     { bg: "from-amber-600/90 to-amber-900/90",   text: "text-amber-200",  line: "rgba(251,191,36,0.3)" },
-  critical: { bg: "from-green-600/90 to-green-900/90",   text: "text-green-200",  line: "rgba(74,222,128,0.3)" },
-  fumble:   { bg: "from-red-700/90 to-red-950/90",       text: "text-red-200",    line: "rgba(248,113,113,0.3)" },
-  clear:    { bg: "from-yellow-500/90 to-amber-700/90",  text: "text-yellow-100", line: "rgba(253,224,71,0.4)" },
-  failed:   { bg: "from-gray-600/90 to-gray-900/90",     text: "text-gray-300",   line: "rgba(156,163,175,0.25)" },
+const ACCENT_COLORS: Record<CutInType, { bg: string; text: string; line: string; image: string }> = {
+  dice:     { bg: "from-amber-600/90 to-amber-900/90",   text: "text-amber-200",  line: "rgba(251,191,36,0.3)",   image: "/images/nayang/dice.png" },
+  critical: { bg: "from-green-600/90 to-green-900/90",   text: "text-green-200",  line: "rgba(74,222,128,0.3)",   image: "/images/nayang/critical.png" },
+  fumble:   { bg: "from-red-700/90 to-red-950/90",       text: "text-red-200",    line: "rgba(248,113,113,0.3)",  image: "/images/nayang/fumble.png" },
+  clear:    { bg: "from-yellow-500/90 to-amber-700/90",  text: "text-yellow-100", line: "rgba(253,224,71,0.4)",   image: "/images/nayang/clear.png" },
+  failed:   { bg: "from-gray-600/90 to-gray-900/90",     text: "text-gray-300",   line: "rgba(156,163,175,0.25)", image: "/images/nayang/failed.png" },
 };
 
 export default function NaYangCutIn({ type, text, onComplete }: Props) {
@@ -62,7 +62,7 @@ export default function NaYangCutIn({ type, text, onComplete }: Props) {
         <div className="animate-cut-in-portrait ml-4 sm:ml-8 shrink-0">
           <div className="w-20 h-20 sm:w-24 sm:h-24 rounded-xl border-2 border-white/30 overflow-hidden bg-black/40 shadow-lg">
             <Image
-              src="/images/nayang/neutral.svg"
+              src={colors.image}
               alt="NaYang"
               width={96}
               height={96}

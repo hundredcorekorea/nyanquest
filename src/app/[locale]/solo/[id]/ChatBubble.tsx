@@ -203,7 +203,7 @@ export default function ChatBubble({ message, isStreaming, theme, systemId, user
             <div className="shrink-0 animate-portrait-in">
               <div className={`w-14 h-14 sm:w-16 sm:h-16 rounded-lg ${accentBorder} border-2 overflow-hidden bg-black/30`}>
                 <Image
-                  src="/images/nayang/neutral.svg"
+                  src="/images/nayang/neutral.png"
                   alt="NaYang GM"
                   width={64}
                   height={64}
