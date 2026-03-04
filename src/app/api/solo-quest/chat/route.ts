@@ -152,6 +152,25 @@ export async function POST(request: NextRequest) {
   // Build messages for OpenRouter (more context = better coherence)
   const contextLimit = isPremium ? 12 : 8;
   const contextMessages = (messages || []).slice(-contextLimit);
+
+  // Build the final player message with optional pacing reminder
+  let finalPlayerContent = diceRoll
+    ? `${playerMessage}${formatDiceForAI(diceRoll)}`
+    : playerMessage;
+
+  // Inject pacing reminder directly into conversation for the last 3 turns
+  // This is much harder for the AI to ignore than system prompt alone
+  const turnsRemaining = effectiveTotalTurns - turnCount;
+  if (turnsRemaining <= 0) {
+    finalPlayerContent += locale === "en"
+      ? "\n\n[⚠️ GM DIRECTIVE: This is the FINAL turn. You MUST write the ending NOW. Include [Quest Complete] or [Quest Failed]. No choices, no new elements.]"
+      : "\n\n[⚠️ GM 지시: 이것이 마지막 턴이다. 지금 당장 엔딩을 써라. [퀘스트 완료] 또는 [퀘스트 실패]를 반드시 포함해라. 선택지 금지, 새로운 요소 금지.]";
+  } else if (turnsRemaining <= 2) {
+    finalPlayerContent += locale === "en"
+      ? `\n\n[⚠️ PACING: Only ${turnsRemaining} turn(s) remain. Do NOT introduce new things to explore. Present only choices that resolve the story's main conflict.]`
+      : `\n\n[⚠️ 페이싱: 남은 턴 ${turnsRemaining}턴. 새로운 탐색 요소를 추가하지 마라. 이야기의 핵심 갈등을 해결하는 선택지만 제시하라.]`;
+  }
+
   const openRouterMessages = [
     { role: "system" as const, content: systemPrompt },
     ...contextMessages.map((m: QuestMessage) => ({
@@ -162,9 +181,7 @@ export async function POST(request: NextRequest) {
     })),
     {
       role: "user" as const,
-      content: diceRoll
-        ? `${playerMessage}${formatDiceForAI(diceRoll)}`
-        : playerMessage,
+      content: finalPlayerContent,
     },
   ];
 

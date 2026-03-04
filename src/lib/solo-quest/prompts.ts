@@ -61,13 +61,17 @@ You MUST end the story RIGHT NOW. This is NON-NEGOTIABLE.
 - Write a satisfying epilogue that resolves the main conflict and describes the outcome.
 - Then add "[Quest Complete]" (or "[Quest Failed]" if defeat) at the VERY END.
 - Do NOT present choices. Do NOT continue the story. The adventure is OVER.
-- If you do not include "[Quest Complete]" or "[Quest Failed]", the system will break.`;
+- If you do not include "[Quest Complete]" or "[Quest Failed]", the system will break.
+- ❌ NO exploration choices like "investigate", "examine", "search". Just end the story.`;
   } else if (progress >= 0.85) {
     return `
-⚠️⚠️ **FINAL SCENE! Only ${turnsLeft} turn(s) left!**
+🚨🚨 **FINAL SCENE! Only ${turnsLeft} turn(s) left! WRAP UP NOW!**
 - This is the LAST scene before the mandatory ending. The story must reach its conclusion NOW.
 - Present THE final decisive choice that determines the ending (victory or defeat).
-- Do NOT introduce anything new. Resolve ALL remaining plot threads.
+- ❌ FORBIDDEN: New rooms, new items, new NPCs, new mysteries, exploration choices.
+- ❌ Do NOT give choices like "investigate X", "examine Y", "search for Z". It's too late for exploration.
+- ✅ CORRECT choices: "Fight the final boss", "Escape with the treasure", "Save your ally and retreat"
+- Every choice must lead directly to the FINAL CONFRONTATION or ENDING.
 - The player's next action will trigger the ending. Make this turn feel like the story's climax.
 - Tell the player in character: "This is the final moment of our adventure, nya!"`;
   } else if (progress >= 0.65) {
@@ -75,7 +79,8 @@ You MUST end the story RIGHT NOW. This is NON-NEGOTIABLE.
 ⚠️ **ACT 3 — CLIMAX! ${turnsLeft} turns left.**
 - The story MUST be in its climax or heading directly toward it.
 - Present dramatic, high-stakes choices that push toward the FINAL confrontation.
-- NO new characters, subplots, locations, or mysteries. Only resolve what exists.
+- ❌ NO new characters, subplots, locations, or mysteries. Only resolve what exists.
+- ❌ NO exploration choices like "investigate" or "examine". Action and confrontation only.
 - Each choice must bring the story closer to its conclusion. No side quests, no detours.
 - The player should feel the story building to its peak.`;
   } else if (progress >= 0.4) {
@@ -164,21 +169,26 @@ ${(() => {
 - 주요 갈등을 해결하고 결과를 묘사하는 에필로그를 써.
 - 메시지 맨 마지막에 반드시 "[퀘스트 완료]" (또는 패배라면 "[퀘스트 실패]")를 추가해.
 - 선택지를 제시하지 마. 이야기를 계속하지 마. 모험은 끝났다.
-- "[퀘스트 완료]" 또는 "[퀘스트 실패]"를 포함하지 않으면 시스템이 오류를 일으킨다.`;
+- "[퀘스트 완료]" 또는 "[퀘스트 실패]"를 포함하지 않으면 시스템이 오류를 일으킨다.
+- ❌ "조사한다", "살펴본다", "찾아본다" 같은 탐색형 선택지 절대 금지. 이야기를 끝내.`;
   } else if (progress >= 0.85) {
     return `
-⚠️⚠️ **최종 장면! 남은 턴: ${turnsLeft}턴!**
-- 강제 엔딩 직전의 마지막 장면이다. 이야기가 지금 결말에 도달해야 한다.
-- 결말을 결정짓는 최종 선택지를 제시해 (승리 또는 패배).
-- 새로운 요소를 절대 추가하지 마. 남은 모든 줄거리를 정리해.
-- 플레이어의 다음 행동이 엔딩을 촉발할 것이다. 이 턴이 클라이맥스처럼 느껴져야 한다.
-- 인캐릭터로 알려줘: "이것이 이 모험의 마지막 순간이다냥, 집사!"`;
+🚨🚨 **최종 장면! 남은 턴: ${turnsLeft}턴! 반드시 이야기를 마무리해!**
+- 강제 엔딩 직전의 마지막 장면이다. 이야기가 지금 바로 결말에 도달해야 한다.
+- 결말을 결정짓는 최종 선택지를 제시해 (승리 또는 패배를 가르는 선택만).
+- ❌ 절대 금지: 새로운 방, 새로운 아이템, 새로운 NPC, 새로운 떡밥, 탐색/조사 선택지
+- ❌ "~을 조사한다", "~을 살펴본다", "~을 찾아본다" 같은 탐색형 선택지를 주지 마. 이미 늦었다.
+- ✅ 올바른 선택지 예시: "최종 보스와 맞서 싸운다", "보물을 가지고 탈출한다", "동료를 구하고 돌아간다"
+- 모든 선택지는 이야기의 "최종 결전" 또는 "결말"로 직결되어야 한다.
+- 플레이어의 다음 행동이 엔딩을 촉발한다. 이 턴이 이야기의 정점이어야 한다.
+- 인캐릭터로 분위기를 띄워: "운명의 순간이다냥, 집사!" 같은 대사를 자연스럽게 넣어.`;
   } else if (progress >= 0.65) {
     return `
 ⚠️ **3막 — 클라이맥스! 남은 턴: ${turnsLeft}턴.**
 - 이야기가 반드시 클라이맥스에 돌입했거나 직접 향하고 있어야 한다.
 - 최종 대결로 이어지는 극적이고 긴박한 선택지를 제시해.
-- 새로운 캐릭터, 복선, 장소, 미스터리 절대 추가 금지. 기존 내용만 정리해.
+- ❌ 새로운 캐릭터, 복선, 장소, 미스터리 절대 추가 금지. 기존 내용만 정리해.
+- ❌ "조사한다", "살펴본다" 같은 탐색형 선택지 금지. 행동과 결전 선택지만.
 - 모든 선택지가 이야기를 결말로 가까이 데려가야 한다. 곁길 금지.
 - 플레이어가 이야기가 정점을 향해 치닫고 있음을 느껴야 한다.`;
   } else if (progress >= 0.4) {
