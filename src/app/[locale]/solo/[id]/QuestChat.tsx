@@ -477,7 +477,7 @@ export default function QuestChat({
       <ScenePanel sceneBg={sceneBg} theme={theme} />
 
       {/* ── All UI overlaid on top of the scene ── */}
-      <div className={`relative z-10 h-full max-w-2xl mx-auto flex flex-col ${screenEffect === "fumble" ? "animate-screen-shake" : ""}`}>
+      <div className={`relative z-10 h-full max-w-2xl mx-auto flex flex-col pb-14 ${screenEffect === "fumble" ? "animate-screen-shake" : ""}`}>
         {/* ── Header bar ── */}
         <div className="flex items-center justify-between px-3 h-11 shrink-0">
           <div className="flex items-center gap-2 min-w-0">
