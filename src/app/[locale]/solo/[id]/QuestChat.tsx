@@ -111,14 +111,16 @@ export default function QuestChat({
 
   const currentTurn = turns[currentViewIndex] ?? null;
 
-  // Auto-switch to "choice" when GM provides numbered suggestions
+  // Auto-switch input mode based on GM suggestions
   const prevSuggestionsLenRef = useRef(suggestions.length);
   useEffect(() => {
     if (suggestions.length >= 2 && prevSuggestionsLenRef.current !== suggestions.length && !pendingDice) {
       setInputMode("choice");
+    } else if (suggestions.length === 0 && prevSuggestionsLenRef.current > 0 && inputMode === "choice") {
+      setInputMode("short");
     }
     prevSuggestionsLenRef.current = suggestions.length;
-  }, [suggestions, pendingDice]);
+  }, [suggestions, pendingDice, inputMode]);
 
   // Stop BGM when navigating away from the quest page
   const pathname = usePathname();
@@ -194,9 +196,7 @@ export default function QuestChat({
             .trim()
         )
         .filter((l) => l.length > 0 && l.length < 80);
-      if (numbered.length >= 2) {
-        setSuggestions(numbered);
-      }
+      setSuggestions(numbered.length >= 2 ? numbered : []);
       if (request && numbered.length >= 2) {
         setPendingDice(null);
       } else {
