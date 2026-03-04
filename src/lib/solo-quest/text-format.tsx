@@ -7,6 +7,17 @@ export function stripDiceTags(text: string): string {
   return text.replace(/\s*\[판정 필요:[^\]]*\]/g, "").trim();
 }
 
+/** Extract scene keywords from [SCENE: ...] tag. Returns null if no tag found. */
+export function extractSceneTag(text: string): string | null {
+  const match = text.match(/\[SCENE:\s*([^\]]+)\]/i);
+  return match ? match[1].trim() : null;
+}
+
+/** Strip [SCENE: ...] tags from displayed text */
+export function stripSceneTags(text: string): string {
+  return text.replace(/\s*\[SCENE:[^\]]*\]/gi, "").trim();
+}
+
 /** Strip quest ending tags from displayed text */
 export function stripEndTags(text: string): string {
   return text

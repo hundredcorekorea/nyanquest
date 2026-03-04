@@ -6,6 +6,7 @@ import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { parseSystemDiceRequest, type ParsedDiceRequest } from "@/lib/solo-quest/dice";
+import { extractSceneTag } from "@/lib/solo-quest/text-format";
 import { getSystem, type TrpgSystemId } from "@/lib/solo-quest/systems";
 import { useQuestSounds } from "@/hooks/useQuestSounds";
 import { useBgmPlayer } from "@/hooks/useBgmPlayer";
@@ -85,7 +86,8 @@ export default function QuestChat({
   const [suggestions, setSuggestions] = useState(initialSuggestions);
   const [screenEffect, setScreenEffect] = useState<"critical" | "fumble" | "success" | "fail" | null>(null);
   const sfxGenre = genreToSfx(genre);
-  const sceneBg = useSceneBackground(scenarioId);
+  const { sceneBg, changeScene } = useSceneBackground(scenarioId);
+  const lastSceneTagRef = useRef<string | null>(null);
   const [cutIn, setCutIn] = useState<{ type: CutInType; key: number } | null>(null);
   const [sceneTransition, setSceneTransition] = useState(false);
 
@@ -280,6 +282,13 @@ export default function QuestChat({
         setTurnCount((prev) => prev + 1);
         sounds.playMessage();
         bgmMood.analyzeMessage(fullText);
+
+        // Detect [SCENE: ...] tag for dynamic background change
+        const sceneTag = extractSceneTag(fullText);
+        if (sceneTag && sceneTag !== lastSceneTagRef.current) {
+          lastSceneTagRef.current = sceneTag;
+          changeScene(sceneTag);
+        }
       } catch (err) {
         toast(
           err instanceof Error ? err.message : tCommon("errorOccurred"),
@@ -290,7 +299,7 @@ export default function QuestChat({
         setIsStreaming(false);
       }
     },
-    [isStreaming, questStatus, messages, quest.id, scenarioId, turnCount, toast, tQuest, tCommon, locale, sounds, bgmMood]
+    [isStreaming, questStatus, messages, quest.id, scenarioId, turnCount, toast, tQuest, tCommon, locale, sounds, bgmMood, changeScene]
   );
 
   function handleScreenEffect(effect: "critical" | "fumble" | "success" | "fail" | null) {

@@ -144,36 +144,57 @@ async function tryPexels(
 
 export async function GET(request: NextRequest) {
   const scenarioId = request.nextUrl.searchParams.get("scenarioId");
-  if (!scenarioId) {
-    return NextResponse.json({ error: "Missing scenarioId" }, { status: 400 });
+  const directKeywords = request.nextUrl.searchParams.get("keywords");
+
+  if (!scenarioId && !directKeywords) {
+    return NextResponse.json({ error: "Missing scenarioId or keywords" }, { status: 400 });
   }
 
+  // Cache key: use keywords if provided, otherwise scenarioId
+  const cacheKey = directKeywords
+    ? `kw:${directKeywords}`
+    : `sc:${scenarioId}`;
+
   // Check server cache
-  const cached = cache.get(scenarioId);
+  const cached = cache.get(cacheKey);
   if (cached && Date.now() - cached.ts < CACHE_TTL) {
     return NextResponse.json(cached, {
       headers: { "Cache-Control": "public, max-age=3600" },
     });
   }
 
-  const scenario = getScenario(scenarioId);
-  if (!scenario?.sceneKeywords) {
-    return NextResponse.json({ error: "No scene keywords" }, { status: 404 });
-  }
+  let keywords: string;
+  let genre: string;
 
-  const genre = scenario.genreEn ?? "fantasy";
+  if (directKeywords) {
+    // Dynamic scene change: keywords come directly from GM's [SCENE:] tag
+    keywords = directKeywords;
+    genre = "fantasy"; // default genre for dynamic scenes
+    // Try to get genre from scenarioId if also provided
+    if (scenarioId) {
+      const scenario = getScenario(scenarioId);
+      genre = scenario?.genreEn ?? "fantasy";
+    }
+  } else {
+    const scenario = getScenario(scenarioId!);
+    if (!scenario?.sceneKeywords) {
+      return NextResponse.json({ error: "No scene keywords" }, { status: 404 });
+    }
+    keywords = scenario.sceneKeywords;
+    genre = scenario.genreEn ?? "fantasy";
+  }
 
   // Try Freepik (pixel art vectors) first, then Pexels (atmospheric photos)
   const result =
-    (await tryFreepik(scenario.sceneKeywords, genre)) ??
-    (await tryPexels(scenario.sceneKeywords));
+    (await tryFreepik(keywords, genre)) ??
+    (await tryPexels(keywords));
 
   if (!result) {
     return NextResponse.json({ error: "No images found" }, { status: 404 });
   }
 
   const cacheEntry = { ...result, ts: Date.now() };
-  cache.set(scenarioId, cacheEntry);
+  cache.set(cacheKey, cacheEntry);
 
   return NextResponse.json(cacheEntry, {
     headers: { "Cache-Control": "public, max-age=3600" },

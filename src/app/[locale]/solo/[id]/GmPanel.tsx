@@ -5,7 +5,7 @@ import Image from "next/image";
 import { useTranslations } from "next-intl";
 import type { ScenarioTheme } from "@/types/solo-quest";
 import type { Turn } from "@/hooks/useTurns";
-import { stripDiceTags, stripEndTags, renderInlineMarkdown } from "@/lib/solo-quest/text-format";
+import { stripDiceTags, stripEndTags, stripSceneTags, renderInlineMarkdown } from "@/lib/solo-quest/text-format";
 import TurnNav from "./TurnNav";
 
 interface Props {
@@ -40,7 +40,7 @@ export default function GmPanel({
   }, [currentViewIndex, isStreaming, streamingText]);
 
   const gmContent = currentTurn?.gmMessage?.content;
-  const displayText = gmContent ? stripEndTags(stripDiceTags(gmContent)) : null;
+  const displayText = gmContent ? stripSceneTags(stripEndTags(stripDiceTags(gmContent))) : null;
   const isCurrentTurnStreaming = isStreaming && currentViewIndex === totalTurns - 1;
 
   function renderTextContent(text: string) {
@@ -129,7 +129,7 @@ export default function GmPanel({
           >
             {isCurrentTurnStreaming && streamingText ? (
               <div className="animate-turn-slide-in text-[13px] leading-relaxed text-gray-100">
-                {renderTextContent(stripDiceTags(streamingText))}
+                {renderTextContent(stripSceneTags(stripDiceTags(streamingText)))}
                 <span className="streaming-cursor" />
               </div>
             ) : isCurrentTurnStreaming && !streamingText ? (

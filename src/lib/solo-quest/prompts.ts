@@ -63,6 +63,12 @@ ${(() => {
 ## Scenario Setting
 ${scenarioPrompt}
 
+## Scene Changes
+- When the location or atmosphere changes significantly (entering a new room, moving outdoors, arriving at a new area, etc.), add a [SCENE: 2-3 English keywords] tag at the very end of your message.
+- Example: [SCENE: dark dungeon corridor] or [SCENE: moonlit forest clearing] or [SCENE: burning village night]
+- Do NOT add this every turn. Only when the scenery genuinely changes.
+- Keywords should be short, visual, and describe the new environment for an image search.
+
 ## Response Format (MUST follow!)
 - Respond ONLY in English. Do not mix Korean or other languages.
 - Always maintain the format: scene description + choices. Never give choices without description, or description without choices.
@@ -126,6 +132,12 @@ ${(() => {
 
 ## 시나리오 설정
 ${scenario.systemPromptAddition}
+
+## 장면 전환
+- 장소나 분위기가 크게 바뀔 때 (새로운 방 진입, 야외 이동, 새 지역 도착 등) 메시지 맨 끝에 [SCENE: 영어 키워드 2-3개] 태그를 추가해.
+- 예시: [SCENE: dark dungeon corridor] 또는 [SCENE: moonlit forest clearing] 또는 [SCENE: burning village night]
+- 매 턴마다 넣지 마. 진짜로 장면이 바뀔 때만.
+- 키워드는 짧고, 시각적이고, 새 환경을 묘사하는 영어 단어여야 해.
 
 ## 응답 형식 (반드시 지켜!)
 - 한국어로만 응답해. 영어나 다른 언어를 섞지 마.
