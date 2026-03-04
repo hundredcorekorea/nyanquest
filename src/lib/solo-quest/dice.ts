@@ -1,7 +1,7 @@
 import type { DiceType, DiceRoll } from "@/types/solo-quest";
 import type { TrpgSystemPreset } from "./systems";
 
-const DICE_MAX: Record<DiceType, number> = {
+export const DICE_MAX: Record<DiceType, number> = {
   d4: 4,
   d6: 6,
   d8: 8,
@@ -303,4 +303,109 @@ export function rollSystemDice(
     success: judgment.success,
     tier: judgment.tier,
   };
+}
+
+/**
+ * Calculate a visual "success percentage" for the progress bar display.
+ * Not a real probability — just how well the roll went relative to the range.
+ */
+export function calcSuccessPercentage(
+  result: DiceRoll,
+  request: ParsedDiceRequest,
+  system: TrpgSystemPreset
+): number {
+  if (system.judgmentType === "pool-count") {
+    // VtM: successes / pool size
+    const pool = request.diceCount || 1;
+    return Math.min(100, Math.round(((result.successes ?? 0) / pool) * 100));
+  }
+  if (system.judgmentType === "pool-highest") {
+    // Blades: highest die / 6
+    return Math.min(100, Math.round((result.total / 6) * 100));
+  }
+  if (system.judgmentType === "tier") {
+    // Dungeon World: total / 12
+    return Math.min(100, Math.round((result.total / 12) * 100));
+  }
+  if (system.judgmentType === "target") {
+    // Insane: lower is better, so invert
+    const target = request.target || 12;
+    // If total <= target, success. Show as (target - total + target) / (2*target)
+    // Simple: 100 - (total / 12) * 100, clamped
+    return Math.min(100, Math.max(0, Math.round((1 - (result.total - 2) / 10) * 100)));
+  }
+  // DC-based (D&D) or skill-based (CoC)
+  const max = DICE_MAX[result.type] || 20;
+  return Math.min(100, Math.max(0, Math.round((result.total / max) * 100)));
+}
+
+/**
+ * Determine the DC/threshold position on the percentage bar.
+ */
+export function calcThresholdPercentage(
+  request: ParsedDiceRequest,
+  system: TrpgSystemPreset
+): number | null {
+  if (system.judgmentType === "dc" && request.dc) {
+    const max = DICE_MAX[request.diceType] || 20;
+    return Math.round((request.dc / max) * 100);
+  }
+  if (system.judgmentType === "target" && request.target) {
+    return Math.round((1 - (request.target - 2) / 10) * 100);
+  }
+  if (system.id === "coc" && request.skillValue) {
+    return Math.round((request.skillValue / 100) * 100);
+  }
+  if (system.judgmentType === "tier") {
+    return Math.round((7 / 12) * 100); // 7 is partial success threshold
+  }
+  return null;
+}
+
+/**
+ * 15% chance to trigger a reversal animation (fake → real result).
+ */
+export function shouldReversal(): boolean {
+  return Math.random() < 0.15;
+}
+
+/**
+ * Generate a random "fake" number for the slot machine that will be shown
+ * briefly before the reversal reveals the real result.
+ * The fake number should look like the opposite outcome.
+ */
+export function generateFakeTotal(
+  realResult: DiceRoll,
+  request: ParsedDiceRequest,
+  system: TrpgSystemPreset
+): number {
+  const isRealSuccess = realResult.success === true ||
+    realResult.tier === "success" || realResult.tier === "partial";
+
+  if (system.judgmentType === "pool-count" || system.judgmentType === "pool-highest") {
+    // For pools, fake a different highest/success count
+    if (isRealSuccess) {
+      return Math.max(1, Math.floor(Math.random() * 3)); // low fake
+    }
+    return system.judgmentType === "pool-highest" ? 6 : request.diceCount;
+  }
+
+  const max = DICE_MAX[request.diceType] || 20;
+  const threshold = request.dc || request.target || request.skillValue || Math.round(max * 0.5);
+
+  if (system.judgmentType === "target") {
+    // Insane: lower is better
+    if (isRealSuccess) {
+      return Math.min(max, threshold + 1 + Math.floor(Math.random() * 3));
+    }
+    return Math.max(1, threshold - 1 - Math.floor(Math.random() * 3));
+  }
+
+  // DC-based: higher is better
+  if (isRealSuccess) {
+    // Show a fake fail number
+    return Math.max(1, threshold - 1 - Math.floor(Math.random() * (threshold - 1)));
+  }
+  // Show a fake success number
+  return Math.min(max, threshold + Math.floor(Math.random() * (max - threshold + 1)));
 }

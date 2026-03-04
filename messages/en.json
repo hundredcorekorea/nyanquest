@@ -450,6 +450,8 @@
     "diceCriticalBitdNyan": "Critical, nya!! Double sixes!",
     "diceRollResultBitd": "Rolled the dice! {pool}d6 → Highest {highest} ({result})",
     "diceCheckBitd": "{label} Check ({pool}d6)",
+    "diceReversalNyan": "REVERSAL~nya!!",
+    "diceReversalSub": "Fate has been overturned, nya!",
     "bgmPrompt": "Enable background music, nya?",
     "bgmEnable": "On",
     "bgmDisable": "Off",

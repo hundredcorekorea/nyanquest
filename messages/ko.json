@@ -450,6 +450,8 @@
     "diceCriticalBitdNyan": "크리티컬이다냥!! 6이 두 개다냥!",
     "diceRollResultBitd": "주사위를 굴렸다! {pool}d6 → 최고값 {highest} ({result})",
     "diceCheckBitd": "{label} 판정 ({pool}d6)",
+    "diceReversalNyan": "역전이다냥!!",
+    "diceReversalSub": "운명이 뒤집혔다냥!",
     "bgmPrompt": "배경음악을 켤까냥?",
     "bgmEnable": "켜기",
     "bgmDisable": "끄기",

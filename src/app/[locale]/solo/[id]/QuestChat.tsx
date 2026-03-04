@@ -20,6 +20,7 @@ import GmPanel from "./GmPanel";
 import ScenePanel from "./ScenePanel";
 import PlayerPanel, { type InputMode } from "./PlayerPanel";
 import DiceRoller from "./DiceRoller";
+import DiceOverlay from "./DiceOverlay";
 import TurnExtendBanner from "./TurnExtendBanner";
 import QuestComplete from "./QuestComplete";
 
@@ -83,6 +84,7 @@ export default function QuestChat({
   const [questStatus, setQuestStatus] = useState(quest.status);
   const system = getSystem(systemId);
   const [pendingDice, setPendingDice] = useState<ParsedDiceRequest | null>(null);
+  const [showDiceOverlay, setShowDiceOverlay] = useState(false);
   const [suggestions, setSuggestions] = useState(initialSuggestions);
   const [screenEffect, setScreenEffect] = useState<"critical" | "fumble" | "success" | "fail" | null>(null);
   const sfxGenre = genreToSfx(genre);
@@ -431,6 +433,19 @@ export default function QuestChat({
           onComplete={() => setCutIn(null)}
         />
       )}
+      {showDiceOverlay && pendingDice && (
+        <DiceOverlay
+          request={pendingDice}
+          system={system}
+          onComplete={(result) => {
+            setShowDiceOverlay(false);
+            handleDiceRoll(result);
+          }}
+          onRolling={() => sounds.playDiceRoll(sfxGenre)}
+          onScreenEffect={handleScreenEffect}
+          onCutIn={triggerCutIn}
+        />
+      )}
       {isPremium && (
         <div className="pointer-events-none absolute inset-0 bg-linear-to-b from-amber-500/5 via-transparent to-amber-500/5" />
       )}
@@ -578,10 +593,7 @@ export default function QuestChat({
               <DiceRoller
                 request={pendingDice}
                 system={system}
-                onRoll={handleDiceRoll}
-                onRolling={() => sounds.playDiceRoll(sfxGenre)}
-                onScreenEffect={handleScreenEffect}
-                onCutIn={triggerCutIn}
+                onTrigger={() => setShowDiceOverlay(true)}
               />
             </div>
           ) : (
