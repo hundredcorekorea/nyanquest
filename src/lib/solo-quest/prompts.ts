@@ -44,20 +44,53 @@ export function buildSystemPrompt(
 ## TRPG System: ${sys.nameEn}
 ${sys.promptRulesEn}
 
-## Progress
-- Current: Turn ${currentTurn}/${totalTurns}
+## Story Pacing (CRITICAL — read this carefully!)
+- This adventure has ${totalTurns} turns total. Current: Turn ${currentTurn}/${totalTurns}.
+- Structure your story as a 3-act arc:
+  - **Act 1 (turns 1~${Math.max(1, Math.round(totalTurns * 0.3))})**: Setup — introduce the situation, first encounter, set the stakes.
+  - **Act 2 (turns ${Math.round(totalTurns * 0.3) + 1}~${Math.round(totalTurns * 0.65)})**: Conflict — develop tension, face obstacles, build toward the climax. Do NOT open new subplots after the midpoint.
+  - **Act 3 (turns ${Math.round(totalTurns * 0.65) + 1}~${totalTurns})**: Climax & Resolution — confront the final challenge, resolve the story, deliver the ending.
+- IMPORTANT: Every choice you present should move the story FORWARD toward the ending. Never stall or loop the narrative.
 ${(() => {
   const progress = totalTurns > 0 ? currentTurn / totalTurns : 0;
+  const turnsLeft = totalTurns - currentTurn;
   if (progress >= 1.0) {
-    return `- 🏁🏁🏁 MANDATORY ENDING — You MUST end the story RIGHT NOW this turn! This is NON-NEGOTIABLE. Write a satisfying epilogue describing the outcome. Then add "[Quest Complete]" (or "[Quest Failed]" if the story ended in defeat) at the VERY END of your message. Do NOT present choices. Do NOT continue the story. The adventure is OVER. If you do not include "[Quest Complete]" or "[Quest Failed]", the system will break.`;
+    return `
+🏁🏁🏁 **MANDATORY ENDING — THIS IS THE FINAL TURN!**
+You MUST end the story RIGHT NOW. This is NON-NEGOTIABLE.
+- Write a satisfying epilogue that resolves the main conflict and describes the outcome.
+- Then add "[Quest Complete]" (or "[Quest Failed]" if defeat) at the VERY END.
+- Do NOT present choices. Do NOT continue the story. The adventure is OVER.
+- If you do not include "[Quest Complete]" or "[Quest Failed]", the system will break.`;
   } else if (progress >= 0.85) {
-    return `- ⚠️⚠️ FINAL STRETCH! This is one of the LAST turns! You MUST tell the player in character that this is their final chance to act. For example: "This is the final moment of our adventure, nya! Make it count, Adventurer!" Wrap up ALL storylines. No new plot points. Present final choices that DIRECTLY lead to the story's conclusion. The next turn will be the MANDATORY ENDING.`;
-  } else if (progress >= 0.7) {
-    return `- ⚠️ CLIMAX PHASE! The story MUST be heading toward its climax NOW. Present dramatic, decisive choices that push toward a resolution. Do NOT introduce any new subplots, characters, or mysteries. Start resolving existing plot threads. Hint in character that a crucial moment is near: "NaYang senses the adventure reaching its peak, nya..."`;
-  } else if (progress >= 0.5) {
-    return `- 💡 MID-STORY: The story is past the halfway point. Focus on developing existing plotlines rather than introducing new ones. Start building toward the climax naturally. Avoid opening new subplots or introducing major new characters.`;
+    return `
+⚠️⚠️ **FINAL SCENE! Only ${turnsLeft} turn(s) left!**
+- This is the LAST scene before the mandatory ending. The story must reach its conclusion NOW.
+- Present THE final decisive choice that determines the ending (victory or defeat).
+- Do NOT introduce anything new. Resolve ALL remaining plot threads.
+- The player's next action will trigger the ending. Make this turn feel like the story's climax.
+- Tell the player in character: "This is the final moment of our adventure, nya!"`;
+  } else if (progress >= 0.65) {
+    return `
+⚠️ **ACT 3 — CLIMAX! ${turnsLeft} turns left.**
+- The story MUST be in its climax or heading directly toward it.
+- Present dramatic, high-stakes choices that push toward the FINAL confrontation.
+- NO new characters, subplots, locations, or mysteries. Only resolve what exists.
+- Each choice must bring the story closer to its conclusion. No side quests, no detours.
+- The player should feel the story building to its peak.`;
+  } else if (progress >= 0.4) {
+    return `
+💡 **ACT 2 — CONFLICT. ${turnsLeft} turns left.**
+- The story is in its middle section. Build tension and develop the main conflict.
+- Do NOT open new major subplots or introduce new major characters.
+- Start steering events toward the climax. Plant seeds for the final confrontation.
+- Every turn should escalate the stakes or bring the player closer to the central conflict.`;
   }
-  return "";
+  return `
+📖 **ACT 1 — SETUP. ${turnsLeft} turns left.**
+- Establish the situation, introduce key elements, and set the stakes.
+- Keep the scope focused. Do not branch into too many subplots.
+- By the end of Act 1, the player should understand the main conflict.`;
 })()}
 
 ## Scenario Setting
@@ -114,20 +147,53 @@ ${scenarioPrompt}
 ## TRPG 시스템: ${sys.name}
 ${sys.promptRules}
 
-## 진행 상황
-- 현재: ${currentTurn}/${totalTurns} 턴
+## 스토리 페이싱 (매우 중요 — 반드시 읽어!)
+- 이 모험은 총 ${totalTurns}턴이다. 현재: ${currentTurn}/${totalTurns}턴.
+- 이야기를 3막 구조로 진행해:
+  - **1막 (1~${Math.max(1, Math.round(totalTurns * 0.3))}턴)**: 도입 — 상황 소개, 첫 만남, 목표 제시.
+  - **2막 (${Math.round(totalTurns * 0.3) + 1}~${Math.round(totalTurns * 0.65)}턴)**: 갈등 — 긴장감 고조, 장애물, 클라이맥스를 향한 전개. 중반 이후 새로운 복선 금지.
+  - **3막 (${Math.round(totalTurns * 0.65) + 1}~${totalTurns}턴)**: 클라이맥스 & 결말 — 최종 대결, 이야기 마무리, 엔딩.
+- 중요: 제시하는 모든 선택지는 이야기를 결말 방향으로 전진시켜야 한다. 절대 이야기를 제자리에서 맴돌게 하지 마.
 ${(() => {
   const progress = totalTurns > 0 ? currentTurn / totalTurns : 0;
+  const turnsLeft = totalTurns - currentTurn;
   if (progress >= 1.0) {
-    return `- 🏁🏁🏁 강제 엔딩 — 반드시 이번 턴에서 이야기를 끝내야 한다! 이것은 협상 불가. 결과를 묘사하는 에필로그를 쓰고, 메시지 맨 마지막에 반드시 "[퀘스트 완료]" (또는 이야기가 패배로 끝났다면 "[퀘스트 실패]")를 추가해. 선택지를 제시하지 마. 이야기를 계속하지 마. 모험은 끝났다. "[퀘스트 완료]" 또는 "[퀘스트 실패]"를 포함하지 않으면 시스템이 오류를 일으킨다.`;
+    return `
+🏁🏁🏁 **강제 엔딩 — 이것이 마지막 턴이다!**
+반드시 이번 턴에서 이야기를 끝내야 한다. 이것은 협상 불가.
+- 주요 갈등을 해결하고 결과를 묘사하는 에필로그를 써.
+- 메시지 맨 마지막에 반드시 "[퀘스트 완료]" (또는 패배라면 "[퀘스트 실패]")를 추가해.
+- 선택지를 제시하지 마. 이야기를 계속하지 마. 모험은 끝났다.
+- "[퀘스트 완료]" 또는 "[퀘스트 실패]"를 포함하지 않으면 시스템이 오류를 일으킨다.`;
   } else if (progress >= 0.85) {
-    return `- ⚠️⚠️ 마지막 기회! 이것은 마지막 몇 턴 중 하나다! 플레이어에게 인캐릭터로 이것이 마지막 행동 기회임을 반드시 알려줘. 예시: "이것이 이 모험의 마지막 순간이다냥! 후회 없는 선택을 하라냥, 집사!" 모든 스토리를 정리해. 새로운 전개 금지. 이야기의 결말로 직결되는 최종 선택지를 제시해. 다음 턴이 강제 엔딩이다.`;
-  } else if (progress >= 0.7) {
-    return `- ⚠️ 클라이맥스 단계! 이야기가 반드시 클라이맥스로 향해야 한다. 극적이고 결정적인 선택지를 제시해서 이야기를 마무리 방향으로 몰아가. 새로운 복선, 캐릭터, 미스터리를 절대 추가하지 마. 기존 줄거리를 정리하기 시작해. 인캐릭터로 중요한 순간이 다가옴을 암시해: "나양의 수염이 떨린다냥... 모험이 정점을 향해 가고 있다냥..."`;
-  } else if (progress >= 0.5) {
-    return `- 💡 중반부: 이야기가 절반을 넘었다. 새로운 복선이나 서브플롯을 만들기보다 기존 줄거리를 발전시키는 데 집중해. 자연스럽게 클라이맥스를 향해 이야기를 전개해. 새로운 주요 캐릭터를 등장시키지 마.`;
+    return `
+⚠️⚠️ **최종 장면! 남은 턴: ${turnsLeft}턴!**
+- 강제 엔딩 직전의 마지막 장면이다. 이야기가 지금 결말에 도달해야 한다.
+- 결말을 결정짓는 최종 선택지를 제시해 (승리 또는 패배).
+- 새로운 요소를 절대 추가하지 마. 남은 모든 줄거리를 정리해.
+- 플레이어의 다음 행동이 엔딩을 촉발할 것이다. 이 턴이 클라이맥스처럼 느껴져야 한다.
+- 인캐릭터로 알려줘: "이것이 이 모험의 마지막 순간이다냥, 집사!"`;
+  } else if (progress >= 0.65) {
+    return `
+⚠️ **3막 — 클라이맥스! 남은 턴: ${turnsLeft}턴.**
+- 이야기가 반드시 클라이맥스에 돌입했거나 직접 향하고 있어야 한다.
+- 최종 대결로 이어지는 극적이고 긴박한 선택지를 제시해.
+- 새로운 캐릭터, 복선, 장소, 미스터리 절대 추가 금지. 기존 내용만 정리해.
+- 모든 선택지가 이야기를 결말로 가까이 데려가야 한다. 곁길 금지.
+- 플레이어가 이야기가 정점을 향해 치닫고 있음을 느껴야 한다.`;
+  } else if (progress >= 0.4) {
+    return `
+💡 **2막 — 갈등. 남은 턴: ${turnsLeft}턴.**
+- 이야기가 중반부다. 긴장감을 높이고 주요 갈등을 발전시켜.
+- 새로운 주요 복선이나 주요 캐릭터를 추가하지 마.
+- 클라이맥스를 향해 이야기를 조종하기 시작해. 최종 대결의 씨앗을 심어.
+- 매 턴마다 긴장감이 고조되거나 플레이어가 핵심 갈등에 가까워져야 한다.`;
   }
-  return "";
+  return `
+📖 **1막 — 도입. 남은 턴: ${turnsLeft}턴.**
+- 상황을 확립하고, 핵심 요소를 소개하고, 목표를 설정해.
+- 범위를 집중시켜. 너무 많은 복선으로 가지치기하지 마.
+- 1막이 끝날 때쯤 플레이어가 주요 갈등을 이해해야 한다.`;
 })()}
 
 ## 시나리오 설정

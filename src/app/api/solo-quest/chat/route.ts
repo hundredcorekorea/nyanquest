@@ -90,8 +90,8 @@ export async function POST(request: NextRequest) {
   // Prefer explicit locale from client body (most reliable), fallback to cookie/header detection
   const locale = bodyLocale === "en" || bodyLocale === "ko" ? bodyLocale : getLocaleFromRequest(request);
 
-  // Enforce turn limit (allow 3 extra turns for AI to wrap up gracefully)
-  if (turnCount >= effectiveTotalTurns + 3) {
+  // Enforce turn limit (allow 2 extra turns max — AI should have wrapped up by now)
+  if (turnCount >= effectiveTotalTurns + 2) {
     // Force complete the quest
     await supabase
       .from("solo_quests")
