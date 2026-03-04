@@ -39,7 +39,7 @@ export async function GET(request: NextRequest) {
 
   try {
     const params = new URLSearchParams({
-      query: `pixel art ${scenario.sceneKeywords}`,
+      query: scenario.sceneKeywords,
       per_page: "5",
       orientation: "landscape",
     });
