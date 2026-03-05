@@ -251,6 +251,7 @@ export default function QuestChat({
             messages: messages.slice(-6),
             turnCount,
             locale,
+            jobId: typeof sessionStorage !== "undefined" ? sessionStorage.getItem("nq_job") : undefined,
           }),
         });
 
@@ -473,6 +474,17 @@ export default function QuestChat({
         </div>
       )}
 
+      {/* AI disclosure notice (AI 기본법 compliance) */}
+      {turnCount <= 1 && (
+        <div className="absolute top-12 left-1/2 -translate-x-1/2 z-30 w-[min(320px,90vw)] animate-in fade-in duration-500">
+          <div className="bg-black/70 backdrop-blur-sm rounded-xl px-3 py-2 text-center border border-white/10">
+            <p className="text-[10px] text-gray-300 leading-relaxed">
+              🤖 {tQuest("aiDisclosure") ?? "이 콘텐츠는 AI가 생성합니다. GM 나양의 모든 응답은 AI 기반입니다."}
+            </p>
+          </div>
+        </div>
+      )}
+
       {/* ── Full-screen scene background (z-0) ── */}
       <ScenePanel sceneBg={sceneBg} theme={theme} />
 
@@ -586,6 +598,22 @@ export default function QuestChat({
                 turnCount={turnCount}
                 isPremium={isPremium}
                 isFailed={questStatus === "failed"}
+                alreadyClaimedExp={quest.exp_earned}
+                onRewind={questStatus === "failed" ? () => {
+                  // Rewind: remove last GM failure message and last player message
+                  const rewound = [...messages];
+                  // Remove from end until we find a player message, then remove that too
+                  while (rewound.length > 1 && rewound[rewound.length - 1].role === "gm") {
+                    rewound.pop();
+                  }
+                  if (rewound.length > 1 && rewound[rewound.length - 1].role === "player") {
+                    rewound.pop();
+                  }
+                  setMessages(rewound);
+                  setTurnCount(Math.max(0, turnCount - 1));
+                  setQuestStatus("in_progress");
+                  setSuggestions([]);
+                } : undefined}
               />
             </div>
           ) : pendingDice && !isStreaming ? (

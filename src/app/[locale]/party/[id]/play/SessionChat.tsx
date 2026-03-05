@@ -861,8 +861,9 @@ export default function SessionChat({
                   )}
                 </div>
                 <div>
-                  <p className="text-[10px] text-amber-600 font-medium mb-0.5 ml-1">
+                  <p className="text-[10px] text-amber-600 font-medium mb-0.5 ml-1 flex items-center gap-1">
                     {msg.player_name ?? t("nayangGm")}
+                    <span className="text-[8px] font-medium px-1 py-0.5 rounded bg-amber-100 text-amber-500">AI</span>
                   </p>
                   <div className="max-w-[80%] rounded-2xl rounded-tl-sm bg-amber-50 text-gray-800 px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
                     {msg.content}
@@ -943,8 +944,9 @@ export default function SessionChat({
               🧙‍♂️
             </div>
             <div>
-              <p className="text-[10px] text-amber-600 font-medium mb-0.5 ml-1">
+              <p className="text-[10px] text-amber-600 font-medium mb-0.5 ml-1 flex items-center gap-1">
                 {t("nayangGm")}
+                <span className="text-[8px] font-medium px-1 py-0.5 rounded bg-amber-100 text-amber-500">AI</span>
               </p>
               <div className="max-w-[80%] rounded-2xl rounded-tl-sm bg-amber-50 text-gray-800 px-4 py-3 text-sm leading-relaxed whitespace-pre-wrap">
                 {streamingText}

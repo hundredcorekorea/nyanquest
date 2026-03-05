@@ -8,6 +8,7 @@ import { useToast } from "@/components/Toast";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import AdGate from "@/components/AdGate";
 import LoginModal from "@/components/LoginModal";
+import JobPicker from "@/components/JobPicker";
 import { SYSTEMS } from "@/lib/solo-quest/systems";
 import type { Scenario } from "@/types/solo-quest";
 
@@ -38,6 +39,8 @@ export default function ScenarioCard({
   const [loading, setLoading] = useState(false);
   const [showAdGate, setShowAdGate] = useState(false);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [showJobPicker, setShowJobPicker] = useState(false);
+  const [userExp, setUserExp] = useState(0);
 
   const isLocked = scenario.isPremium && !isPremium;
   const effectiveTurns = Math.round(
@@ -47,7 +50,7 @@ export default function ScenarioCard({
         : PREMIUM_CONFIG.free.turnMultiplier)
   );
 
-  function handleClick() {
+  async function handleClick() {
     if (isLocked) {
       router.push("/premium");
       return;
@@ -65,6 +68,24 @@ export default function ScenarioCard({
       return;
     }
 
+    // Fetch user EXP for job picker, then show job selection
+    const supabase = createClient();
+    const { data: { user } } = await supabase.auth.getUser();
+    if (user) {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("cat_exp")
+        .eq("id", user.id)
+        .single();
+      setUserExp(profile?.cat_exp ?? 0);
+    }
+    setShowJobPicker(true);
+  }
+
+  function handleJobSelect(jobId: string) {
+    setShowJobPicker(false);
+    // Store selected job for this quest session
+    sessionStorage.setItem("nq_job", jobId);
     // Premium / admin users skip ad gate
     if (isPremium || isAdminUser) {
       startQuest();
@@ -168,6 +189,12 @@ export default function ScenarioCard({
           </div>
         </div>
       </div>
+      <JobPicker
+        open={showJobPicker}
+        userExp={userExp}
+        onSelect={handleJobSelect}
+        onClose={() => setShowJobPicker(false)}
+      />
       <AdGate
         open={showAdGate}
         onComplete={startQuest}

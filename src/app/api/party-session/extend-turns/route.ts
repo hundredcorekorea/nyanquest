@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+export { OPTIONS } from "@/lib/api-cors";
+import { corsJson } from "@/lib/api-cors";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { NextRequest } from "next/server";
 import { apiMsg } from "@/lib/api-messages";
@@ -13,12 +15,12 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
+    return corsJson({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const { sessionId } = (await request.json()) as { sessionId: string };
   if (!sessionId) {
-    return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
   // Fetch session
@@ -29,11 +31,11 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!session) {
-    return Response.json({ error: apiMsg("sessionNotFound", request) }, { status: 404 });
+    return corsJson({ error: apiMsg("sessionNotFound", request) }, { status: 404 });
   }
 
   if (session.status !== "active") {
-    return Response.json({ error: apiMsg("sessionEnded", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("sessionEnded", request) }, { status: 400 });
   }
 
   // Verify membership
@@ -46,13 +48,13 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!membership) {
-    return Response.json({ error: apiMsg("notPartyMember", request) }, { status: 403 });
+    return corsJson({ error: apiMsg("notPartyMember", request) }, { status: 403 });
   }
 
   // Check extend limit (stored in session metadata or count from current total vs original)
   const extendCount = session.extend_count ?? 0;
   if (extendCount >= MAX_EXTENDS_PER_SESSION) {
-    return Response.json(
+    return corsJson(
       { error: apiMsg("extendLimitReached", request) },
       { status: 400 }
     );
@@ -75,10 +77,10 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     console.error("[extend-turns] Error:", error);
-    return Response.json({ error: "Failed to extend turns" }, { status: 500 });
+    return corsJson({ error: "Failed to extend turns" }, { status: 500 });
   }
 
-  return Response.json({
+  return corsJson({
     totalTurns: (session.total_turns ?? 25) + EXTEND_AMOUNT,
     extendCount: extendCount + 1,
     maxExtends: MAX_EXTENDS_PER_SESSION,

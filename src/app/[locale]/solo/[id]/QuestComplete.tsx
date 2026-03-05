@@ -1,30 +1,87 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { useToast } from "@/components/Toast";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import { getTitleDef } from "@/lib/titles";
+import { tossSubmitScore } from "@/lib/toss";
+
+const REWIND_COST = 50; // EXP cost to rewrite fate
 
 interface Props {
   questId: string;
   turnCount: number;
   isPremium: boolean;
   isFailed?: boolean;
+  /** If > 0, EXP was already claimed (re-entry guard) */
+  alreadyClaimedExp?: number;
+  /** Callback to rewind the quest to the last player choice */
+  onRewind?: () => void;
 }
 
-export default function QuestComplete({ questId, turnCount, isPremium, isFailed = false }: Props) {
+export default function QuestComplete({ questId, turnCount, isPremium, isFailed = false, alreadyClaimedExp = 0, onRewind }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const tQuest = useTranslations("SoloQuest");
   const tCommon = useTranslations("Common");
   const locale = useLocale();
   const [claiming, setClaiming] = useState(false);
-  const [claimed, setClaimed] = useState(false);
-  const [expAmount, setExpAmount] = useState(0);
+  const [claimed, setClaimed] = useState(alreadyClaimedExp > 0);
+  const [expAmount, setExpAmount] = useState(alreadyClaimedExp);
   const [newTitles, setNewTitles] = useState<string[]>([]);
+  const [rewinding, setRewinding] = useState(false);
+  const [userExp, setUserExp] = useState<number | null>(null);
+
+  // Fetch user EXP on mount for rewind eligibility
+  useEffect(() => {
+    const supabase = createClient();
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (user) {
+        supabase
+          .from("profiles")
+          .select("cat_exp")
+          .eq("id", user.id)
+          .single()
+          .then(({ data }) => setUserExp(data?.cat_exp ?? 0));
+      }
+    });
+  }, []);
+
+  async function handleRewind() {
+    if (rewinding || !onRewind) return;
+    setRewinding(true);
+    try {
+      const supabase = createClient();
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Deduct EXP
+      const { error } = await supabase.rpc("add_exp", {
+        p_user_id: user.id,
+        p_amount: -REWIND_COST,
+      });
+      if (error) {
+        toast(tQuest("rewindFailed") ?? "EXP가 부족합니다", "error");
+        return;
+      }
+
+      // Reset quest status back to in_progress
+      await supabase
+        .from("solo_quests")
+        .update({ status: "in_progress", updated_at: new Date().toISOString() })
+        .eq("id", questId);
+
+      toast(tQuest("rewindSuccess") ?? "운명을 다시 쓴다냥!", "success");
+      onRewind();
+    } catch {
+      toast(tCommon("errorOccurred"), "error");
+    } finally {
+      setRewinding(false);
+    }
+  }
 
   // Failed quests give reduced EXP (60%)
   const expMultiplier = isFailed ? 0.6 : 1;
@@ -58,6 +115,16 @@ export default function QuestComplete({ questId, turnCount, isPremium, isFailed 
       setClaimed(true);
       toast(tQuest("expGained", { exp }), "success");
 
+      // Submit total EXP to Toss leaderboard
+      const { data: freshProfile } = await supabase
+        .from("profiles")
+        .select("cat_exp")
+        .eq("id", user.id)
+        .single();
+      if (freshProfile) {
+        tossSubmitScore(freshProfile.cat_exp);
+      }
+
       // Check for new title unlocks
       const { data: titles } = await supabase.rpc("check_titles", { p_user_id: user.id });
       if (titles && titles.length > 0) {
@@ -88,6 +155,28 @@ export default function QuestComplete({ questId, turnCount, isPremium, isFailed 
           ? tQuest("questFailedDesc", { turnCount })
           : tQuest("questCompleteDesc", { turnCount })}
       </p>
+
+      {/* Rewind option for failed quests */}
+      {isFailed && !claimed && onRewind && userExp !== null && userExp >= REWIND_COST && (
+        <div className="bg-purple-50 border border-purple-200 rounded-xl p-4 space-y-2">
+          <p className="text-sm font-bold text-purple-800">
+            {tQuest("rewindTitle") ?? "운명을 다시 쓸까냥?"}
+          </p>
+          <p className="text-xs text-purple-600">
+            {tQuest("rewindDesc", { cost: REWIND_COST }) ?? `${REWIND_COST} EXP를 소모해 마지막 선택으로 되돌아갑니다`}
+          </p>
+          <button
+            onClick={handleRewind}
+            disabled={rewinding}
+            className="w-full py-2.5 bg-purple-500 hover:bg-purple-600 text-white rounded-xl font-medium text-sm transition-colors disabled:opacity-50"
+          >
+            {rewinding ? tCommon("processing") : `⏪ ${tQuest("rewindButton") ?? "운명 다시쓰기"} (-${REWIND_COST} EXP)`}
+          </button>
+          <p className="text-[10px] text-purple-400 text-center">
+            {tQuest("currentExp") ?? "보유"}: {userExp.toLocaleString()} EXP
+          </p>
+        </div>
+      )}
 
       {!claimed ? (
         <div className="space-y-3">

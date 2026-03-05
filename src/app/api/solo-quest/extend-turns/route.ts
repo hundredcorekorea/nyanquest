@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+export { OPTIONS } from "@/lib/api-cors";
+import { corsJson } from "@/lib/api-cors";
 import { getScenario } from "@/lib/solo-quest/scenarios";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import { apiMsg, getLocaleFromRequest } from "@/lib/api-messages";
@@ -13,14 +15,14 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
+    return corsJson({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const body = await request.json();
   const { questId } = body as { questId: string };
 
   if (!questId) {
-    return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
   // Fetch quest
@@ -31,17 +33,17 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!quest || quest.user_id !== user.id) {
-    return Response.json({ error: apiMsg("questNotFound", request) }, { status: 404 });
+    return corsJson({ error: apiMsg("questNotFound", request) }, { status: 404 });
   }
 
   if (quest.status !== "in_progress") {
-    return Response.json({ error: apiMsg("questAlreadyEnded", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("questAlreadyEnded", request) }, { status: 400 });
   }
 
   // Only allow one extension per quest
   if (quest.turns_extended) {
     const locale = getLocaleFromRequest(request);
-    return Response.json({
+    return corsJson({
       error: locale === "en"
         ? "Already extended turns for this quest, meow!"
         : "이미 이 퀘스트에서 턴을 연장했다냥!",
@@ -67,8 +69,8 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     console.error("[extend-turns] Update error:", error);
-    return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 500 });
+    return corsJson({ error: apiMsg("invalidRequest", request) }, { status: 500 });
   }
 
-  return Response.json({ newTotalTurns, extended: EXTEND_AMOUNT });
+  return corsJson({ newTotalTurns, extended: EXTEND_AMOUNT });
 }

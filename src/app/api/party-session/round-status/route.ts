@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+export { OPTIONS } from "@/lib/api-cors";
+import { corsJson } from "@/lib/api-cors";
 import { NextRequest } from "next/server";
 import { apiMsg } from "@/lib/api-messages";
 
@@ -9,12 +11,12 @@ export async function GET(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
+    return corsJson({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const sessionId = request.nextUrl.searchParams.get("sessionId");
   if (!sessionId) {
-    return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
   const { data: session } = await supabase
@@ -24,12 +26,12 @@ export async function GET(request: NextRequest) {
     .single();
 
   if (!session) {
-    return Response.json({ error: apiMsg("sessionNotFound", request) }, { status: 404 });
+    return corsJson({ error: apiMsg("sessionNotFound", request) }, { status: 404 });
   }
 
   // Only relevant for async AI GM sessions
   if (session.play_mode !== "async" || !session.use_ai_gm) {
-    return Response.json({ roundBased: false });
+    return corsJson({ roundBased: false });
   }
 
   // Verify membership
@@ -42,7 +44,7 @@ export async function GET(request: NextRequest) {
     .single();
 
   if (!membership) {
-    return Response.json({ error: apiMsg("notPartyMember", request) }, { status: 403 });
+    return corsJson({ error: apiMsg("notPartyMember", request) }, { status: 403 });
   }
 
   // Get PL members
@@ -87,7 +89,7 @@ export async function GET(request: NextRequest) {
 
   const currentUserSubmitted = submittedUserIds.has(user.id);
 
-  return Response.json({
+  return corsJson({
     roundBased: true,
     submitted: submittedUserIds.size,
     total: totalPLs,

@@ -1,4 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
+export { OPTIONS } from "@/lib/api-cors";
+import { corsJson, withCors } from "@/lib/api-cors";
 import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { getScenario } from "@/lib/solo-quest/scenarios";
 import { buildMultiplayerSystemPrompt } from "@/lib/party-session/prompts";
@@ -15,7 +17,7 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
+    return corsJson({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const body = await request.json();
@@ -28,11 +30,11 @@ export async function POST(request: NextRequest) {
   };
 
   if (!sessionId || (!playerMessage && !isOpening && !forceRound)) {
-    return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
   if (playerMessage && playerMessage.length > 500) {
-    return Response.json(
+    return corsJson(
       { error: apiMsg("messageTooLong", request) },
       { status: 400 }
     );
@@ -46,20 +48,20 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!session) {
-    return Response.json({ error: apiMsg("sessionNotFound", request) }, { status: 404 });
+    return corsJson({ error: apiMsg("sessionNotFound", request) }, { status: 404 });
   }
 
   if (session.status !== "active") {
-    return Response.json({ error: apiMsg("sessionEnded", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("sessionEnded", request) }, { status: 400 });
   }
 
   if (!session.use_ai_gm) {
-    return Response.json({ error: apiMsg("notAiGmSession", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("notAiGmSession", request) }, { status: 400 });
   }
 
   // Check turn limit
   if ((session.turn_count ?? 0) >= (session.total_turns ?? 20)) {
-    return Response.json(
+    return corsJson(
       { error: apiMsg("turnLimitReached", request) },
       { status: 400 }
     );
@@ -75,7 +77,7 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!membership) {
-    return Response.json({ error: apiMsg("notPartyMember", request) }, { status: 403 });
+    return corsJson({ error: apiMsg("notPartyMember", request) }, { status: 403 });
   }
 
   const playerName = (membership.user as unknown as { nickname: string })?.nickname ?? "모험가";
@@ -88,7 +90,7 @@ export async function POST(request: NextRequest) {
       .eq("id", session.party_id)
       .single();
     if (party?.creator_id !== user.id) {
-      return Response.json({ error: apiMsg("notPartyMember", request) }, { status: 403 });
+      return corsJson({ error: apiMsg("notPartyMember", request) }, { status: 403 });
     }
   }
 
@@ -184,7 +186,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Not all PL members submitted — return waiting status (JSON, not stream)
-        return Response.json({
+        return corsJson({
           waiting: true,
           submitted,
           total: totalPLs,
@@ -348,7 +350,7 @@ export async function POST(request: NextRequest) {
         continue;
       }
       console.error(`[party-session] OpenRouter network error:`, err);
-      return Response.json(
+      return corsJson(
         { error: apiMsg("aiGmUnavailable", request) },
         { status: 502 }
       );
@@ -360,7 +362,7 @@ export async function POST(request: NextRequest) {
     console.error(
       `[party-session] OpenRouter ${openRouterResponse?.status}: ${errBody}`
     );
-    return Response.json(
+    return corsJson(
       { error: apiMsg("aiGmUnavailable", request) },
       { status: 502 }
     );
@@ -444,9 +446,9 @@ export async function POST(request: NextRequest) {
   });
 
   return new Response(stream, {
-    headers: {
+    headers: withCors({
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
-    },
+    }),
   });
 }

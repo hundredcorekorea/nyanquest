@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import type { QuestMessage, ScenarioTheme } from "@/types/solo-quest";
 import type { TrpgSystemId } from "@/lib/solo-quest/systems";
 import { stripDiceTags, renderInlineMarkdown } from "@/lib/solo-quest/text-format";
+import { isTossApp } from "@/lib/toss";
 
 interface Props {
   message: QuestMessage;
@@ -213,8 +214,9 @@ export default function ChatBubble({ message, isStreaming, theme, systemId, user
             </div>
             {/* Text area */}
             <div className="flex-1 min-w-0">
-              <div className={`text-xs font-bold mb-1 ${theme?.accentColor ?? "text-amber-400"}`}>
+              <div className={`text-xs font-bold mb-1 flex items-center gap-1.5 ${theme?.accentColor ?? "text-amber-400"}`}>
                 {t("gmName")}
+                <span className="text-[9px] font-medium px-1 py-0.5 rounded bg-white/10 text-gray-400">AI</span>
               </div>
               <div className="text-sm leading-relaxed whitespace-pre-wrap text-gray-100">
                 {renderInlineMarkdown(stripDiceTags(message.content))}

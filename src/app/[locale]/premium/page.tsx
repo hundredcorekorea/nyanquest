@@ -8,6 +8,7 @@ import { usePremium } from "@/hooks/usePremium";
 import { createClient, getUserFromCookies } from "@/lib/supabase/client";
 import { PLANS, PREMIUM_CONFIG, type PlanType } from "@/lib/premium";
 import { useTranslations, useLocale } from "next-intl";
+import { isTossApp, tossCheckoutPayment } from "@/lib/toss";
 
 interface SearchUser {
   id: string;
@@ -60,6 +61,55 @@ export default function PremiumPage() {
 
     setProcessing(true);
     try {
+      // Toss mini-app payment flow
+      if (isTossApp()) {
+        const initRes = await fetch("/api/payment/toss-initiate", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            plan: selectedPlan,
+            ...(mode === "gift" && selectedRecipient ? { giftTo: selectedRecipient.id } : {}),
+          }),
+        });
+        const initData = await initRes.json();
+        if (!initRes.ok) {
+          toast(initData.error || t("paymentInitFailed"), "error");
+          return;
+        }
+
+        const result = await tossCheckoutPayment(initData.payToken);
+        if (!result.success) {
+          toast(result.reason || t("paymentCancelled"), "error");
+          return;
+        }
+
+        // Verify payment server-side
+        const verifyRes = await fetch("/api/payment/verify", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            paymentId: initData.orderId,
+            plan: selectedPlan,
+            provider: "toss",
+          }),
+        });
+        const verifyData = await verifyRes.json();
+        if (!verifyRes.ok) {
+          toast(verifyData.error || t("paymentVerifyFailed"), "error");
+          return;
+        }
+
+        if (mode === "gift" && selectedRecipient) {
+          toast(t("giftSuccess", { name: selectedRecipient.nickname }), "success");
+          setSelectedRecipient(null);
+          setSearchQuery("");
+        } else {
+          toast(t("subscriptionStarted"), "success");
+        }
+        router.refresh();
+        return;
+      }
+
       if (locale !== "ko") {
         // Stripe flow for non-Korean locales
         const res = await fetch("/api/stripe/checkout", {

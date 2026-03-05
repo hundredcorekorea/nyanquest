@@ -1,9 +1,12 @@
 import { createClient } from "@/lib/supabase/server";
+export { OPTIONS } from "@/lib/api-cors";
+import { corsJson, withCors } from "@/lib/api-cors";
 import { getScenario } from "@/lib/solo-quest/scenarios";
 import { buildSystemPrompt } from "@/lib/solo-quest/prompts";
 import { getSystem } from "@/lib/solo-quest/systems";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import { apiMsg, getLocaleFromRequest } from "@/lib/api-messages";
+import { getJob } from "@/lib/cat-jobs";
 import { NextRequest } from "next/server";
 import type { QuestMessage } from "@/types/solo-quest";
 
@@ -14,7 +17,7 @@ export async function POST(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return Response.json({ error: apiMsg("loginRequired", request) }, { status: 401 });
+    return corsJson({ error: apiMsg("loginRequired", request) }, { status: 401 });
   }
 
   const body = await request.json();
@@ -26,6 +29,7 @@ export async function POST(request: NextRequest) {
     messages,
     turnCount,
     locale: bodyLocale,
+    jobId,
   } = body as {
     questId: string;
     scenarioId: string;
@@ -34,15 +38,16 @@ export async function POST(request: NextRequest) {
     messages: QuestMessage[];
     turnCount: number;
     locale?: "ko" | "en";
+    jobId?: string;
   };
 
   // Validate input
   if (!questId || !scenarioId || !playerMessage) {
-    return Response.json({ error: apiMsg("invalidRequest", request) }, { status: 400 });
+    return corsJson({ error: apiMsg("invalidRequest", request) }, { status: 400 });
   }
 
   if (playerMessage.length > 500) {
-    return Response.json(
+    return corsJson(
       { error: apiMsg("messageTooLong", request) },
       { status: 400 }
     );
@@ -58,11 +63,11 @@ export async function POST(request: NextRequest) {
     .single();
 
   if (!quest || quest.user_id !== user.id) {
-    return Response.json({ error: apiMsg("questNotFound", request) }, { status: 404 });
+    return corsJson({ error: apiMsg("questNotFound", request) }, { status: 404 });
   }
 
   if (quest.status !== "in_progress") {
-    return Response.json(
+    return corsJson(
       { error: apiMsg("questAlreadyEnded", request) },
       { status: 400 }
     );
@@ -71,7 +76,7 @@ export async function POST(request: NextRequest) {
   // Load scenario
   const scenario = getScenario(scenarioId);
   if (!scenario) {
-    return Response.json(
+    return corsJson(
       { error: apiMsg("scenarioNotFound", request) },
       { status: 404 }
     );
@@ -98,7 +103,7 @@ export async function POST(request: NextRequest) {
       .update({ status: "completed", updated_at: new Date().toISOString() })
       .eq("id", questId);
 
-    return Response.json(
+    return corsJson(
       { error: locale === "en" ? "Turn limit exceeded, meow!" : apiMsg("turnLimitExceeded", request) },
       { status: 400 }
     );
@@ -106,7 +111,16 @@ export async function POST(request: NextRequest) {
 
   // Build system prompt
   const system = getSystem(scenario.system);
-  const systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens, system, locale);
+  let systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens, system, locale);
+
+  // Inject job/class prompt if selected
+  if (jobId) {
+    const job = getJob(jobId);
+    if (job) {
+      const jobPrompt = locale === "en" ? job.promptPrefixEn : job.promptPrefix;
+      systemPrompt = `## 플레이어 직업\n${jobPrompt}\n\n${systemPrompt}`;
+    }
+  }
 
   // Dice result labels by locale
   const diceL = locale === "en"
@@ -225,7 +239,7 @@ export async function POST(request: NextRequest) {
         continue;
       }
       console.error(`[solo-quest] OpenRouter network error:`, err);
-      return Response.json(
+      return corsJson(
         { error: apiMsg("aiUnavailable", request) },
         { status: 502 }
       );
@@ -237,7 +251,7 @@ export async function POST(request: NextRequest) {
     console.error(
       `[solo-quest] OpenRouter ${openRouterResponse?.status}: ${errBody}`
     );
-    return Response.json(
+    return corsJson(
       { error: apiMsg("aiUnavailable", request) },
       { status: 502 }
     );
@@ -344,9 +358,9 @@ export async function POST(request: NextRequest) {
   });
 
   return new Response(stream, {
-    headers: {
+    headers: withCors({
       "Content-Type": "text/plain; charset=utf-8",
       "Cache-Control": "no-cache",
-    },
+    }),
   });
 }

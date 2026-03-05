@@ -96,7 +96,10 @@ export default async function SoloQuestPage({ params }: { params: Promise<{ loca
   return (
     <div className="pb-24 max-w-lg mx-auto space-y-6">
       {/* Header */}
-      <div className="text-center space-y-2">
+      <div className="text-center space-y-2 relative">
+        <Link href="/leaderboard" className="absolute right-0 top-0 text-xs text-amber-600 hover:text-amber-700 font-medium px-3 py-1.5 bg-amber-50 rounded-full border border-amber-200 transition-colors">
+          🏆 {t("ranking")}
+        </Link>
         <div className="text-4xl">🧙‍♂️🐱</div>
         <h1 className="text-xl font-bold text-gray-900">
           {t("title")}

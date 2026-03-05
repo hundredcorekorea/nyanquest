@@ -4,7 +4,8 @@ import { createPortal } from "react-dom";
 import { useTranslations, useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { PROMO_APPS } from "@/lib/self-promo";
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { isTossApp, tossLogin } from "@/lib/toss";
 
 interface Props {
   open: boolean;
@@ -32,6 +33,57 @@ export default function LoginModal({ open, onClose, redirectAfterLogin }: Props)
   const [confirmPassword, setConfirmPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [tossLoading, setTossLoading] = useState(false);
+  const tossLoginAttempted = useRef(false);
+
+  // Auto-trigger Toss login when modal opens in Toss environment
+  const inToss = typeof window !== "undefined" && isTossApp();
+
+  useEffect(() => {
+    if (!open || !inToss || tossLoginAttempted.current) return;
+    tossLoginAttempted.current = true;
+    handleTossLogin();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [open, inToss]);
+
+  async function handleTossLogin() {
+    setTossLoading(true);
+    setError("");
+    try {
+      const result = await tossLogin();
+      if (!result) {
+        setError("토스 로그인에 실패했습니다");
+        setTossLoading(false);
+        return;
+      }
+
+      const res = await fetch("/api/auth/toss", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(result),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "로그인 실패");
+        setTossLoading(false);
+        return;
+      }
+
+      // Use the redirect URL to establish Supabase session
+      if (data.redirectUrl) {
+        window.location.href = data.redirectUrl;
+        return;
+      }
+
+      // Fallback: reload
+      onClose();
+      window.location.reload();
+    } catch (e) {
+      console.error("[Toss Login]", e);
+      setError("로그인 중 오류가 발생했습니다");
+      setTossLoading(false);
+    }
+  }
 
   if (!open) return null;
 
@@ -367,6 +419,50 @@ export default function LoginModal({ open, onClose, redirectAfterLogin }: Props)
               </div>
             </div>
             <div className="px-5 pb-4">
+              <button onClick={handleClose} className="w-full py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors">
+                {t("loginModalClose")}
+              </button>
+            </div>
+          </div>
+        </div>
+      </>,
+      document.body
+    );
+  }
+
+  // Toss environment: show Toss-only login
+  if (inToss) {
+    return createPortal(
+      <>
+        <div className="fixed inset-0 bg-black/40 z-9998" onClick={handleClose} />
+        <div className="fixed inset-0 z-9999 flex justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden animate-in zoom-in-95 fade-in duration-200 m-auto shrink-0">
+            <div className="bg-gradient-to-b from-blue-50 to-white px-5 pt-5 pb-3 text-center">
+              <div className="text-3xl mb-1">🐱</div>
+              <h3 className="text-base font-bold text-gray-900">
+                {t("loginModalTitle")}
+              </h3>
+              <p className="text-xs text-gray-500 mt-1.5">
+                토스 계정으로 간편 로그인
+              </p>
+            </div>
+            <div className="px-5 pb-5 space-y-3">
+              {tossLoading ? (
+                <div className="text-center py-6">
+                  <div className="text-2xl animate-bounce">🔐</div>
+                  <p className="text-sm text-gray-500 mt-2">토스 로그인 중...</p>
+                </div>
+              ) : (
+                <>
+                  {error && <p className="text-xs text-red-500 text-center">{error}</p>}
+                  <button
+                    onClick={() => { tossLoginAttempted.current = false; handleTossLogin(); }}
+                    className="w-full py-3 bg-blue-500 hover:bg-blue-600 text-white rounded-xl font-medium text-sm transition-colors"
+                  >
+                    토스로 계속하기
+                  </button>
+                </>
+              )}
               <button onClick={handleClose} className="w-full py-2 text-sm text-gray-400 hover:text-gray-600 transition-colors">
                 {t("loginModalClose")}
               </button>

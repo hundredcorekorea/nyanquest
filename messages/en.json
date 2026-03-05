@@ -359,6 +359,7 @@
     "inProgressTurns": "— {turnCount} turns played",
     "unknownScenario": "Unknown scenario",
     "resumeTraining": "Resume Training",
+    "ranking": "Ranking",
     "selectScenario": "Select Scenario",
     "loginRequiredForTraining": "You need to log in to start training, nya!",
     "loginPromptTitle": "You need to log in to start adventuring, nya!",
@@ -400,6 +401,7 @@
     "diceRolling": "Rolling...",
     "gmThinking": "NaYang is thinking...",
     "gmName": "NaYang GM",
+    "aiDisclosure": "This content is AI-generated. All GM NaYang responses are powered by AI.",
     "adventurerLabel": "Adventurer",
     "diceRoll": "Roll",
     "diceCheck": "{label} Check (DC {dc})",
@@ -420,6 +422,12 @@
     "questCompleteTag": "[Quest Complete]",
     "questFailed": "Training failed, nya...",
     "questFailedDesc": "The adventure ended in {turnCount} turns... But failure is part of growth, nya!",
+    "rewindTitle": "Rewrite your fate, nya?",
+    "rewindDesc": "Spend {cost} EXP to go back to your last choice!",
+    "rewindButton": "Rewrite Fate",
+    "rewindSuccess": "Time is rewinding, nya! Try again!",
+    "rewindFailed": "Not enough EXP, nya...",
+    "currentExp": "Current",
     "questFailedTag": "[Quest Failed]",
     "diceGreatSuccess": "Amazing, nya!",
     "diceNextTimeBetter": "No worries, nya~ You'll do better next time, nya!",
@@ -539,6 +547,18 @@
     "deletePost": "Delete",
     "deletePostConfirm": "Delete this post, nya? This can't be undone, nya!",
     "emptyComments": "No comments yet, nya... Be the first to leave one, nya!"
+  },
+  "Jobs": {
+    "pickTitle": "Choose Your Class, nya!",
+    "pickDesc": "Your adventure style changes completely based on your class~",
+    "nextUnlock": "Unlock \"{name}\" at {exp} EXP!",
+    "cancel": "Close"
+  },
+  "Leaderboard": {
+    "title": "Adventurer Ranking",
+    "subtitle": "Top cats ranked by total EXP!",
+    "shareMyRank": "Share My Rank 🐱",
+    "empty": "No adventurers yet, nya..."
   },
   "MyPage": {
     "catLevels": {
