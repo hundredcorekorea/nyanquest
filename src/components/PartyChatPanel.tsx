@@ -6,6 +6,21 @@ import type { SessionMessage } from "@/types/party-session";
 import type { PartyMember } from "@/types/database";
 import { useTranslations } from "next-intl";
 
+// Basic client-side safety filter (matches toss-app/src/lib/safety.ts)
+const BLOCKED_PATTERNS = [
+  /자살\s*(방법|하는\s*법|도구)/,
+  /자해\s*(방법|하는\s*법)/,
+  /폭탄\s*(만드|제조|설계)/,
+  /마약\s*(제조|구매|파는)/,
+  /아동.*성|성.*아동/,
+  /살인\s*(방법|하는\s*법|도구)/,
+];
+
+function isSafeInput(text: string): boolean {
+  const normalized = text.replace(/\s+/g, " ").trim();
+  return !BLOCKED_PATTERNS.some((p) => p.test(normalized));
+}
+
 interface Props {
   sessionId: string;
   currentUserId: string;
@@ -50,6 +65,8 @@ export default function PartyChatPanel({
   const sendChat = useCallback(async () => {
     const text = chatInput.trim();
     if (!text || sending) return;
+
+    if (!isSafeInput(text)) return; // silently block unsafe input
 
     const member = members.find((m) => m.user_id === currentUserId);
     const playerName = member?.user?.nickname ?? "???";

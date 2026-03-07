@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "../lib/supabase";
 import { tossShare, tossHaptic } from "../lib/toss";
+import { SCENARIOS } from "../lib/scenarios";
 import type { Profile, Party, PartyMember } from "../types";
 
 interface Props {
@@ -148,6 +149,10 @@ export default function PartyDetail({ profile }: Props) {
           <Badge className={party.status === "recruiting" ? "bg-(--tds-green-bg) text-(--tds-green) border-(--tds-green-bg)" : ""}>
             {party.status === "recruiting" ? "모집중" : party.status === "filled" ? "인원마감" : party.status}
           </Badge>
+          {party.scenario_id && (() => {
+            const sc = SCENARIOS.find((s) => s.id === party.scenario_id);
+            return sc ? <Badge>📜 {sc.titleKo}</Badge> : null;
+          })()}
         </div>
       </div>
 

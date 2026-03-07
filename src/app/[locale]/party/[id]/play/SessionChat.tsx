@@ -166,7 +166,8 @@ export default function SessionChat({
     } finally {
       setIsStreaming(false);
     }
-  }, [initialSession.id, supabase, t]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps -- bgmMood is stable ref-like
+  }, [initialSession.id, supabase, t, bgmMood]);
 
   // Load initial messages + auto-start AI GM opening
   useEffect(() => {
@@ -238,9 +239,10 @@ export default function SessionChat({
       .subscribe();
 
     return () => {
+      channel.unsubscribe();
       supabase.removeChannel(channel);
     };
-  }, [initialSession.id, supabase]);
+  }, [initialSession.id, supabase, isRoundBased, bgmMood, fetchRoundStatus]);
 
   // Detect when new content is below the viewport
   useEffect(() => {
@@ -403,6 +405,9 @@ export default function SessionChat({
       currentUserId,
       supabase,
       toast,
+      t,
+      bgmMood,
+      isRoundBased,
     ]
   );
 
@@ -605,7 +610,7 @@ export default function SessionChat({
     } finally {
       setIsStreaming(false);
     }
-  }, [isCreator, isStreaming, initialSession.id, supabase, toast, t]);
+  }, [isCreator, isStreaming, initialSession.id, supabase, toast, t, bgmMood]);
 
   const turnsRemaining = totalTurns - turnCount;
   const showExtendBanner =

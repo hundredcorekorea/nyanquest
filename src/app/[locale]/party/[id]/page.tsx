@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import type { Party, PartyMember } from "@/types/database";
 import { fetchGmStats } from "@/lib/gm-stats";
+import { SCENARIOS } from "@/lib/solo-quest/scenarios";
 import { Link } from "@/i18n/navigation";
 import Image from "next/image";
 import JoinPartyButton from "./JoinPartyButton";
@@ -152,6 +153,14 @@ export default async function PartyDetailPage({ params }: Props) {
             {p.play_mode === "realtime" ? `⚡ ${tMeeting("online")}` : `📝 ${tMeeting("async")}`}
           </span>
         )}
+        {p.use_ai_gm && p.scenario_id && (() => {
+          const sc = SCENARIOS.find((s) => s.id === p.scenario_id);
+          return sc ? (
+            <span className="text-xs font-medium px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700">
+              {sc.thumbnailEmoji} {locale === "ko" ? sc.titleKo : sc.title}
+            </span>
+          ) : null;
+        })()}
       </div>
 
       {/* Title + Manage */}

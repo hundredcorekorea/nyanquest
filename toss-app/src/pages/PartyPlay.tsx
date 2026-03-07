@@ -104,8 +104,8 @@ export default function PartyPlay({ profile }: Props) {
         // If no messages yet (new session), trigger AI GM opening (delayed if tutorial showing)
         if (!msgs || msgs.length === 0) {
           if (!showTutorial) {
-            await sendChat("__OPEN__", sessionData.id);
             setOpeningTriggered(true);
+            sendChat("__OPEN__", sessionData.id);
           }
         } else {
           setOpeningTriggered(true);
@@ -158,6 +158,7 @@ export default function PartyPlay({ profile }: Props) {
       .subscribe();
 
     return () => {
+      channel.unsubscribe();
       supabase.removeChannel(channel);
     };
   }, [session]);
@@ -308,8 +309,18 @@ export default function PartyPlay({ profile }: Props) {
   // Send party chat message (direct insert)
   const handleChatSend = async () => {
     if (!chatInput.trim() || !session || !profile || chatSending) return;
+    const text = chatInput.trim().slice(0, 200);
+
+    // Safety check on chat messages too
+    const check = checkUserInput(text);
+    if (!check.allowed) {
+      tossHaptic("error");
+      setSafetyWarning(check.reason || "");
+      setTimeout(() => setSafetyWarning(""), 4000);
+      return;
+    }
+
     setChatSending(true);
-    const text = chatInput.trim();
     setChatInput("");
     tossHaptic("tap");
 
