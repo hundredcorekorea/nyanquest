@@ -8,11 +8,16 @@ import { useToast } from "@/components/Toast";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import { getTitleDef } from "@/lib/titles";
 import { tossSubmitScore } from "@/lib/toss";
+import PostGameSurvey from "@/components/PostGameSurvey";
 
 const REWIND_COST = 50; // EXP cost to rewrite fate
 
+// Show survey at these play counts (1st, 3rd, 7th, then every 10th)
+const SURVEY_TRIGGERS = new Set([1, 3, 7, 15, 25, 50, 100]);
+
 interface Props {
   questId: string;
+  scenarioId?: string;
   turnCount: number;
   isPremium: boolean;
   isFailed?: boolean;
@@ -22,7 +27,7 @@ interface Props {
   onRewind?: () => void;
 }
 
-export default function QuestComplete({ questId, turnCount, isPremium, isFailed = false, alreadyClaimedExp = 0, onRewind }: Props) {
+export default function QuestComplete({ questId, scenarioId, turnCount, isPremium, isFailed = false, alreadyClaimedExp = 0, onRewind }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const tQuest = useTranslations("SoloQuest");
@@ -34,19 +39,32 @@ export default function QuestComplete({ questId, turnCount, isPremium, isFailed 
   const [newTitles, setNewTitles] = useState<string[]>([]);
   const [rewinding, setRewinding] = useState(false);
   const [userExp, setUserExp] = useState<number | null>(null);
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [surveyDismissed, setSurveyDismissed] = useState(false);
 
-  // Fetch user EXP on mount for rewind eligibility
+  // Fetch user EXP + check survey eligibility on mount
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data: { user } }) => {
-      if (user) {
-        supabase
-          .from("profiles")
-          .select("cat_exp")
-          .eq("id", user.id)
-          .single()
-          .then(({ data }) => setUserExp(data?.cat_exp ?? 0));
-      }
+      if (!user) return;
+      supabase
+        .from("profiles")
+        .select("cat_exp")
+        .eq("id", user.id)
+        .single()
+        .then(({ data }) => setUserExp(data?.cat_exp ?? 0));
+
+      // Count completed solo quests for survey trigger
+      supabase
+        .from("solo_quests")
+        .select("id", { count: "exact", head: true })
+        .eq("user_id", user.id)
+        .in("status", ["completed", "failed"])
+        .then(({ count }) => {
+          if (count !== null && SURVEY_TRIGGERS.has(count)) {
+            setShowSurvey(true);
+          }
+        });
     });
   }, []);
 
@@ -225,6 +243,15 @@ export default function QuestComplete({ questId, turnCount, isPremium, isFailed 
                 ) : null;
               })}
             </div>
+          )}
+          {showSurvey && !surveyDismissed && (
+            <PostGameSurvey
+              questId={questId}
+              scenarioId={scenarioId}
+              playType="solo"
+              questStatus={isFailed ? "failed" : "completed"}
+              onClose={() => setSurveyDismissed(true)}
+            />
           )}
           <button
             onClick={() => router.push("/solo")}

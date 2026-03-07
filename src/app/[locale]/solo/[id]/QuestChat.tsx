@@ -595,6 +595,7 @@ export default function QuestChat({
             <div className="px-3 py-2 max-h-[40vh] overflow-y-auto">
               <QuestComplete
                 questId={quest.id}
+                scenarioId={scenarioId}
                 turnCount={turnCount}
                 isPremium={isPremium}
                 isFailed={questStatus === "failed"}

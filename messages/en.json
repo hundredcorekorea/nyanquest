@@ -1365,5 +1365,13 @@
     "description": "Access nyanQuest instantly like a native app!",
     "install": "Install",
     "later": "Later"
+  },
+  "Survey": {
+    "title": "How was your adventure?",
+    "subtitle": "One tap! Share your experience, nya!",
+    "placeholder": "What did you enjoy? (Optional)",
+    "skip": "Skip",
+    "submit": "Send",
+    "thankYou": "Thanks, nya! We'll make it even better!"
   }
 }

@@ -9,6 +9,7 @@ import PlayerList from "./PlayerList";
 import SessionControls from "./SessionControls";
 import DiceRollButton from "./DiceRollButton";
 import AdGate from "@/components/AdGate";
+import PostGameSurvey from "@/components/PostGameSurvey";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -80,6 +81,8 @@ export default function SessionChat({
   const [bgmPickerCategory, setBgmPickerCategory] = useState<BgmCategory | null>(null);
   const locale = typeof window !== "undefined" ? (document.documentElement.lang || "ko") : "ko";
   const [profileNudgeDismissed, setProfileNudgeDismissed] = useState(false);
+  const [showSurvey, setShowSurvey] = useState(false);
+  const [surveyDismissed, setSurveyDismissed] = useState(false);
 
   // Check if current user has empty preferences
   const currentMember = members.find((m) => m.user_id === currentUserId);
@@ -89,6 +92,15 @@ export default function SessionChat({
     !currentMember?.user?.avoided_elements?.length;
 
   const openingTriggered = useRef(false);
+
+  // Show survey when session completes (random 30% chance to avoid fatigue)
+  useEffect(() => {
+    if (sessionStatus === "completed" && !surveyDismissed) {
+      if (Math.random() < 0.3) {
+        setShowSurvey(true);
+      }
+    }
+  }, [sessionStatus, surveyDismissed]);
 
   // Fetch round status for async AI GM sessions
   const fetchRoundStatus = useCallback(async () => {
@@ -989,6 +1001,15 @@ export default function SessionChat({
               {t("sessionCompletedDesc", { turnCount })}
             </p>
             <div className="text-2xl font-bold text-amber-600">{t("sessionCompletedExp")}</div>
+            {showSurvey && !surveyDismissed && (
+              <PostGameSurvey
+                sessionId={initialSession.id}
+                scenarioId={initialSession.scenario_id ?? undefined}
+                playType="party"
+                questStatus="completed"
+                onClose={() => setSurveyDismissed(true)}
+              />
+            )}
             <Link
               href={`/party/${partyId}`}
               className="block w-full py-3 bg-amber-500 text-white rounded-xl font-medium hover:bg-amber-600 transition-colors"
