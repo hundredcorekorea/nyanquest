@@ -31,6 +31,12 @@ export default function SoloQuest({ profile }: Props) {
   const [surveySubmitted, setSurveySubmitted] = useState(false);
   const chatEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const readerRef = useRef<ReadableStreamDefaultReader | null>(null);
+
+  // Cancel active stream reader on unmount
+  useEffect(() => {
+    return () => { readerRef.current?.cancel(); };
+  }, []);
 
   // Create or resume quest
   useEffect(() => {
@@ -119,33 +125,38 @@ export default function SoloQuest({ profile }: Props) {
 
       // Stream response
       const reader = res.body?.getReader();
+      readerRef.current = reader ?? null;
       const decoder = new TextDecoder();
       let fullText = "";
 
       if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-          const chunk = decoder.decode(value, { stream: true });
-          // Parse SSE format
-          const lines = chunk.split("\n");
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6);
-              if (data === "[DONE]") continue;
-              try {
-                const parsed = JSON.parse(data);
-                const content = parsed.choices?.[0]?.delta?.content || parsed.token || parsed.text || "";
-                fullText += content;
-                setStreamingText(fullText);
-              } catch {
-                // SSE text chunk (not JSON)
-                fullText += data;
-                setStreamingText(fullText);
+            const chunk = decoder.decode(value, { stream: true });
+            // Parse SSE format
+            const lines = chunk.split("\n");
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.slice(6);
+                if (data === "[DONE]") continue;
+                try {
+                  const parsed = JSON.parse(data);
+                  const content = parsed.choices?.[0]?.delta?.content || parsed.token || parsed.text || "";
+                  fullText += content;
+                  setStreamingText(fullText);
+                } catch {
+                  // SSE text chunk (not JSON)
+                  fullText += data;
+                  setStreamingText(fullText);
+                }
               }
             }
           }
+        } finally {
+          readerRef.current = null;
         }
       }
 

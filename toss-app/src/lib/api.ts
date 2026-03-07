@@ -40,7 +40,7 @@ export async function soloChat(body: {
 }) {
   return apiFetch("/api/solo-quest/chat", {
     method: "POST",
-    body: JSON.stringify({ ...body, locale: "ko" }),
+    body: JSON.stringify({ ...body, locale: body.locale || "ko" }),
   });
 }
 

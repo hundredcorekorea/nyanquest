@@ -434,7 +434,7 @@ export async function POST(request: NextRequest) {
           .eq("id", sessionId);
 
         // Check if quest is complete
-        if (fullResponse.includes("[퀘스트 완료]")) {
+        if (fullResponse.includes("[퀘스트 완료]") || fullResponse.includes("[Quest Complete]")) {
           await serviceSupabase
             .from("party_sessions")
             .update({ status: "completed", updated_at: new Date().toISOString() })

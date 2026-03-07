@@ -361,7 +361,7 @@ export default function SessionChat({
           if (data) setMessages(data as unknown as SessionMessage[]);
 
           // Check for quest completion
-          if (fullText.includes("[퀘스트 완료]")) {
+          if (fullText.includes("[퀘스트 완료]") || fullText.includes("[Quest Complete]")) {
             setSessionStatus("completed");
             toast(t("sessionCompletedToast"), "success");
           }
@@ -499,7 +499,7 @@ export default function SessionChat({
           .order("created_at", { ascending: true });
         if (data) setMessages(data as unknown as SessionMessage[]);
 
-        if (fullText.includes("[퀘스트 완료]")) {
+        if (fullText.includes("[퀘스트 완료]") || fullText.includes("[Quest Complete]")) {
           setSessionStatus("completed");
           toast(t("sessionCompletedToast"), "success");
         }

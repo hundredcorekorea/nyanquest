@@ -51,6 +51,12 @@ export default function PartyPlay({ profile }: Props) {
   const [expClaimed, setExpClaimed] = useState(false);
   const [partyTitle, setPartyTitle] = useState("");
   const chatEndRef = useRef<HTMLDivElement>(null);
+  const readerRef = useRef<ReadableStreamDefaultReader | null>(null);
+
+  // Cancel active stream reader on unmount
+  useEffect(() => {
+    return () => { readerRef.current?.cancel(); };
+  }, []);
 
   // Chat panel
   const [chatOpen, setChatOpen] = useState(false);
@@ -219,31 +225,36 @@ export default function PartyPlay({ profile }: Props) {
 
       // Stream response
       const reader = res.body?.getReader();
+      readerRef.current = reader ?? null;
       const decoder = new TextDecoder();
       let fullText = "";
 
       if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
+        try {
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
 
-          const chunk = decoder.decode(value, { stream: true });
-          const lines = chunk.split("\n");
-          for (const line of lines) {
-            if (line.startsWith("data: ")) {
-              const data = line.slice(6);
-              if (data === "[DONE]") continue;
-              try {
-                const parsed = JSON.parse(data);
-                const content = parsed.choices?.[0]?.delta?.content || parsed.token || parsed.text || "";
-                fullText += content;
-                setStreamingText(fullText);
-              } catch {
-                fullText += data;
-                setStreamingText(fullText);
+            const chunk = decoder.decode(value, { stream: true });
+            const lines = chunk.split("\n");
+            for (const line of lines) {
+              if (line.startsWith("data: ")) {
+                const data = line.slice(6);
+                if (data === "[DONE]") continue;
+                try {
+                  const parsed = JSON.parse(data);
+                  const content = parsed.choices?.[0]?.delta?.content || parsed.token || parsed.text || "";
+                  fullText += content;
+                  setStreamingText(fullText);
+                } catch {
+                  fullText += data;
+                  setStreamingText(fullText);
+                }
               }
             }
           }
+        } finally {
+          readerRef.current = null;
         }
       }
 
