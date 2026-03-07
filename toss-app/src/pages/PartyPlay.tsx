@@ -7,7 +7,7 @@ import { checkUserInput, CRISIS_HELP_MESSAGE } from "../lib/safety";
 import type { Profile, PartySession, SessionMessage, PartyMember } from "../types";
 
 /* ── Party Tutorial (hardcoded KR) ── */
-const PARTY_TUTORIAL_KEY = "nyanquest_party_tutorial_seen";
+const PARTY_TUTORIAL_PREFIX = "nyanquest_party_tutorial_";
 
 const TUTORIAL_STEPS = [
   { speaker: "🧙‍♂️🐱", text: "파티 플레이에 오신 것을 환영하라냥! 함께 모험을 떠나볼까냥?" },
@@ -18,15 +18,16 @@ const TUTORIAL_STEPS = [
   { speaker: "🎉", text: "준비가 됐다면 모험을 시작하라냥! 파티원들과 최고의 이야기를 만들어보라냥~!" },
 ];
 
-function usePartyTutorial() {
+function usePartyTutorial(userId?: string) {
+  const key = `${PARTY_TUTORIAL_PREFIX}${userId || "anon"}`;
   const [show, setShow] = useState(() => {
     if (typeof window === "undefined") return false;
-    return !localStorage.getItem(PARTY_TUTORIAL_KEY);
+    try { return !localStorage.getItem(key); } catch { return false; }
   });
   const dismiss = useCallback(() => {
-    localStorage.setItem(PARTY_TUTORIAL_KEY, "1");
+    try { localStorage.setItem(key, "1"); } catch { /* quota */ }
     setShow(false);
-  }, []);
+  }, [key]);
   return { showTutorial: show, dismissTutorial: dismiss };
 }
 
@@ -66,7 +67,7 @@ export default function PartyPlay({ profile }: Props) {
   const chatPanelEndRef = useRef<HTMLDivElement>(null);
 
   // Tutorial
-  const { showTutorial, dismissTutorial } = usePartyTutorial();
+  const { showTutorial, dismissTutorial } = usePartyTutorial(profile?.id);
   const [openingTriggered, setOpeningTriggered] = useState(false);
 
   // Load session, members, messages
@@ -462,8 +463,13 @@ export default function PartyPlay({ profile }: Props) {
         </div>
       )}
 
+      {/* AI 기본법 라벨 */}
+      <div className="shrink-0 bg-(--tds-bg-deep-glass) px-4 py-1 text-center border-t border-(--tds-border)">
+        <p className="text-[9px] text-(--tds-text-disabled)">🤖 AI가 생성한 콘텐츠가 포함되어 있습니다</p>
+      </div>
+
       {/* Input */}
-      <form onSubmit={handleSubmit} className="shrink-0 flex gap-2 px-4 py-3 bg-(--tds-bg-deep-glass) border-t border-(--tds-border)">
+      <form onSubmit={handleSubmit} className="shrink-0 flex gap-2 px-4 py-3 bg-(--tds-bg-deep-glass) border-t border-(--tds-border-subtle)">
         <textarea
           value={input}
           onChange={(e) => setInput(e.target.value)}
@@ -481,6 +487,7 @@ export default function PartyPlay({ profile }: Props) {
         <button
           type="submit"
           disabled={!input.trim() || isStreaming || currentUserSubmitted}
+          aria-label="행동 전송"
           className="shrink-0 w-10 h-10 bg-(--tds-blue) text-(--tds-text) rounded-xl flex items-center justify-center active:scale-90 transition-transform disabled:opacity-30"
         >
           ▶
@@ -560,6 +567,7 @@ export default function PartyPlay({ profile }: Props) {
               <button
                 onClick={handleChatSend}
                 disabled={!chatInput.trim() || chatSending}
+                aria-label="채팅 전송"
                 className="shrink-0 w-9 h-9 bg-(--tds-blue) text-(--tds-text) rounded-xl flex items-center justify-center active:scale-90 transition-transform disabled:opacity-30 text-sm"
               >
                 ➤

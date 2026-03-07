@@ -290,6 +290,7 @@ export default function CreatePartyPage() {
                     ...prev,
                     use_ai_gm: newVal,
                     creator_role: newVal ? "PL" : prev.creator_role,
+                    scenario_id: newVal ? prev.scenario_id : null,
                     max_players: newVal
                       ? Math.min(prev.max_players, 4)
                       : prev.max_players,

@@ -453,8 +453,13 @@ export default function SoloQuest({ profile }: Props) {
         </div>
       )}
 
+      {/* AI 기본법 라벨 */}
+      <div className="shrink-0 bg-(--tds-bg-deep-glass) px-4 py-1 text-center border-t border-(--tds-border)">
+        <p className="text-[9px] text-(--tds-text-disabled)">🤖 AI가 생성한 콘텐츠가 포함되어 있습니다</p>
+      </div>
+
       {/* Input */}
-      <form onSubmit={handleSubmit} className="shrink-0 flex gap-2 px-4 py-3 bg-(--tds-bg-deep-glass) border-t border-(--tds-border)">
+      <form onSubmit={handleSubmit} className="shrink-0 flex gap-2 px-4 py-3 bg-(--tds-bg-deep-glass) border-t border-(--tds-border-subtle)">
         <textarea
           ref={textareaRef}
           value={input}
@@ -473,6 +478,7 @@ export default function SoloQuest({ profile }: Props) {
         <button
           type="submit"
           disabled={!input.trim() || isStreaming}
+          aria-label="행동 전송"
           className="shrink-0 w-10 h-10 bg-(--tds-blue) text-(--tds-text) rounded-xl flex items-center justify-center active:scale-90 transition-transform disabled:opacity-30"
         >
           ▶

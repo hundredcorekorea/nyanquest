@@ -85,7 +85,7 @@ export default function SessionChat({
   const [profileNudgeDismissed, setProfileNudgeDismissed] = useState(false);
   const [showSurvey, setShowSurvey] = useState(false);
   const [surveyDismissed, setSurveyDismissed] = useState(false);
-  const { showPartyTutorial, dismissPartyTutorial } = usePartyTutorialState();
+  const { showPartyTutorial, dismissPartyTutorial } = usePartyTutorialState(currentUserId);
 
   // Check if current user has empty preferences
   const currentMember = members.find((m) => m.user_id === currentUserId);

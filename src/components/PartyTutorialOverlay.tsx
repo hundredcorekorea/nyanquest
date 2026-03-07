@@ -3,7 +3,7 @@
 import { useState, useCallback } from "react";
 import { useTranslations } from "next-intl";
 
-const STORAGE_KEY = "nyanquest_party_tutorial_seen";
+const STORAGE_PREFIX = "nyanquest_party_tutorial_";
 
 interface TutorialStep {
   speaker: string;
@@ -11,16 +11,17 @@ interface TutorialStep {
   highlight?: "action" | "chat";
 }
 
-export function usePartyTutorialState() {
+export function usePartyTutorialState(userId?: string) {
+  const key = `${STORAGE_PREFIX}${userId || "anon"}`;
   const [show, setShow] = useState(() => {
     if (typeof window === "undefined") return false;
-    return !localStorage.getItem(STORAGE_KEY);
+    try { return !localStorage.getItem(key); } catch { return false; }
   });
 
   const dismiss = useCallback(() => {
-    localStorage.setItem(STORAGE_KEY, "1");
+    try { localStorage.setItem(key, "1"); } catch { /* quota */ }
     setShow(false);
-  }, []);
+  }, [key]);
 
   return { showPartyTutorial: show, dismissPartyTutorial: dismiss };
 }
