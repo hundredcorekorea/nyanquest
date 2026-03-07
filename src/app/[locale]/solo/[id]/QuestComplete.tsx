@@ -12,8 +12,8 @@ import PostGameSurvey from "@/components/PostGameSurvey";
 
 const REWIND_COST = 50; // EXP cost to rewrite fate
 
-// Show survey at these play counts (1st, 3rd, 7th, then every 10th)
-const SURVEY_TRIGGERS = new Set([1, 3, 7, 15, 25, 50, 100]);
+// Show survey at milestone play counts (first survey handled by 0-response check)
+const SURVEY_TRIGGERS = new Set([7, 15, 25, 50, 100]);
 
 interface Props {
   questId: string;
