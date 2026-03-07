@@ -8,19 +8,19 @@ export async function POST(request: Request) {
 
   // 1. Verify webhook signature (Standard Webhooks via Portone SDK)
   const webhookSecret = process.env.PORTONE_WEBHOOK_SECRET;
-  if (webhookSecret) {
-    try {
-      await PortOne.Webhook.verify(
-        webhookSecret,
-        body,
-        Object.fromEntries(request.headers),
-      );
-    } catch (err) {
-      console.error("[webhook] Signature verification failed:", err);
-      return Response.json({ error: "Invalid signature" }, { status: 401 });
-    }
-  } else {
-    console.warn("[webhook] PORTONE_WEBHOOK_SECRET not set — skipping signature verification");
+  if (!webhookSecret) {
+    console.error("[webhook] PORTONE_WEBHOOK_SECRET not set — rejecting request");
+    return Response.json({ error: "Webhook verification disabled" }, { status: 503 });
+  }
+  try {
+    await PortOne.Webhook.verify(
+      webhookSecret,
+      body,
+      Object.fromEntries(request.headers),
+    );
+  } catch (err) {
+    console.error("[webhook] Signature verification failed:", err);
+    return Response.json({ error: "Invalid signature" }, { status: 401 });
   }
 
   let payload;

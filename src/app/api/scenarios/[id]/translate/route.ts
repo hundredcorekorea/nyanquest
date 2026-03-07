@@ -10,7 +10,7 @@ export async function POST(
 
   // Simple auth: only allow internal calls with secret
   const authHeader = request.headers.get("x-translate-secret");
-  if (authHeader !== process.env.TRANSLATE_SECRET) {
+  if (!process.env.TRANSLATE_SECRET || authHeader !== process.env.TRANSLATE_SECRET) {
     return Response.json({ error: "Unauthorized" }, { status: 401 });
   }
 
