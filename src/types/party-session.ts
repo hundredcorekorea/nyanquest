@@ -20,7 +20,7 @@ export interface SessionMessage {
   id: string;
   session_id: string;
   user_id: string | null; // null = AI GM
-  role: "gm" | "player" | "system";
+  role: "gm" | "player" | "system" | "chat";
   player_name: string | null;
   content: string;
   dice_roll: DiceRoll | null;

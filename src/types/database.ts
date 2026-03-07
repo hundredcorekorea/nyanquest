@@ -61,6 +61,7 @@ export interface Party {
   status: "recruiting" | "filled" | "completed" | "cancelled";
   looking_for_gm: boolean;
   thumbnail_url: string | null;
+  scenario_id: string | null;
   use_ai_gm: boolean;
   play_mode: "realtime" | "async";
   language: "ko" | "en";

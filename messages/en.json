@@ -304,7 +304,24 @@
     "roundYourTurn": "Enter your action for this round!",
     "roundProgress": "{submitted}/{total} actions submitted",
     "roundWaitingPlaceholder": "Waiting for other adventurers...",
-    "forceRound": "Force proceed"
+    "forceRound": "Force proceed",
+    "partyChat": "Party Chat",
+    "partyChatEmpty": "No messages yet, nya! Say hi to your party~ 🐱",
+    "partyChatPlaceholder": "Message your party...",
+    "partyChatSend": "Send"
+  },
+  "PartyTutorial": {
+    "skip": "Skip",
+    "next": "Next",
+    "steps": {
+      "welcome": "Welcome to Party Play, nya! Here you can adventure together with other players, nya.",
+      "explainPartyPlay": "The AI GM leads the story and weaves all party members' actions together, nya!",
+      "explainAction": "The input at the bottom is for Actions, nya. Type things like 'open the door' or 'cast a spell' — it goes straight to the AI GM!",
+      "explainChat": "The 💬 button on the bottom-right is Party Chat, nya! Chat with party members, strategize, or just hang out. The AI GM can't see this, nya~",
+      "explainRounds": "In async mode, the next round starts when all party members submit their actions. Check the status banner at the top, nya!",
+      "ready": "Ready, nya? Show your chemistry with your party members! Let the adventure begin, nya~"
+    },
+    "startAdventure": "Start Adventure!"
   },
   "CreateParty": {
     "steps": {
@@ -346,6 +363,9 @@
     "customSystemPlaceholder": "Enter the system name",
     "recruitCount": "Recruiting {count} players",
     "gmRecruiting": "Recruiting GM",
+    "selectScenario": "Select Scenario",
+    "freeAdventure": "Free Adventure",
+    "freeAdventureDesc": "AI GM will improvise the story for you!",
     "submitParty": "Post Adventure!",
     "submitFailed": "Submission failed: {error}"
   },

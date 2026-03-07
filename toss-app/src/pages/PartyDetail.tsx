@@ -98,6 +98,7 @@ export default function PartyDetail({ profile }: Props) {
         .from("party_sessions")
         .insert({
           party_id: partyId,
+          scenario_id: party?.scenario_id || null,
           status: "active",
           turn_order: turnOrder,
           current_turn_index: 0,

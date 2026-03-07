@@ -10,6 +10,8 @@ import SessionControls from "./SessionControls";
 import DiceRollButton from "./DiceRollButton";
 import AdGate from "@/components/AdGate";
 import PostGameSurvey from "@/components/PostGameSurvey";
+import PartyChatPanel from "@/components/PartyChatPanel";
+import PartyTutorialOverlay, { usePartyTutorialState } from "@/components/PartyTutorialOverlay";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -83,6 +85,7 @@ export default function SessionChat({
   const [profileNudgeDismissed, setProfileNudgeDismissed] = useState(false);
   const [showSurvey, setShowSurvey] = useState(false);
   const [surveyDismissed, setSurveyDismissed] = useState(false);
+  const { showPartyTutorial, dismissPartyTutorial } = usePartyTutorialState();
 
   // Check if current user has empty preferences
   const currentMember = members.find((m) => m.user_id === currentUserId);
@@ -176,11 +179,12 @@ export default function SessionChat({
 
       if (data) setMessages(data as unknown as SessionMessage[]);
 
-      // Auto-trigger AI GM opening if no messages yet
+      // Auto-trigger AI GM opening if no messages yet (delay if tutorial is showing)
       if (
         initialSession.use_ai_gm &&
         (!data || data.length === 0) &&
-        !openingTriggered.current
+        !openingTriggered.current &&
+        !showPartyTutorial
       ) {
         openingTriggered.current = true;
         triggerOpening();
@@ -190,7 +194,7 @@ export default function SessionChat({
       fetchRoundStatus();
     };
     loadMessages();
-  }, [initialSession.id, initialSession.use_ai_gm, triggerOpening, fetchRoundStatus]);
+  }, [initialSession.id, initialSession.use_ai_gm, triggerOpening, fetchRoundStatus, showPartyTutorial]);
 
   // Scroll to top on mount
   useEffect(() => {
@@ -783,7 +787,7 @@ export default function SessionChat({
 
       {/* Chat area */}
       <div className="flex-1 space-y-3 mb-4">
-        {messages.map((msg) => {
+        {messages.filter((msg) => msg.role !== "chat").map((msg) => {
           const member = getMemberForMessage(msg);
           const isMe = msg.user_id === currentUserId;
           const isGm = msg.role === "gm";
@@ -1192,6 +1196,32 @@ export default function SessionChat({
             {input.length}/500
           </p>
         </div>
+      )}
+
+      {/* Party Chat Panel */}
+      <PartyChatPanel
+        sessionId={initialSession.id}
+        currentUserId={currentUserId}
+        members={members}
+        allMessages={messages}
+      />
+
+      {/* Party Tutorial (first time only) */}
+      {showPartyTutorial && (
+        <PartyTutorialOverlay
+          onComplete={() => {
+            dismissPartyTutorial();
+            // Trigger opening after tutorial if not yet triggered
+            if (
+              initialSession.use_ai_gm &&
+              messages.length === 0 &&
+              !openingTriggered.current
+            ) {
+              openingTriggered.current = true;
+              triggerOpening();
+            }
+          }}
+        />
       )}
     </div>
   );

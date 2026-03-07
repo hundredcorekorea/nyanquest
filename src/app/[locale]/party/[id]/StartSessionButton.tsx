@@ -14,6 +14,7 @@ interface Props {
   useAiGm: boolean;
   playMode: "realtime" | "async";
   partyStatus: "recruiting" | "filled" | "completed" | "cancelled";
+  scenarioId?: string | null;
 }
 
 export default function StartSessionButton({
@@ -22,6 +23,7 @@ export default function StartSessionButton({
   useAiGm,
   playMode,
   partyStatus,
+  scenarioId,
 }: Props) {
   const t = useTranslations("PartyDetail");
   const tc = useTranslations("Common");
@@ -138,6 +140,7 @@ export default function StartSessionButton({
         "create_party_session",
         {
           p_party_id: partyId,
+          p_scenario_id: scenarioId || null,
           p_total_turns: totalTurns,
           p_use_ai_gm: useAiGm,
           p_play_mode: playMode,

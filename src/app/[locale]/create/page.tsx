@@ -8,6 +8,7 @@ import type { TrpgSystem } from "@/types/database";
 import { useToast } from "@/components/Toast";
 import DateTimePicker from "@/components/DateTimePicker";
 import { useTranslations, useLocale } from "next-intl";
+import { SCENARIOS } from "@/lib/solo-quest/scenarios";
 
 const CUSTOM_SYSTEM_NAME = "기타 (직접 입력)";
 
@@ -45,6 +46,7 @@ export default function CreatePartyPage() {
     creator_role: "GM" as "GM" | "PL",
     use_ai_gm: false,
     play_mode: "realtime" as "realtime" | "async",
+    scenario_id: null as string | null,
   });
 
   useEffect(() => {
@@ -100,6 +102,7 @@ export default function CreatePartyPage() {
         scheduled_at: form.scheduled_at || null,
         use_ai_gm: form.use_ai_gm,
         play_mode: form.play_mode,
+        scenario_id: form.use_ai_gm ? form.scenario_id : null,
         language: locale,
       })
       .select("id")
@@ -345,6 +348,45 @@ export default function CreatePartyPage() {
               </p>
             </div>
           )}
+
+          {/* Scenario selection (only when AI GM enabled) */}
+          {form.use_ai_gm && (
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">
+                {t("selectScenario")}
+              </label>
+              <button
+                onClick={() => setForm((prev) => ({ ...prev, scenario_id: null }))}
+                className={`w-full mb-2 py-3 rounded-xl border text-sm text-left px-4 transition-all ${
+                  !form.scenario_id
+                    ? "border-amber-400 bg-amber-50 text-amber-700"
+                    : "border-gray-200 text-gray-500 hover:border-amber-200"
+                }`}
+              >
+                🎲 {t("freeAdventure")}
+                <span className="block text-xs text-gray-400 mt-0.5">{t("freeAdventureDesc")}</span>
+              </button>
+              <div className="space-y-1.5 max-h-52 overflow-y-auto">
+                {SCENARIOS.filter((s) => !s.isPremium).map((s) => (
+                  <button
+                    key={s.id}
+                    onClick={() => setForm((prev) => ({ ...prev, scenario_id: s.id }))}
+                    className={`w-full py-2.5 rounded-xl border text-sm text-left px-4 flex items-center gap-2.5 transition-all ${
+                      form.scenario_id === s.id
+                        ? "border-amber-400 bg-amber-50 text-amber-700"
+                        : "border-gray-200 text-gray-500 hover:border-amber-200"
+                    }`}
+                  >
+                    <span className="text-lg">{s.thumbnailEmoji}</span>
+                    <div>
+                      <span className="block">{locale === "ko" ? s.titleKo : s.title}</span>
+                      <span className="text-xs text-gray-400">{locale === "ko" ? s.genre : s.genreEn}</span>
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 
@@ -493,6 +535,11 @@ export default function CreatePartyPage() {
               {form.use_ai_gm && (
                 <span className="text-xs bg-purple-50 text-purple-700 px-2 py-1 rounded-lg">
                   {form.play_mode === "realtime" ? `⚡ ${t("realtime")}` : `📝 ${t("async")}`}
+                </span>
+              )}
+              {form.use_ai_gm && form.scenario_id && (
+                <span className="text-xs bg-emerald-50 text-emerald-700 px-2 py-1 rounded-lg">
+                  📜 {SCENARIOS.find((s) => s.id === form.scenario_id)?.[locale === "ko" ? "titleKo" : "title"]}
                 </span>
               )}
               {!form.use_ai_gm && form.creator_role === "PL" && (

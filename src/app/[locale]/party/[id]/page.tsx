@@ -399,6 +399,7 @@ export default async function PartyDetailPage({ params }: Props) {
         useAiGm={!!p.use_ai_gm}
         playMode={p.play_mode ?? "realtime"}
         partyStatus={p.status}
+        scenarioId={p.scenario_id}
       />
 
       {/* Join button */}

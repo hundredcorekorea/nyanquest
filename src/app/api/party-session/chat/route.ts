@@ -197,11 +197,12 @@ export async function POST(request: NextRequest) {
     }
   }
 
-  // Fetch recent messages for context
+  // Fetch recent messages for context (exclude chat messages from AI context)
   const { data: recentMessages } = await supabase
     .from("session_messages")
     .select("*")
     .eq("session_id", sessionId)
+    .neq("role", "chat")
     .order("created_at", { ascending: false })
     .limit(10);
 

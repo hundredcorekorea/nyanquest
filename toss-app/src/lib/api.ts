@@ -55,7 +55,9 @@ export async function soloExtendTurns(questId: string) {
 
 export async function partyChat(body: {
   sessionId: string;
-  content: string;
+  playerMessage?: string;
+  isOpening?: boolean;
+  forceRound?: boolean;
   diceRoll?: unknown;
 }) {
   return apiFetch("/api/party-session/chat", {
