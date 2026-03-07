@@ -54,17 +54,24 @@ export default function QuestComplete({ questId, scenarioId, turnCount, isPremiu
         .single()
         .then(({ data }) => setUserExp(data?.cat_exp ?? 0));
 
-      // Count completed solo quests for survey trigger
-      supabase
-        .from("solo_quests")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", user.id)
-        .in("status", ["completed", "failed"])
-        .then(({ count }) => {
-          if (count !== null && SURVEY_TRIGGERS.has(count)) {
-            setShowSurvey(true);
-          }
-        });
+      // Survey trigger: show if never responded OR at milestone play counts
+      Promise.all([
+        supabase
+          .from("survey_responses")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id),
+        supabase
+          .from("solo_quests")
+          .select("id", { count: "exact", head: true })
+          .eq("user_id", user.id)
+          .in("status", ["completed", "failed"]),
+      ]).then(([surveyRes, questRes]) => {
+        const surveyCount = surveyRes.count ?? 0;
+        const questCount = questRes.count ?? 0;
+        if (surveyCount === 0 || SURVEY_TRIGGERS.has(questCount)) {
+          setShowSurvey(true);
+        }
+      });
     });
   }, []);
 
