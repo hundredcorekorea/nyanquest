@@ -45,3 +45,12 @@ lemonsqueezy_2fa_backup.txt
 next-env.d.ts
 
 .vercel
+
+# android
+android-app/keystore/
+android-app/app/build/
+android-app/.gradle/
+android-app/build/
+android-app/local.properties
+*.aab
+*.apk

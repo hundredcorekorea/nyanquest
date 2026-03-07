@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.NyanQuest" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="android:windowBackground">#1a1a2e</item>
+        <item name="android:statusBarColor">#1a1a2e</item>
+        <item name="android:navigationBarColor">#1a1a2e</item>
+        <item name="colorPrimary">#f59e0b</item>
+        <item name="colorPrimaryDark">#d97706</item>
+        <item name="colorAccent">#f59e0b</item>
+    </style>
+
+    <style name="Theme.NyanQuest.Splash" parent="Theme.NyanQuest">
+        <item name="android:windowBackground">@drawable/splash_background</item>
+    </style>
+</resources>
