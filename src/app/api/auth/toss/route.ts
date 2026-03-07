@@ -52,10 +52,13 @@ export async function POST(request: NextRequest) {
       const tokenData = await tokenRes.json();
       // Toss returns: { access_token, token_type, expires_in, scope, user_id, ... }
       tossUserId = `toss_${tokenData.user_id || tokenData.sub || authorizationCode.slice(0, 32)}`;
-    } else {
+    } else if (process.env.NODE_ENV === "development") {
       // Dev fallback: use authorizationCode as temporary identifier
       console.warn("[Toss Auth] No TOSS_CLIENT_ID/SECRET — using dev fallback");
       tossUserId = `toss_${authorizationCode.slice(0, 32)}`;
+    } else {
+      console.error("[Toss Auth] TOSS_CLIENT_ID/SECRET not configured in production");
+      return corsJson({ error: "Toss auth not configured" }, { status: 503 });
     }
 
     const tossEmail = `${tossUserId}@toss.miniapp`;
