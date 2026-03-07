@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabase";
-import { soloChat, soloExtendTurns } from "../lib/api";
+import { soloChat } from "../lib/api";
 import { tossHaptic, tossSubmitScore, tossShare } from "../lib/toss";
 import { getScenario } from "../lib/scenarios";
 import { checkUserInput, detectCrisisInResponse, CRISIS_HELP_MESSAGE } from "../lib/safety";
@@ -242,26 +242,29 @@ export default function SoloQuest({ profile }: Props) {
       p_exp_amount: expAmount,
     });
 
-    if (!error) {
-      setExpClaimed(true);
-      tossHaptic("success");
+    if (error) {
+      tossHaptic("error");
+      return;
+    }
 
-      // Check survey eligibility
-      const { count } = await supabase
-        .from("survey_responses")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", profile.id);
-      if (count === 0) setShowSurvey(true);
+    setExpClaimed(true);
+    tossHaptic("success");
 
-      // Submit to Toss leaderboard
-      const { data: freshProfile } = await supabase
-        .from("profiles")
-        .select("cat_exp")
-        .eq("id", profile.id)
-        .single();
-      if (freshProfile) {
-        tossSubmitScore(freshProfile.cat_exp);
-      }
+    // Check survey eligibility
+    const { count } = await supabase
+      .from("survey_responses")
+      .select("id", { count: "exact", head: true })
+      .eq("user_id", profile.id);
+    if (count === 0) setShowSurvey(true);
+
+    // Submit to Toss leaderboard
+    const { data: freshProfile } = await supabase
+      .from("profiles")
+      .select("cat_exp")
+      .eq("id", profile.id)
+      .maybeSingle();
+    if (freshProfile) {
+      tossSubmitScore(freshProfile.cat_exp);
     }
   };
 
