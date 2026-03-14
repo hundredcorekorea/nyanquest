@@ -6,6 +6,7 @@ import { buildSystemPrompt } from "@/lib/solo-quest/prompts";
 import { getSystem } from "@/lib/solo-quest/systems";
 import { PREMIUM_CONFIG } from "@/lib/premium";
 import { apiMsg, getLocaleFromRequest } from "@/lib/api-messages";
+import { checkUserInput } from "@/lib/safety";
 import { getJob } from "@/lib/cat-jobs";
 import { NextRequest } from "next/server";
 import type { QuestMessage } from "@/types/solo-quest";
@@ -30,6 +31,7 @@ export async function POST(request: NextRequest) {
     turnCount,
     locale: bodyLocale,
     jobId,
+    personaId,
   } = body as {
     questId: string;
     scenarioId: string;
@@ -39,6 +41,7 @@ export async function POST(request: NextRequest) {
     turnCount: number;
     locale?: "ko" | "en";
     jobId?: string;
+    personaId?: string;
   };
 
   // Validate input
@@ -49,6 +52,15 @@ export async function POST(request: NextRequest) {
   if (playerMessage.length > 500) {
     return corsJson(
       { error: apiMsg("messageTooLong", request) },
+      { status: 400 }
+    );
+  }
+
+  // Safety filter — block harmful content before sending to AI
+  const safetyCheck = checkUserInput(playerMessage, bodyLocale ?? "ko");
+  if (!safetyCheck.allowed) {
+    return corsJson(
+      { error: safetyCheck.reason ?? "Content blocked for safety." },
       { status: 400 }
     );
   }
@@ -111,7 +123,7 @@ export async function POST(request: NextRequest) {
 
   // Build system prompt
   const system = getSystem(scenario.system);
-  let systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens, system, locale);
+  let systemPrompt = buildSystemPrompt(scenario, turnCount, effectiveTotalTurns, config.maxTokens, system, locale, personaId);
 
   // Inject job/class prompt if selected
   if (jobId) {

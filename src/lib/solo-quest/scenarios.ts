@@ -358,6 +358,227 @@ Adventurer, will you help find the silver bell~nya?
     },
     sceneKeywords: "cozy village cafe morning sunlight warm peaceful",
   },
+  {
+    id: "starlight-garden",
+    isPremium: false,
+    system: "dungeon-world" as TrpgSystemId,
+    title: "The Starlight Garden",
+    titleKo: "별빛 정원의 수호자",
+    description:
+      "마을의 별빛 정원이 시들어가고 있다냥! 정원을 되살릴 방법을 찾아보자냥.",
+    descriptionEn:
+      "The village's starlight garden is wilting, meow! Let's find a way to restore it.",
+    thumbnailEmoji: "🌟",
+    difficulty: "easy",
+    estimatedTurns: 10,
+    genre: "코지/힐링",
+    genreEn: "Cozy/Healing",
+    systemPromptAddition: `배경: 마법의 별빛 정원이 있는 평화로운 마을. 꽃들이 별빛을 머금고 빛나는 아름다운 정원.
+목표: 시들어가는 별빛 정원을 되살려라. 정원 중앙의 고대 수정이 금이 가서 별빛이 새어나가고 있다. 수정을 복원하려면 3가지 재료(달빛물, 해바라기꽃잎, 별가루)가 필요하다.
+분위기: 따뜻하고 평화로운 코지 힐링. 전투 없음. 생명의 위협 절대 없음. 탐험과 수집, 부드러운 퍼즐에 집중.
+톤: 봄날 오후의 산책 같은 느긋함. 모든 NPC가 친절하고 협조적.
+
+NPC (모두 디저트/과자 이름):
+- 정원사 "티라미수": 현명한 늙은 고양이. 50년간 정원을 돌봐왔다. 수정이 금간 원인과 필요한 재료를 알려줌.
+- 약초사 "마카롱": 수줍지만 도움을 잘 주는 고양이. 숲 속 약초밭에서 해바라기꽃잎을 구할 수 있다고 알려줌.
+- 양봉가 "허니": 활기차고 씩씩한 고양이. 벌들과 대화할 수 있으며, 달빛 연못의 위치를 알고 있다.
+- 반딧불 여왕 "프랄린": 신비롭지만 친절한 존재. 별가루를 가지고 있으며, 작은 부탁(반딧불을 위한 노래)을 들어주면 나눠줌.
+
+재료 수집:
+1. 달빛물: 달빛 연못에서 달이 비칠 때 수면을 떠야 함. 허니가 위치를 알려줌.
+2. 해바라기꽃잎: 마카롱의 약초밭에서 가장 크게 핀 해바라기에서 채취. 마카롱이 도와줌.
+3. 별가루: 프랄린에게 반딧불을 위한 노래를 불러주면 작은 병에 담아줌.
+
+해결: 3가지 재료를 모아 금간 수정에 바르면 정원이 되살아남. 별빛 꽃들이 다시 빛나는 아름다운 엔딩.
+보너스 엔딩: 모든 NPC에게 친절하게 대하면 마을 축제가 열리고 특별한 별빛 꽃을 선물받음.
+
+주요 판정:
+- 간파하기(Discern Realities): 재료 찾기 시 (+2, 쉬운 편)
+- 탐문하기(Parley): NPC와 대화 시 (+1, 부분 성공 시 재미있는 오해 발생)
+- 위험 감수(Defy Danger): 달빛 연못에서 물을 뜰 때 (+1, 부분 성공 시 옷이 젖음)
+
+아슬아슬한 성공 예시:
+- 달빛물을 떴는데 절반을 쏟아버림
+- 해바라기꽃잎을 땄는데 재채기해서 일부 흩어짐
+- 별가루를 받았는데 반딧불이 머리 위에 눌러앉아서 안 내려옴`,
+    systemPromptAdditionEn: `Setting: A peaceful village with a magical starlight garden. A beautiful garden where flowers glow, imbued with starlight.
+Goal: Restore the wilting starlight garden. The ancient crystal at the garden's center has cracked, and starlight is leaking out. Three ingredients are needed to repair the crystal: moonwater, sunpetal, and stardust.
+Atmosphere: Warm, peaceful cozy healing. No combat. Absolutely zero life-threatening situations. Focus on exploration, gathering, and gentle puzzles.
+Tone: As relaxed as an afternoon stroll on a spring day. All NPCs are friendly and cooperative.
+
+NPCs (all named after desserts/sweets):
+- Gardener "Tiramisu": A wise old cat. Has tended the garden for 50 years. Explains why the crystal cracked and what ingredients are needed.
+- Herbalist "Macaron": A shy but helpful cat. Reveals that sunpetals can be found in the herb garden deep in the forest.
+- Beekeeper "Honey": An energetic, spirited cat. Can talk to bees and knows the location of the moonlight pond.
+- Firefly Queen "Praline": A mysterious but kind being. Possesses stardust and will share it if you fulfill a small favor (singing a song for the fireflies).
+
+Ingredient gathering:
+1. Moonwater: Must be scooped from the moonlight pond when the moon is reflected on its surface. Honey knows the location.
+2. Sunpetal: Harvest from the largest sunflower in Macaron's herb garden. Macaron helps.
+3. Stardust: Sing a song for the fireflies for Praline, and she'll give you a small bottle of it.
+
+Resolution: Gather all 3 ingredients and apply them to the cracked crystal to revive the garden. A beautiful ending where the starlight flowers glow again.
+Bonus ending: If you treat all NPCs kindly, a village festival is held and you receive a special starlight flower as a gift.
+
+Key rolls:
+- Discern Realities: When searching for ingredients (+2, on the easy side)
+- Parley: When talking to NPCs (+1, partial success = a funny misunderstanding occurs)
+- Defy Danger: When scooping water from the moonlight pond (+1, partial success = your clothes get soaked)
+
+Partial success examples:
+- Scooped the moonwater but spilled half of it
+- Picked the sunpetal but sneezed and scattered some
+- Received the stardust but a firefly sat on your head and won't get off`,
+    openingMessage: `🌟 별빛이 희미하게 깜빡이는 정원이다냥...
+
+"큰일이다냥, 집사..."
+
+정원 입구에서 늙은 고양이 **티라미수**가 걱정스러운 얼굴로 서 있다냥. 한때 찬란하게 빛나던 별빛 꽃들이 하나둘 시들어가고 있다냥.
+
+"정원 중앙의 **고대 수정**에 금이 갔다냥... 별빛이 새어나가고 있어. 이대로 두면 정원의 모든 꽃이 사라질 거다냥."
+
+티라미수에 따르면, 수정을 고치려면 **달빛물**, **해바라기꽃잎**, **별가루** 세 가지 재료가 필요하다고 한다냥. 정원에는 달콤한 꽃향기가 아직 남아있고, 멀리서 반딧불이 깜빡이는 게 보인다냥.
+
+집사, 별빛 정원을 살려보겠냥?
+
+1. 🌿 마을 약초사 마카롱을 찾아간다
+2. 🐝 양봉가 허니에게 달빛 연못의 위치를 묻는다
+3. ✨ 반딧불이 빛나는 숲속으로 가본다
+
+💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
+    openingMessageEn: `🌟 A garden where starlight flickers faintly~nya...
+
+"This is terrible~nya, adventurer..."
+
+At the garden entrance, an old cat named **Tiramisu** stands with a worried face~nya. The starlight flowers that once shone brilliantly are wilting one by one~nya.
+
+"The **ancient crystal** at the center of the garden has cracked~nya... Starlight is leaking out. If we leave it like this, all the flowers in the garden will disappear~nya."
+
+According to Tiramisu, three ingredients are needed to repair the crystal: **moonwater**, **sunpetal**, and **stardust**~nya. The sweet fragrance of flowers still lingers in the garden, and fireflies can be seen flickering in the distance~nya.
+
+Adventurer, will you help save the starlight garden~nya?
+
+1. 🌿 Visit the village herbalist Macaron
+2. 🐝 Ask beekeeper Honey about the moonlight pond's location
+3. ✨ Head into the forest where the fireflies glow
+
+💡 You can freely type any action beyond these choices, meow!`,
+    suggestedActions: ["마카롱 방문", "허니에게 질문", "숲속 탐험"],
+    suggestedActionsEn: ["Visit Macaron", "Ask Honey", "Explore the forest"],
+    theme: {
+      bgGradient: "from-green-950 via-emerald-900/50 to-green-950",
+      accentColor: "text-emerald-400",
+      bubbleColor: "bg-emerald-900/40",
+    },
+    sceneKeywords: "magical garden starlight flowers glowing peaceful night",
+  },
+  {
+    id: "harbor-festival",
+    isPremium: false,
+    title: "The Harbor Festival",
+    titleKo: "항구 축제의 미식 대모험",
+    description:
+      "항구 마을의 미식 축제에 참가하게 됐다냥! 최고의 요리를 만들어 우승하자냥!",
+    descriptionEn:
+      "You've entered the harbor town's food festival, meow! Let's cook the best dish and win!",
+    thumbnailEmoji: "🍳",
+    difficulty: "easy",
+    estimatedTurns: 8,
+    genre: "코지/요리",
+    genreEn: "Cozy/Cooking",
+    systemPromptAddition: `배경: 바닷가 항구 마을의 연례 미식 축제. 화창한 날씨, 활기찬 시장.
+목표: 항구 시장에서 재료를 모아 요리를 만들고, 심사위원에게 선보여 우승하라. 우호적인 경쟁, 위험 없음.
+분위기: 따뜻하고 즐거운 코지 요리 모험. 전투 없음. 생명의 위협 절대 없음. 요리 테마의 스킬 체크.
+톤: 요리 프로그램처럼 밝고 경쾌. 모든 NPC가 개성 넘치지만 친절.
+
+NPC (모두 디저트/과자 이름):
+- 심사위원 "크렘 브륄레": 엄격하지만 공정한 고양이 셰프. 요리의 맛, 향, 프레젠테이션을 종합 평가.
+- 어부 "타이야키": 넉넉하고 관대한 고양이. 신선한 생선을 나눠주며, 바다 이야기를 좋아함.
+- 향신료 상인 "사프란": 드라마틱하고 흥정을 즐기는 고양이. 진귀한 향신료를 가지고 있지만 값을 잘 깎아야 함.
+- 라이벌 셰프 "퐁당": 경쟁적이지만 스포츠맨십이 훌륭한 고양이. 패배해도 웃으며 축하해줌.
+
+요리 과정:
+1. 재료 모으기: 항구 시장을 돌아다니며 해산물, 채소, 향신료를 수집.
+2. 조리하기: 불 조절, 양념, 타이밍이 중요. 손놀림(Dexterity) 체크.
+3. 프레젠테이션: 접시에 예쁘게 담는 것도 점수. 창의성 보너스.
+
+주요 판정:
+- 요리/손놀림(Dexterity): DC 10. 요리 실력 체크.
+- 설득(Persuasion): DC 11. 흥정이나 재료 부탁 시.
+- 지각(Perception): DC 12. 진귀한 재료 발견 시.
+
+아슬아슬한 성공 예시:
+- 요리 맛은 훌륭한데 프레젠테이션이 지저분함
+- 진귀한 향신료를 구했는데 너무 비싸게 삼
+- 생선은 완벽하게 구웠는데 소스를 좀 태움`,
+    systemPromptAdditionEn: `Setting: The annual food festival in a seaside harbor town. Sunny weather, bustling market.
+Goal: Gather ingredients from the harbor market, cook a dish, and present it to the judges to win. Friendly competition, no danger.
+Atmosphere: Warm, cheerful cozy cooking adventure. No combat. Absolutely zero life-threatening situations. Cooking-themed skill checks.
+Tone: Bright and lively like a cooking show. All NPCs are full of personality but friendly.
+
+NPCs (all named after desserts/sweets):
+- Judge "Crème Brûlée": A stern but fair cat chef. Evaluates dishes on taste, aroma, and presentation.
+- Fisher "Taiyaki": A generous, big-hearted cat. Shares fresh fish and loves telling stories of the sea.
+- Spice Merchant "Saffron": A dramatic cat who loves bargaining. Has rare spices, but you need to haggle well.
+- Rival Chef "Fondant": A competitive but sportsmanlike cat. Smiles and congratulates you even in defeat.
+
+Cooking process:
+1. Gather ingredients: Wander the harbor market collecting seafood, vegetables, and spices.
+2. Cook: Heat control, seasoning, and timing are key. Dexterity checks.
+3. Presentation: Plating beautifully also earns points. Creativity bonus.
+
+Key rolls:
+- Cooking/Dexterity: DC 10. Cooking skill check.
+- Persuasion: DC 11. For haggling or requesting ingredients.
+- Perception: DC 12. For finding rare ingredients.
+
+Partial success examples:
+- The dish tastes great but the presentation is messy
+- Found the rare spice but paid too much for it
+- Grilled the fish perfectly but slightly burned the sauce`,
+    openingMessage: `🍳 바닷바람이 시원하게 부는 항구 마을이다냥!
+
+"축제가 시작됐다냥~!"
+
+항구 시장은 색색의 깃발과 맛있는 냄새로 가득하다냥. 요리 대회 무대 앞에 커다란 현수막이 걸려 있다냥: **"제12회 항구 미식 축제 — 최고의 셰프를 가려라!"**
+
+심사위원석에는 고양이계의 전설적 셰프 **크렘 브륄레**가 날카로운 눈빛으로 앉아있다냥. 옆에서는 라이벌 셰프 **퐁당**이 자신만만하게 칼을 갈고 있다냥.
+
+"참가자 여러분, 2시간 안에 최고의 한 접시를 만들어 오시오!"
+
+시장에는 어부 타이야키의 생선 가판대, 사프란의 향신료 가게, 그리고 신선한 채소 노점이 즐비하다냥. 집사, 어떤 요리를 만들 거냥?
+
+1. 🐟 어부 타이야키에게 신선한 해산물을 얻으러 간다
+2. 🌶️ 향신료 상인 사프란의 가게를 구경한다
+3. 🥬 먼저 시장을 한 바퀴 돌며 재료를 파악한다
+
+💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
+    openingMessageEn: `🍳 A harbor town where the sea breeze blows cool~nya!
+
+"The festival has begun~nya~!"
+
+The harbor market is filled with colorful banners and delicious aromas~nya. A large banner hangs in front of the cooking contest stage~nya: **"12th Annual Harbor Food Festival — Find the Greatest Chef!"**
+
+At the judges' table, the legendary cat chef **Crème Brûlée** sits with a sharp gaze~nya. Beside the stage, rival chef **Fondant** is confidently sharpening a knife~nya.
+
+"Contestants, you have 2 hours to create your finest dish!"
+
+The market is lined with fisher Taiyaki's seafood stall, Saffron's spice shop, and fresh vegetable stands~nya. Adventurer, what dish will you make~nya?
+
+1. 🐟 Head to fisher Taiyaki for fresh seafood
+2. 🌶️ Browse spice merchant Saffron's shop
+3. 🥬 Take a stroll around the market first to scope out ingredients
+
+💡 You can freely type any action beyond these choices, meow!`,
+    suggestedActions: ["해산물 구하기", "향신료 구경", "시장 둘러보기"],
+    suggestedActionsEn: ["Get seafood", "Browse spices", "Explore the market"],
+    theme: {
+      bgGradient: "from-orange-950 via-amber-900/50 to-orange-950",
+      accentColor: "text-orange-400",
+      bubbleColor: "bg-orange-900/40",
+    },
+    sceneKeywords: "harbor market festival seaside cooking sunny cheerful",
+  },
   // === Premium Scenarios ===
   {
     id: "dragon-diplomacy",

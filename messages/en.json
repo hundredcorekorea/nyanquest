@@ -515,13 +515,13 @@
     "alreadyKnow": "I already know!",
     "startAdventure": "Start Adventure!",
     "steps": {
-      "welcome": "Welcome, fellow storyteller, nya! I'm NaYang, the wizard cat who'll narrate your tales, nya.",
-      "askTrpg": "Have you ever heard of interactive storytelling, nya?",
-      "explainTrpg": "It's like a choose-your-own-adventure book, but with dice and a narrator (that's me!), nya. I tell the story, you make the choices — and the dice add twists we never saw coming, nya!",
-      "explainDice": "Speaking of dice — they decide how your story unfolds, nya! A high roll means things go your way. A low roll? Well... that's where it gets interesting. Shall we try, nya?",
-      "afterDiceAndTraining": "Nice roll, nya! That's how it works. In the Storyteller's Den, I'll be your narrator — pick from choices or write whatever you want to do, nya!",
-      "explainPlayProfile": "Oh, check out 'Play Profile' on your page, nya! Share your favorite stories and writing style to find the purr-fect co-writers 🎭",
-      "ready": "Alright, are you ready, nya? Head to the 'Storyteller's Den' below, choose a world, and let's write your first tale together! NaYang will be waiting, nya~"
+      "welcome": "Welcome, dear friend, nya! I'm NaYang, a wizard cat who'll be your cozy storytelling companion, meow~",
+      "askTrpg": "Have you ever dreamed of stepping into a story, nya?",
+      "explainTrpg": "Here, I weave stories and you decide what happens next, nya. Think of it like being the hero of your own novel — no rules to memorize, just your imagination and me by your side, meow!",
+      "explainDice": "We also have the Dice of Fate, nya! They add little twists to our story — a lucky roll and things go your way, an unlucky one and... well, that's where the tale gets even more interesting, nya. Even failure leads to wonderful moments, meow! Shall we give it a try, nya?",
+      "afterDiceAndTraining": "Nice roll, nya! That's how fate shapes our story, meow. In the Storyteller's Den, I'll guide you through the tale — pick a choice or write whatever feels right, nya!",
+      "explainPlayProfile": "Oh, check out 'Play Profile' on your page, nya! Share your favorite genres and moods, and I'll recommend adventures that feel just right for you, meow 🎭",
+      "ready": "Alright, are you ready, nya? Head to the 'Storyteller's Den' below, pick a world that calls to you, and let's begin your first adventure together! No pressure — just relax and enjoy the story, meow. NaYang will be waiting, nya~"
     },
     "rollD20": "Roll a d20!"
   },

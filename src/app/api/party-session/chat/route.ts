@@ -5,6 +5,7 @@ import { createClient as createServiceClient } from "@supabase/supabase-js";
 import { getScenario } from "@/lib/solo-quest/scenarios";
 import { buildMultiplayerSystemPrompt } from "@/lib/party-session/prompts";
 import { PREMIUM_CONFIG } from "@/lib/premium";
+import { checkUserInput } from "@/lib/safety";
 import { NextRequest } from "next/server";
 import type { SessionMessage } from "@/types/party-session";
 import { apiMsg } from "@/lib/api-messages";
@@ -38,6 +39,17 @@ export async function POST(request: NextRequest) {
       { error: apiMsg("messageTooLong", request) },
       { status: 400 }
     );
+  }
+
+  // Safety filter — block harmful content before sending to AI
+  if (playerMessage) {
+    const safetyCheck = checkUserInput(playerMessage);
+    if (!safetyCheck.allowed) {
+      return corsJson(
+        { error: safetyCheck.reason ?? "Content blocked for safety." },
+        { status: 400 }
+      );
+    }
   }
 
   // Fetch session

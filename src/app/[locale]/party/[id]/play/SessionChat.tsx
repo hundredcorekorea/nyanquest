@@ -12,6 +12,7 @@ import AdGate from "@/components/AdGate";
 import PostGameSurvey from "@/components/PostGameSurvey";
 import PartyChatPanel from "@/components/PartyChatPanel";
 import PartyTutorialOverlay, { usePartyTutorialState } from "@/components/PartyTutorialOverlay";
+import { checkUserInput } from "@/lib/safety";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { useTranslations } from "next-intl";
@@ -282,6 +283,14 @@ export default function SessionChat({
       if (isStreaming || sessionStatus !== "active" || !text.trim()) return;
 
       const trimmed = text.trim();
+
+      // Client-side safety check
+      const safety = checkUserInput(trimmed);
+      if (!safety.allowed) {
+        toast(safety.reason ?? "Content blocked.", "error");
+        return;
+      }
+
       setInput("");
 
       if (initialSession.use_ai_gm) {

@@ -19,6 +19,7 @@ import SessionShareCard from "@/components/SessionShareCard";
 import { getPersona, type GmPersona } from "@/lib/solo-quest/personas";
 import type { SoloQuest, QuestMessage, DiceRoll, ScenarioTheme } from "@/types/solo-quest";
 import type { SfxGenre } from "@/hooks/useQuestSounds";
+import { checkUserInput, detectCrisisInResponse, getCrisisHelp } from "@/lib/safety";
 import GmPanel from "./GmPanel";
 import ScenePanel from "./ScenePanel";
 import PlayerPanel, { type InputMode } from "./PlayerPanel";
@@ -235,9 +236,23 @@ export default function QuestChat({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [messages]);
 
+  const [crisisAlert, setCrisisAlert] = useState(false);
+
   const sendMessage = useCallback(
     async (playerMessage: string, diceRoll?: DiceRoll) => {
       if (isStreaming || questStatus !== "in_progress") return;
+
+      // Client-side safety check
+      if (!diceRoll) {
+        const safety = checkUserInput(playerMessage, locale);
+        if (!safety.allowed) {
+          toast(safety.reason ?? "Content blocked.", "error");
+          return;
+        }
+        if (safety.isCrisis) {
+          setCrisisAlert(true);
+        }
+      }
 
       setSceneTransition(true);
       sounds.playTransition();
@@ -308,6 +323,11 @@ export default function QuestChat({
         if (sceneTag && sceneTag !== lastSceneTagRef.current) {
           lastSceneTagRef.current = sceneTag;
           changeScene(sceneTag);
+        }
+
+        // Detect crisis signals in AI response
+        if (detectCrisisInResponse(fullText)) {
+          setCrisisAlert(true);
         }
       } catch (err) {
         toast(
@@ -615,6 +635,19 @@ export default function QuestChat({
 
         {/* ── Spacer: background scene visible here ── */}
         <div className="flex-1 min-h-0" />
+
+        {/* Crisis alert banner */}
+        {crisisAlert && (
+          <div className="shrink-0 mx-2 mb-1 p-3 bg-red-900/80 backdrop-blur-sm border border-red-500/30 rounded-xl">
+            <p className="text-xs text-red-100 whitespace-pre-line">{getCrisisHelp(locale)}</p>
+            <button
+              onClick={() => setCrisisAlert(false)}
+              className="mt-2 text-[10px] text-red-300 underline"
+            >
+              {locale === "ko" ? "닫기" : "Close"}
+            </button>
+          </div>
+        )}
 
         {/* ── Bottom Panel: Player Input / Dice / QuestComplete ── */}
         <div className="shrink-0 mx-2 mb-2 rounded-xl bg-black/50 backdrop-blur-sm border border-white/10 overflow-hidden">
