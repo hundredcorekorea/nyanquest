@@ -1,8 +1,9 @@
 # 냥퀘스트 Google Play Store 등록 정보
 
 ## 기본 정보
-- **앱 이름**: 냥퀘스트 - AI 고양이 TRPG
-- **패키지명**: com.hundredcore.nyanquest
+- **앱 이름 (KO)**: 냥퀘스트 - AI 스토리텔링 RPG
+- **앱 이름 (EN)**: nyanQuest: Cozy AI Storytelling
+- **패키지명**: com.reaf.nyanquest
 - **카테고리**: 게임 > 롤플레잉
 - **콘텐츠 등급**: 전체이용가 (IARC 설문 시 폭력성/선정성 없음 체크)
 - **개발사**: HundredCore (헌드레드 코어)
@@ -10,51 +11,156 @@
 - **웹사이트**: https://nyanquest.com
 - **개인정보처리방침**: https://nyanquest.com/ko/privacy
 
-## 짧은 설명 (80자 이내)
-AI가 만드는 고양이 모험 이야기! 선택이 스토리를 바꾸는 TRPG 냥퀘스트
+---
 
-## 전체 설명 (4000자 이내)
-🐱 냥퀘스트 - AI가 이끄는 고양이 TRPG 모험!
+## 짧은 설명 — 한국어 (80자 이내)
 
-귀여운 고양이 캐릭터와 함께 AI가 만드는 무한한 모험을 떠나보세요!
-냥퀘스트는 AI 게임 마스터가 이끄는 텍스트 기반 롤플레잉 게임입니다.
+마법사 고양이 나양과 떠나는 AI 스토리텔링 모험! 당신의 선택이 이야기를 만듭니다
 
-🎲 주요 기능
+## 짧은 설명 — 영어 (80자 이내)
 
-▶ 솔로 퀘스트
-- AI 게임 마스터가 이끄는 1인 모험
-- 당신의 선택이 스토리를 바꿉니다
-- 다양한 시나리오: 판타지, 미스터리, 일상, SF
-- 주사위 굴림으로 운명이 결정!
+Your wizard cat GM awaits. Roll dice, make choices, write your own story.
 
-▶ 파티 플레이
-- 친구들과 함께하는 멀티플레이 모험
-- 실시간 & 비동기 플레이 지원
-- AI가 모든 플레이어의 행동을 조율
+---
 
-▶ 커뮤니티 시나리오
-- 다른 플레이어가 만든 시나리오 탐험
-- 나만의 시나리오 제작 & 공유
+## 전체 설명 — 한국어 (4000자 이내)
 
-🐾 특징
-- 귀여운 고양이 캐릭터 커스터마이징
-- 경험치 시스템으로 성장하는 내 고양이
-- 한국어 & 영어 지원
+"자, 모험을 시작하자냥! 🎲"
+
+나양은 고대 마법사 고양이입니다.
+이 녀석이 당신만을 위한 이야기를 만들어줍니다.
+
+냥퀘스트는 AI가 이끄는 코지한 스토리텔링 RPG입니다. 전투 스킬을 외울 필요 없고, 파티원을 구할 필요도 없습니다. 마법사 고양이 나양이 당신의 전담 게임 마스터가 되어, 당신의 선택 하나하나에 반응하는 살아있는 이야기를 만들어줍니다.
+
+
+✨ 왜 냥퀘스트인가요?
+
+▶ 나만의 AI 게임 마스터
+나양은 단순한 챗봇이 아닙니다. 당신의 행동 패턴을 기억하고, 대담하면 "전설의 집사"라는 칭호를, 신중하면 "지혜로운 집사"라는 칭호를 붙여주는 살아있는 캐릭터입니다. 가끔은 마법 실수로 수염에 불이 붙기도 하지만, 그것도 매력이죠.
+
+▶ 운명적인 주사위 판정
+"저 문은 꽤 튼튼해 보인다냥! 힘으로 밀어붙일까, 손재주로 자물쇠를 노릴까?"
+나양이 상황에 맞는 힌트를 주고, 당신이 접근법을 선택하면 주사위가 운명을 결정합니다. 대성공이면 숨겨진 보물까지 발견하고, 아슬아슬하게 성공하면 문은 열리지만 도구가 부러지고... 실패해도 이야기는 끝나지 않습니다. 오히려 더 흥미진진한 방향으로 흘러갑니다.
+
+▶ 전투보다 서사
+당신이 누구인지, 무엇을 선택하는지가 중요합니다. 고블린 동굴에서 보물을 훔칠 수도, 고블린과 친구가 될 수도 있습니다. 모든 NPC는 고유한 개성과 말투를 가지고 있어서, 마치 소설 속에 들어간 것 같은 경험을 선사합니다.
+
+▶ 6가지 TRPG 시스템
+D&D 5e, 크툴루의 부름, 던전월드, 인세인, 뱀파이어: 더 마스커레이드, 블레이즈 인 더 다크까지. 각 시스템의 고유한 주사위 메카닉이 완벽하게 구현되어 있습니다.
+
+▶ 5종의 AI 페르소나
+기본 나양 외에도 츤데레 까칠냥, 힐링 포근냥, 신비로운 신비냥, 카오스 난장냥까지. 같은 시나리오도 GM에 따라 완전히 다른 경험이 됩니다.
+
+
+🎲 이런 분께 딱 맞아요
+
+- 혼자서도 TRPG를 즐기고 싶은 분
+- AI와 함께 나만의 이야기를 써내려가고 싶은 분
+- 코지한 분위기의 힐링 게임을 찾는 분
+- 창작 영감이 필요한 작가 지망생
+- TRPG가 궁금하지만 입문이 어려웠던 분
+
+
+🐾 추가 기능
+
+- 커뮤니티 시나리오: 다른 플레이어가 만든 시나리오를 탐험하고, 나만의 시나리오를 만들어 공유하세요
+- 파티 플레이: 친구와 함께하는 실시간 & 비동기 멀티플레이
+- 한국어 & 영어 완벽 지원
 - 다크모드 지원
-
-📖 이런 분께 추천해요
-- TRPG/텍스트 RPG를 좋아하는 분
-- AI와 대화하며 이야기를 만들고 싶은 분
-- 귀여운 고양이 게임을 찾는 분
-- 친구와 함께 모험을 떠나고 싶은 분
 
 💡 AI 기본법 준수
 냥퀘스트의 스토리는 AI가 생성합니다. 🤖
 
 ---
-개발: HundredCore (헌드레드 코어)
+개발: HundredCore
 문의: osu355@gmail.com
 웹사이트: https://nyanquest.com
+
+---
+
+## Full Description — English (4000 chars)
+
+"Every great story starts with a single roll of the dice, nya!" 🎲
+
+Meet NaYang — an ancient wizard cat, and your personal AI Game Master.
+
+nyanQuest is a cozy AI storytelling RPG. No complicated skill sheets. No scrambling for party members. Just you, your wizard cat GM, and a story that unfolds based on every choice you make.
+
+
+✨ Why nyanQuest?
+
+▶ Your Own AI Game Master
+NaYang isn't a chatbot. NaYang is a living character who remembers your choices, gives you evolving titles based on your play style — "Legendary Adventurer" for the bold, "Wise Adventurer" for the cautious — and occasionally singes her own whiskers with a misfired spell. That's just part of the charm.
+
+▶ Dice Rolls That Tell a Story
+"That door looks pretty sturdy, nya! Try Strength to force it, or Dexterity to pick the lock?"
+NaYang hints at your options, you choose your approach, and the dice decide your fate. Roll high and discover hidden treasure. Barely succeed and the door opens — but your lockpick snaps. Even failure doesn't end your story. It just makes it more interesting.
+
+▶ Story Over Combat
+What matters is who you are and what you choose. Sneak past the goblins, befriend them, or challenge their chief to a cooking contest. Every NPC has their own quirks and speech patterns, making each encounter feel like stepping into a living novel.
+
+▶ 6 TRPG Systems
+D&D 5e, Call of Cthulhu, Dungeon World, Insane, Vampire: The Masquerade, and Blades in the Dark. Each system's unique dice mechanics are fully implemented with authentic rules.
+
+▶ 5 AI Personas
+Beyond the classic NaYang, unlock Spicy Nyan (sassy tsundere), Cozinyan (warm healer), Mystnyan (mysterious oracle), and Chaosnyan (chaotic jester). Same scenario, completely different experience.
+
+
+🎲 Perfect For You If...
+
+- You want to enjoy TRPG adventures solo, anytime
+- You love interactive fiction and making choices that matter
+- You're looking for a cozy, stress-free gaming experience
+- You're a writer seeking creative inspiration
+- You've been TTRPG-curious but never knew where to start
+
+
+🐾 More Features
+
+- Community Scenarios: Explore adventures created by other players, or craft and share your own
+- Party Play: Real-time & async multiplayer with friends
+- Full English & Korean support
+- Dark mode
+
+Your story is waiting. NaYang is waiting.
+Roll the dice and begin your adventure.
+
+💡 AI Disclosure: Stories in nyanQuest are generated by AI. 🤖
+
+---
+Developer: HundredCore
+Contact: osu355@gmail.com
+Website: https://nyanquest.com
+
+---
+
+## ASO 키워드
+
+### 한국어
+AI RPG, 스토리텔링, 솔로 모험, 힐링 게임, 고양이 게임, 텍스트 RPG, TRPG, 인터랙티브 소설, 코지 게임, 주사위, 롤플레잉, AI 게임마스터
+
+### English
+AI RPG, cozy game, storytelling, solo journaling, interactive fiction, wizard cat, dice roll, tabletop RPG, text adventure, creative writing, TTRPG, role playing, AI dungeon master
+
+---
+
+## 스크린샷 캡션
+
+### 한국어
+1. 마법사 고양이 나양이 당신만의 모험을 이끌어줍니다
+2. 당신의 선택이 운명을 바꿉니다 — 주사위를 굴려보세요
+3. 실패해도 괜찮아요, 이야기는 계속됩니다
+4. 5종의 개성 넘치는 AI 페르소나
+5. 커뮤니티 시나리오 — 무한한 모험이 기다립니다
+
+### English
+1. NaYang, your wizard cat GM, crafts adventures just for you
+2. Your choices shape the story — roll the dice and decide your fate
+3. Even failure is part of the adventure
+4. 5 unique AI personas, 5 completely different experiences
+5. Community scenarios — endless adventures await
+
+---
 
 ## 필요 에셋
 - [x] 고해상도 아이콘: public/icons/icon-512.png (512x512)
@@ -74,7 +180,7 @@ AI가 만드는 고양이 모험 이야기! 선택이 스토리를 바꾸는 TRP
 
 ## Play Console 등록 순서
 1. play.google.com/console 접속
-2. 앱 만들기 → "냥퀘스트 - AI 고양이 TRPG"
+2. 앱 만들기 → "냥퀘스트 - AI 스토리텔링 RPG"
 3. 스토어 등록정보 → 위 텍스트 + 이미지 입력
 4. **콘텐츠 등급** → IARC 설문조사 진행 (전체이용가)
 5. 프로덕션 트랙 → AAB 업로드

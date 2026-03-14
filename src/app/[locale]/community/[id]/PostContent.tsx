@@ -20,6 +20,7 @@ export default function PostContent({ post }: { post: Post }) {
     tip: { label: tCat("categories.tip"), emoji: "📚" },
     gallery: { label: tCat("categories.gallery"), emoji: "🖼️" },
     qna: { label: tCat("categories.qna"), emoji: "❓" },
+    adventure: { label: tCat("categories.adventure"), emoji: "📜" },
   };
 
   function timeAgo(dateStr: string): string {

@@ -14,6 +14,9 @@ import { useBgmMood } from "@/hooks/useBgmMood";
 import { useSceneBackground } from "@/hooks/useSceneBackground";
 import { useTurns } from "@/hooks/useTurns";
 import NaYangCutIn, { type CutInType } from "@/components/NaYangCutIn";
+import PersonaSelector from "@/components/PersonaSelector";
+import SessionShareCard from "@/components/SessionShareCard";
+import { getPersona, type GmPersona } from "@/lib/solo-quest/personas";
 import type { SoloQuest, QuestMessage, DiceRoll, ScenarioTheme } from "@/types/solo-quest";
 import type { SfxGenre } from "@/hooks/useQuestSounds";
 import GmPanel from "./GmPanel";
@@ -28,6 +31,7 @@ interface Props {
   quest: SoloQuest;
   scenarioTitle: string;
   scenarioId: string;
+  scenarioEmoji?: string;
   totalTurns: number;
   suggestedActions: string[];
   isPremium: boolean;
@@ -51,6 +55,7 @@ export default function QuestChat({
   quest,
   scenarioTitle,
   scenarioId,
+  scenarioEmoji = "🎲",
   totalTurns,
   suggestedActions: initialSuggestions,
   isPremium,
@@ -92,6 +97,17 @@ export default function QuestChat({
   const lastSceneTagRef = useRef<string | null>(null);
   const [cutIn, setCutIn] = useState<{ type: CutInType; key: number } | null>(null);
   const [sceneTransition, setSceneTransition] = useState(false);
+
+  // Persona state
+  const [personaId, setPersonaId] = useState<string>(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("nyanquest_persona") ?? "default";
+    }
+    return "default";
+  });
+  const [showPersonaSelector, setShowPersonaSelector] = useState(false);
+  const [showShareCard, setShowShareCard] = useState(false);
+  const currentPersona = getPersona(personaId);
 
   // Turn extension state
   const [effectiveTotalTurns, setEffectiveTotalTurns] = useState(totalTurns);
@@ -252,6 +268,7 @@ export default function QuestChat({
             turnCount,
             locale,
             jobId: typeof sessionStorage !== "undefined" ? sessionStorage.getItem("nq_job") : undefined,
+            personaId: personaId !== "default" ? personaId : undefined,
           }),
         });
 
@@ -302,7 +319,7 @@ export default function QuestChat({
         setIsStreaming(false);
       }
     },
-    [isStreaming, questStatus, messages, quest.id, scenarioId, turnCount, toast, tQuest, tCommon, locale, sounds, bgmMood, changeScene]
+    [isStreaming, questStatus, messages, quest.id, scenarioId, turnCount, toast, tQuest, tCommon, locale, sounds, bgmMood, changeScene, personaId]
   );
 
   function handleScreenEffect(effect: "critical" | "fumble" | "success" | "fail" | null) {
@@ -532,6 +549,16 @@ export default function QuestChat({
                 </div>
               )}
             </div>
+            {/* Persona toggle */}
+            {questStatus === "in_progress" && (
+              <button
+                onClick={() => setShowPersonaSelector(true)}
+                className={`text-xs px-1.5 py-1 rounded transition-colors ${currentPersona.accentColor} hover:opacity-80`}
+                title={locale === "en" ? "Change GM Persona" : "GM 페르소나 변경"}
+              >
+                {currentPersona.emoji}
+              </button>
+            )}
             {/* SFX toggle */}
             <button
               onClick={sounds.toggle}
@@ -596,10 +623,12 @@ export default function QuestChat({
               <QuestComplete
                 questId={quest.id}
                 scenarioId={scenarioId}
+                scenarioTitle={scenarioTitle}
                 turnCount={turnCount}
                 isPremium={isPremium}
                 isFailed={questStatus === "failed"}
                 alreadyClaimedExp={quest.exp_earned}
+                onShare={() => setShowShareCard(true)}
                 onRewind={questStatus === "failed" ? () => {
                   // Rewind: remove last GM failure message and last player message
                   const rewound = [...messages];
@@ -638,6 +667,36 @@ export default function QuestChat({
           )}
         </div>
       </div>
+
+      {/* Persona Selector Modal */}
+      {showPersonaSelector && (
+        <PersonaSelector
+          selectedId={personaId}
+          isPremium={isPremium}
+          onSelect={(persona) => {
+            setPersonaId(persona.id);
+            localStorage.setItem("nyanquest_persona", persona.id);
+            setShowPersonaSelector(false);
+          }}
+          onClose={() => setShowPersonaSelector(false)}
+        />
+      )}
+
+      {/* Session Share Card Modal */}
+      {showShareCard && (
+        <SessionShareCard
+          scenarioTitle={scenarioTitle}
+          scenarioEmoji={scenarioEmoji}
+          genre={genre ?? "Fantasy"}
+          turnCount={turnCount}
+          isFailed={questStatus === "failed"}
+          messages={messages}
+          expEarned={quest.exp_earned}
+          personaName={currentPersona.id !== "default" ? (locale === "en" ? currentPersona.nameEn : currentPersona.name) : undefined}
+          personaEmoji={currentPersona.id !== "default" ? currentPersona.emoji : undefined}
+          onClose={() => setShowShareCard(false)}
+        />
+      )}
     </div>
   );
 }

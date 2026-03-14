@@ -3,6 +3,7 @@
 import { createClient } from "@/lib/supabase/client";
 import { useEffect, useState } from "react";
 import { useRouter } from "@/i18n/navigation";
+import { useSearchParams } from "next/navigation";
 import type { User } from "@supabase/supabase-js";
 import type { TrpgSystem, PostCategory } from "@/types/database";
 import { useToast } from "@/components/Toast";
@@ -10,6 +11,7 @@ import { useTranslations, useLocale } from "next-intl";
 
 export default function WritePostPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const supabase = createClient();
   const { toast } = useToast();
   const t = useTranslations("CommunityWrite");
@@ -25,12 +27,18 @@ export default function WritePostPage() {
     { value: "tip", label: tCommunity("categories.tip"), emoji: "📚" },
     { value: "gallery", label: tCommunity("categories.gallery"), emoji: "🖼️" },
     { value: "qna", label: tCommunity("categories.qna"), emoji: "❓" },
+    { value: "adventure", label: tCommunity("categories.adventure"), emoji: "📜" },
   ];
 
+  // Pre-fill from URL query params (used by "Share to Guild Hall" button)
+  const prefillCategory = (searchParams.get("category") as PostCategory) || "free";
+  const prefillTitle = searchParams.get("title") || "";
+  const prefillContent = searchParams.get("content") || "";
+
   const [form, setForm] = useState({
-    category: "free" as PostCategory,
-    title: "",
-    content: "",
+    category: prefillCategory,
+    title: prefillTitle,
+    content: prefillContent,
     system_id: "",
   });
 

@@ -27,6 +27,7 @@ export default function CommunityPostList({ posts }: Props) {
     tip: { label: t("categories.tip"), emoji: "📚" },
     gallery: { label: t("categories.gallery"), emoji: "🖼️" },
     qna: { label: t("categories.qna"), emoji: "❓" },
+    adventure: { label: t("categories.adventure"), emoji: "📜" },
   };
 
   const categories = [
@@ -35,6 +36,7 @@ export default function CommunityPostList({ posts }: Props) {
     { value: "tip", label: t("categories.tipShort"), emoji: "📚" },
     { value: "gallery", label: t("categories.galleryShort"), emoji: "🖼️" },
     { value: "qna", label: t("categories.qnaShort"), emoji: "❓" },
+    { value: "adventure", label: t("categories.adventureShort"), emoji: "📜" },
   ];
 
   const langOptions = [

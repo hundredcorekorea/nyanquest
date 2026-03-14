@@ -242,6 +242,122 @@ Adventurer, shall we begin the investigation~nya?
     },
     sceneKeywords: "fantasy castle throne room golden fairytale",
   },
+  {
+    id: "moonbell-cafe",
+    isPremium: false,
+    system: "dungeon-world" as TrpgSystemId,
+    title: "The Moonbell Café Mystery",
+    titleKo: "달빛 카페의 사라진 은방울",
+    description:
+      "마을 카페의 소중한 은방울이 사라졌다냥! 따뜻한 마을 사람들과 함께 찾아보자냥.",
+    descriptionEn:
+      "The beloved silver bell of the village café has vanished, meow! Let's find it with the warm townsfolk.",
+    thumbnailEmoji: "🔔",
+    difficulty: "easy",
+    estimatedTurns: 10,
+    genre: "코지/미스터리",
+    genreEn: "Cozy/Mystery",
+    systemPromptAddition: `배경: 언덕 위의 아늑한 마법 마을 '달빛 언덕'. 마을 중심의 카페 '은방울 찻집'.
+목표: 카페 주인 할미냥의 소중한 은방울을 찾아라. 은방울은 울릴 때마다 마을에 평화를 가져다주는 마법 아이템이다.
+분위기: 따뜻하고 평화로운 코지 미스터리. 긴장감은 있지만 위험하지는 않다. 생명의 위협은 절대 없음.
+톤: 마을 디저트 축제 전날의 설레는 분위기. 수사라기보다는 보물찾기에 가까운 느낌으로.
+
+NPC (모두 친절하고 협조적. 각자 디저트 별명을 가짐):
+- 할미냥 "마들렌": 카페 주인. 품이 넓고 따뜻한 할머니 고양이. 은방울을 50년간 지켜옴. 수상하지 않음.
+- 제빵사 "슈크림": 덩치가 크고 순한 곰 같은 고양이. 매일 아침 카페에 빵을 배달함. 어젯밤 이상한 소리를 들었다고 함.
+- 꽃집 주인 "카스텔라": 수줍음이 많은 삼색 고양이. 카페 옆 꽃집 운영. 새벽에 빛나는 뭔가를 봤다고 함.
+- 우체부 "에클레어": 활기차고 수다스러운 고양이. 마을 소식통. 최근 떠돌이 까치가 반짝이는 것을 모은다는 소문을 알려줌.
+- 떠돌이 까치 "반짝이": 진범(하지만 악의 없음). 은방울의 아름다운 소리에 반해 둥지로 가져감. 둥지는 마을 광장 큰 떡갈나무 꼭대기.
+
+단서 3개:
+1. 슈크림의 증언: 새벽 3시에 '딸랑딸랑' 소리가 카페 지붕 쪽에서 들렸다.
+2. 카스텔라의 목격: 새벽녘 달빛 아래 반짝이는 뭔가가 하늘을 가로질렀다.
+3. 에클레어의 정보: 떠돌이 까치가 최근 마을에 나타나 반짝이는 물건을 모으고 있다.
+
+해결: 떡갈나무를 올라가 까치 둥지에서 은방울을 회수. 까치를 쫓아내는 게 아니라 달래서 해결하면 보너스.
+보너스 엔딩: 까치에게 대체 반짝이 장식을 만들어주면 까치가 마을의 친구가 됨.
+
+주요 판정:
+- 관찰/탐문: 단서 수집 시 (수정치 +1~+2, 쉬운 편)
+- 나무 오르기: 위험 감수 (수정치 +0, 부분 성공 시 나뭇가지가 부러져 약간 다침)
+- 까치 달래기: 탐문하기 (수정치 +2, 부분 성공 시 까치가 은방울 대신 다른 물건을 줌)
+
+아슬아슬한 성공 예시를 적극 활용:
+- 나무를 올랐는데 바지가 찢어짐
+- 까치와 협상했는데 은방울 대신 단추를 받음
+- 단서를 찾았지만 카페 컵을 깨뜨림`,
+    systemPromptAdditionEn: `Setting: A cozy magical village called 'Moonlit Hill', atop a gentle slope. At its heart is a café called 'Silver Bell Tea House'.
+Goal: Find café owner Grandma Meow's precious silver bell. The bell is a magical item that brings peace to the village whenever it rings.
+Atmosphere: Warm, peaceful cozy mystery. There's suspense but no danger. Absolutely zero life-threatening situations.
+Tone: The excited atmosphere of the evening before the village dessert festival. More of a treasure hunt than an investigation.
+
+NPCs (all friendly and cooperative, each with a dessert nickname):
+- Grandma Meow "Madeleine": Café owner. A warm, kind grandmother cat. Has protected the bell for 50 years. Not suspicious.
+- Baker "Cream Puff": A large, gentle bear-like cat. Delivers bread to the café every morning. Says he heard a strange sound last night.
+- Florist "Castella": A shy calico cat. Runs the flower shop next to the café. Says she saw something shiny at dawn.
+- Mail Carrier "Éclair": An energetic, chatty cat. The village gossip. Shares a rumor about a wandering magpie collecting shiny things.
+- Wandering Magpie "Sparkle": The culprit (but means no harm). Was enchanted by the bell's beautiful sound and took it to its nest. Nest is atop the big oak tree in the village square.
+
+3 Clues:
+1. Cream Puff's testimony: Heard a 'jingle jingle' sound from the café roof at 3 AM.
+2. Castella's sighting: Saw something glittering across the sky under the moonlight at dawn.
+3. Éclair's intel: A wandering magpie has appeared in town recently, collecting shiny objects.
+
+Resolution: Climb the oak tree and retrieve the bell from the magpie's nest. Bonus for calming the magpie rather than chasing it away.
+Bonus ending: If the player crafts a substitute shiny ornament for the magpie, it becomes the village's friend.
+
+Key rolls:
+- Observation/inquiry: When gathering clues (modifier +1 to +2, on the easy side)
+- Tree climbing: Defy Danger (modifier +0, partial success = branch breaks, minor scrape)
+- Calming the magpie: Parley (modifier +2, partial success = magpie gives a button instead of the bell)
+
+Actively use "success at a cost" examples:
+- Climbed the tree but tore your pants
+- Negotiated with the magpie but got a button instead of the bell
+- Found a clue but broke a café cup`,
+    openingMessage: `☀️ 아침 햇살이 따스하게 내리쬐는 달빛 언덕 마을이다냥.
+
+"큰일 났다냥...!"
+
+은방울 찻집의 문을 열자, 할미냥 **마들렌**이 눈물을 글썽이며 서 있다냥.
+
+"50년간 지켜온 **은방울**이 사라졌다냥... 내일이 디저트 축제인데, 은방울이 없으면 축제를 열 수가 없다냥..."
+
+은방울은 울릴 때마다 마을에 평화를 가져다주는 소중한 마법 아이템이라고 한다냥. 찻집 안에는 달콤한 마들렌 냄새가 가득하고, 창밖으로는 평화로운 마을 풍경이 보인다냥.
+
+집사, 은방울을 찾아주겠냥?
+
+1. 🔍 찻집 안을 꼼꼼히 살펴본다
+2. 🐱 마을 사람들에게 이야기를 들으러 간다
+3. 👣 찻집 주변에 발자국이나 흔적이 있는지 확인한다
+
+💡 위 선택지 외에도 원하는 행동을 자유롭게 입력할 수 있다냥!`,
+    openingMessageEn: `☀️ Warm morning sunlight bathes the village of Moonlit Hill~nya.
+
+"This is terrible~nya...!"
+
+Opening the door to the Silver Bell Tea House, you find Grandma Meow **Madeleine** standing there with teary eyes~nya.
+
+"The **silver bell** I've protected for 50 years has vanished~nya... The dessert festival is tomorrow, and without the bell, we can't hold it~nya..."
+
+The silver bell is a precious magical item that brings peace to the village whenever it rings~nya. The tea house is filled with the sweet scent of madeleines, and through the window you can see the peaceful village~nya.
+
+Adventurer, will you help find the silver bell~nya?
+
+1. 🔍 Search the tea house carefully
+2. 🐱 Go talk to the townsfolk
+3. 👣 Check around the tea house for footprints or clues
+
+💡 You can freely type any action beyond these choices, meow!`,
+    suggestedActions: ["찻집 조사", "마을 사람 탐문", "흔적 찾기"],
+    suggestedActionsEn: ["Search tea house", "Talk to townsfolk", "Look for clues"],
+    theme: {
+      bgGradient: "from-amber-950 via-orange-900/40 to-amber-950",
+      accentColor: "text-amber-300",
+      bubbleColor: "bg-amber-900/30",
+    },
+    sceneKeywords: "cozy village cafe morning sunlight warm peaceful",
+  },
   // === Premium Scenarios ===
   {
     id: "dragon-diplomacy",

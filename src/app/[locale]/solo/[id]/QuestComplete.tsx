@@ -18,6 +18,7 @@ const SURVEY_TRIGGERS = new Set([7, 15, 25, 50, 100]);
 interface Props {
   questId: string;
   scenarioId?: string;
+  scenarioTitle?: string;
   turnCount: number;
   isPremium: boolean;
   isFailed?: boolean;
@@ -25,9 +26,11 @@ interface Props {
   alreadyClaimedExp?: number;
   /** Callback to rewind the quest to the last player choice */
   onRewind?: () => void;
+  /** Callback to open the session share card */
+  onShare?: () => void;
 }
 
-export default function QuestComplete({ questId, scenarioId, turnCount, isPremium, isFailed = false, alreadyClaimedExp = 0, onRewind }: Props) {
+export default function QuestComplete({ questId, scenarioId, scenarioTitle, turnCount, isPremium, isFailed = false, alreadyClaimedExp = 0, onRewind, onShare }: Props) {
   const router = useRouter();
   const { toast } = useToast();
   const tQuest = useTranslations("SoloQuest");
@@ -251,6 +254,52 @@ export default function QuestComplete({ questId, scenarioId, turnCount, isPremiu
               })}
             </div>
           )}
+          {onShare && (
+            <button
+              onClick={onShare}
+              className="w-full py-3 bg-linear-to-r from-pink-500 to-violet-500 hover:from-pink-600 hover:to-violet-600 text-white rounded-xl font-medium text-sm transition-colors flex items-center justify-center gap-2"
+            >
+              📸 {tQuest("shareSessionCard") ?? "모험 기록 카드 만들기"}
+            </button>
+          )}
+          {/* Share buttons: Guild Hall + SNS */}
+          <div className="flex gap-2">
+            <button
+              onClick={() => {
+                const title = isFailed
+                  ? tQuest("shareAdventureFailTitle", { scenario: scenarioTitle || "Quest" })
+                  : tQuest("shareAdventureTitle", { scenario: scenarioTitle || "Quest" });
+                const status = isFailed ? (locale === "ko" ? "실패" : "Failed") : (locale === "ko" ? "성공" : "Cleared");
+                const content = tQuest("shareAdventureBody", { turnCount, status });
+                const params = new URLSearchParams({ category: "adventure", title, content });
+                router.push(`/community/write?${params.toString()}`);
+              }}
+              className="flex-1 py-3 bg-amber-100 hover:bg-amber-200 text-amber-800 rounded-xl font-medium text-sm transition-colors flex items-center justify-center gap-1.5"
+            >
+              🏰 {tQuest("shareToGuildHall") ?? "길드홀에 공유"}
+            </button>
+            <button
+              onClick={async () => {
+                const title = isFailed
+                  ? tQuest("shareAdventureFailTitle", { scenario: scenarioTitle || "Quest" })
+                  : tQuest("shareAdventureTitle", { scenario: scenarioTitle || "Quest" });
+                const status = isFailed ? (locale === "ko" ? "실패" : "Failed") : (locale === "ko" ? "성공" : "Cleared");
+                const text = `${title}\n🎲 ${turnCount} ${locale === "ko" ? "턴" : "turns"} | ${status}\n\n#냥퀘스트 #nyanQuest #CozyRPG`;
+                const url = `https://nyanquest.com/${locale}/solo`;
+                if (navigator.share) {
+                  try {
+                    await navigator.share({ title, text, url });
+                  } catch { /* user cancelled */ }
+                } else {
+                  await navigator.clipboard.writeText(`${text}\n${url}`);
+                  toast(tQuest("shareCopied") ?? "링크가 복사되었다냥!", "success");
+                }
+              }}
+              className="flex-1 py-3 bg-blue-100 hover:bg-blue-200 text-blue-800 rounded-xl font-medium text-sm transition-colors flex items-center justify-center gap-1.5"
+            >
+              🔗 {tQuest("shareToSns") ?? "SNS에 공유"}
+            </button>
+          </div>
           {showSurvey && !surveyDismissed && (
             <PostGameSurvey
               questId={questId}

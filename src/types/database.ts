@@ -104,7 +104,7 @@ export interface SessionLog {
   created_at: string;
 }
 
-export type PostCategory = "free" | "tip" | "gallery" | "qna";
+export type PostCategory = "free" | "tip" | "gallery" | "qna" | "adventure";
 
 export interface Post {
   id: string;

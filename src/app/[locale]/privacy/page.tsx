@@ -43,6 +43,13 @@ export default async function PrivacyPage({ params }: { params: Promise<{ locale
 
         <h2 className="text-base font-bold text-gray-900 mt-6">{t("section4Title")}</h2>
         <p>{t("section4Content")}</p>
+        <ul className="list-disc pl-5 space-y-1">
+          <li>{t("section4Items.payment")}</li>
+          <li>{t("section4Items.ai")}</li>
+        </ul>
+
+        <h2 className="text-base font-bold text-gray-900 mt-6">{t("section4aTitle")}</h2>
+        <p>{t("section4aContent")}</p>
 
         <h2 className="text-base font-bold text-gray-900 mt-6">{t("section5Title")}</h2>
         <ul className="list-disc pl-5 space-y-1">
