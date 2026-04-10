@@ -277,6 +277,16 @@ export default function ScenarioDetailPage() {
         </div>
         <p className="text-sm text-gray-600">{displayDesc}</p>
 
+        {/* AI 생성 표시 (AI 기본법 의무) */}
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 text-[11px] text-amber-800 flex items-start gap-1.5">
+          <span>🤖</span>
+          <span>
+            {locale === "ko"
+              ? "이 시나리오 콘텐츠와 GM 응답은 AI가 생성합니다. 엔터테인먼트 목적이며 실제 조언으로 사용하지 마세요."
+              : "Scenario content and GM responses are AI-generated. For entertainment only — not real advice."}
+          </span>
+        </div>
+
         {/* Translation status */}
         {isTranslating && (
           <div className="bg-blue-50 border border-blue-200 rounded-xl px-3 py-2 text-xs text-blue-700 flex items-center gap-2">

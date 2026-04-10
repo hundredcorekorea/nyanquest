@@ -714,6 +714,18 @@ export default function SessionChat({
         />
       </div>
 
+      {/* AI 생성 표시 (AI 기본법 의무) — AI GM 모드일 때 */}
+      {initialSession.use_ai_gm && (
+        <div className="bg-amber-50 border border-amber-200 rounded-xl px-3 py-2 mb-3 text-[11px] text-amber-800 flex items-start gap-1.5">
+          <span>🤖</span>
+          <span>
+            {locale === "ko"
+              ? "AI GM이 응답을 생성합니다. 엔터테인먼트 목적이며 실제 조언이 아닙니다."
+              : "AI GM generates responses. For entertainment only — not real advice."}
+          </span>
+        </div>
+      )}
+
       {/* Player list */}
       <div className="mb-3">
         <PlayerList
