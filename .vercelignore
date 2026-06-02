@@ -1,0 +1,7 @@
+# Standalone sub-apps and build artifacts — not part of the Next.js web build.
+# (These are untracked locally; excluding keeps deploys lean and out of the typecheck.)
+toss-app
+android-app
+android-app2
+dist
+*.log
