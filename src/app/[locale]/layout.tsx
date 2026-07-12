@@ -12,6 +12,7 @@ import PWARegister from "@/components/PWARegister";
 import ReferralCapture from "@/components/ReferralCapture";
 import PushPermissionPrompt from "@/components/PushPermissionPrompt";
 import InstallPrompt from "@/components/InstallPrompt";
+import AnalyticsListener from "@/components/AnalyticsListener";
 import { Suspense } from "react";
 
 export function generateStaticParams() {
@@ -96,7 +97,7 @@ export default async function LocaleLayout({
     description:
       locale === "ko"
         ? "AI GM과 함께하는 온라인 TRPG 플랫폼. 솔로 퀘스트, 파티 모드, 커뮤니티 모집."
-        : "Online TRPG platform with AI Game Master. Solo quests, party mode, and community recruitment.",
+        : "A cozy AI storytelling RPG. Write your own adventure with NaYang, your wizard cat Game Master. Solo journaling, collaborative tales & dice-driven fiction.",
     applicationCategory: "GameApplication",
     operatingSystem: "Any",
     offers: {
@@ -119,11 +120,23 @@ export default async function LocaleLayout({
         crossOrigin="anonymous"
         strategy="afterInteractive"
       />
+      {process.env.NEXT_PUBLIC_GA_ID && (
+        <>
+          <Script
+            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GA_ID}`}
+            strategy="afterInteractive"
+          />
+          <Script id="ga4-init" strategy="afterInteractive">
+            {`window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','${process.env.NEXT_PUBLIC_GA_ID}');`}
+          </Script>
+        </>
+      )}
       <NextIntlClientProvider messages={messages}>
         <ToastProvider>
           <PWARegister />
           <Suspense>
             <ReferralCapture />
+            <AnalyticsListener />
           </Suspense>
           <Header />
           <main className="max-w-3xl mx-auto px-4 py-6">{children}</main>

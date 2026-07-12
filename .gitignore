@@ -54,3 +54,19 @@ android-app/build/
 android-app/local.properties
 *.aab
 *.apk
+
+# android-twa build cache (was polluting git)
+android-twa/.gradle/
+android-twa/build/
+android-twa/app/build/
+
+# toss-app build artifacts
+toss-app/node_modules/
+toss-app/dist/
+
+# misc build artifacts / crash dumps / editor
+/dist/
+*.ait
+hs_err_pid*.log
+replay_pid*.log
+.vscode/

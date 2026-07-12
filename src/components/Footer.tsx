@@ -13,7 +13,7 @@ export default function Footer() {
           <p>{t("businessNumber")}: 735-69-00608</p>
           <p>{t("address")}: {t("addressValue")}</p>
           <p>{t("email")}: osu355@gmail.com</p>
-          <p>{t("phone")}: 010-7556-0317</p>
+          <p>{t("phone")}: 010-7415-2673</p>
         </div>
         <div className="flex gap-3 pt-2">
           <Link href="/privacy" className="hover:text-gray-600 underline">
